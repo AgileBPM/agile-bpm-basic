@@ -1,0 +1,76 @@
+<html>
+<head>
+	<title>用户的岗位列表</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body class="panel-body">
+    <div class="btn-group toolbar">
+	  <button class="btn btn-outline btn-primary fa-plus"  onclick="setOrg()">加入组织</button>
+	  <button class="btn btn-outline btn-primary fa-plus" onclick="setPos()">加入岗位 </button>
+    </div>
+	<table ab-grid data-id-field="id" data-url="/org/user/listUserPostJson?userId={userId}">
+          <thead>
+          <tr>
+              <th data-checkbox="true">ID</th>
+              <th data-field="orgName">组织名称</th>
+              <th data-field="relName" >岗位名称</th>
+              <th data-field="isMaster"  data-formatter="labelFormatter" data-value-style="1-是-primary,0-否-warning,">是否主组织</th>
+              <th data-field="script" data-formatter="innerHtmlFormatter" data-title="管理">
+				<span class='btn btn-outline btn-primary fa fa-trash'  url='/org/groupUser/remove?id={groupUserId}' sendAction='删除' qtip='删除'></span>
+				<span if="{isMaster}===1" class='btn btn-outline btn-primary fa-thumbs-o-down' sendAction='取消主组织' qtip='取消主组织'  url='/org/groupUser/setMaster?id={groupUserId}'></span>
+				<span if="{isMaster}===0" class='btn btn-outline btn-primary fa  fa-thumbs-o-up' sendAction='设为主组织' qtip='设为主组织'  url='/org/groupUser/setMaster?id={groupUserId}'></span>
+			 </th>
+          </tr>
+          </thead>
+     </table>
+</body>
+</html>
+<script type="text/javascript">
+
+	var userId=$.getParam("userId");
+	
+	function setOrg(){
+		CustUtil.openCustDialog("orgSelector",function(arrData,innerWindow){
+ 			var ids = [];
+ 			for(var i=0,group;group=arrData[i++];){
+ 				ids.push(group.id);
+ 			}
+ 			
+ 			var params = {userId:userId,groupIds:ids.join(",")};
+ 			$.post(__ctx + "/org/groupUser/saveUserRels",params,function(data){
+				 reloadGrid();
+				 if(data.isOk){
+					$.Dialog.success("添加成功！");
+	 		    	$.Dialog.close(innerWindow);
+				 }else{
+					 $.Dialog.error("操作失败"+data.msg);
+				 } 
+	 	    },"json");
+ 			
+ 		})
+	}
+
+	function setPos() {
+		CustUtil.openCustDialog("postSelector",function(arrData,innerWindow){
+ 			var relIds = [],groupIds=[];
+ 			for(var i=0,group;group=arrData[i++];){
+ 				relIds.push(group.id);
+ 				groupIds.push(group.orgId);
+ 			}
+ 			
+ 			var params = {userId:userId,relIds:relIds.join(","),groupIds:groupIds.join(",")};
+ 			$.post(__ctx + "/org/groupUser/saveUserRels",params,function(data){
+				 reloadGrid();
+				 if(data.isOk){
+					$.Dialog.success("添加成功！");
+	 		    	$.Dialog.close(innerWindow);
+				 }else{
+					 $.Dialog.error("操作失败"+data.msg);
+				 }
+	 	    },"json");
+ 			
+ 		})
+	}
+</script>

@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>工作台面板</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body class="panel-body">
+	<div>
+		<!--搜索 .search-panel 必须 -->
+		<div class="panel panel-default search-panel">
+			<div class="panel-heading">
+				查询条件
+				<a　href="javascript:void(0)" class="pull-right">　<i class="fa fa-angle-double-up" toggle-collapse="#searchForm"></i> </a>
+			</div>
+			<div class="panel-body">
+				<form id="searchForm" class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-sm-1" for="alias_^VSL">别名</label>
+						<div class="col-sm-3"> <input class="form-control" type="text" name="alias_^VSL"> </div>
+						<label class="control-label col-sm-1" for="name_^VSL">标题</label>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="name_^VSL">
+						</div>
+						<div class="col-sm-4" style="text-align: left;">
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="btn-group toolbar">
+			<a class="btn btn-outline btn-primary fa-plus" openDialog="添加面板" url="workbenchPanelEdit" href="javascript:void(0)">新增 </a>
+			<button class="btn btn-outline btn-primary fa-detail" openDialog="默认布局设置" url="/sys/workbenchPanel/myWorkbench.html?layoutKey=default_layout" top="true">设置默认工作台布局</button>
+			<button class="btn btn-outline btn-primary fa-remove">删除</button>
+		</div>
+		<table ab-grid data-id-field="id" data-url="sys/workbenchPanel/listJson">
+			<thead>
+				<tr>
+					<th data-checkbox="true">序号</th>
+					<th data-field="name">标题</th>
+					<th data-field="alias">标识</th>
+					<th data-field="dataType" data-formatter="labelFormatter" data-value-style="interface-接口-primary,custQuery-自定义查询-warning,iframe-IFRAME-info,">数据类型</th>
+					<th data-field="dataSource"  >数据来源</th>
+					<th data-field="autoRefresh" data-formatter="autoRefreshFormatter">自动刷新</th>
+					<th data-field="width" data-formatter = "widthFormatter">宽</th>
+					<th data-field="createTime" data-sort="create_time_">创建时间</th>
+					<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+						<span class="fa-edit btn btn-outline btn-primary btn-sm" qtip='编辑' openDialog="编辑"  url="./workbenchPanelEdit.html?id={id}"></span>
+						<span class="fa-trash btn btn-outline  btn-primary btn-sm" qtip='删除' sendAction="删除" url="/sys/workbenchPanel/remove?id={id}"></span>
+						<span class="fa-user-times btn btn-outline  btn-primary btn-sm" dialogConf='"height":500,"width":600' qtip='授权' openDialog="{name}流程授权" url="/sys/authorization/authorizationDialog.html?rightsObject=WORKBENCH&rightsTarget={id}"></span>
+					</th>
+				</tr>
+			</thead>
+		</table>
+</body>
+</html>
+<script>
+	function autoRefreshFormatter(value){
+		if(value )return value+"秒";
+		return "否";
+	}
+	function widthFormatter(value){
+		return value+"%";
+	}
+</script>

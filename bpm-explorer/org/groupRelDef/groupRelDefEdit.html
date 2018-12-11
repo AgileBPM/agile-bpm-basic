@@ -1,0 +1,43 @@
+<!doctype html>
+<html ng-app="baseDirective">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	</head>
+	<body class="panel success">
+		<div class="panel-heading">
+			<a class="btn  btn-primary fa-save" ng-model="data" ab-save="/org/groupRelDef/save" use-default-after-save-event="true"><span>保存</span></a>
+			<a class="btn  btn-primary fa-back" onClick="javascript:$.Dialog.close(window);"><span>返回</span></a>
+		</div>
+		<form name="form" method="post" ab-load="/org/groupRelDef/get?id={id}"  ng-model="data">
+			<table class="form-table"  cellspacing="0" >
+						<tr>								
+							<th><span>名称:</span><span class="required">*</span></th>
+							<td>
+								<input class="form-control" type="text" ng-model="data.name"   ab-validate="{required:true,maxlength:192}"  />
+							</td>								
+						</tr>
+						<tr>								
+							<th><span>编码:</span><span class="required">*</span></th>
+							<td>
+								<input class="form-control"  id="code" type="text" ng-model="data.code"   ab-validate="{required:true,maxlength:192}"  ab-pinyin="data.name" />
+							</td>								
+						</tr>
+						<tr>								
+							<th><span>职务级别:</span></th>
+							<td>
+								<input class="form-control" type="text" ng-model="data.postLevel"   ab-validate="{required:false,maxlength:192}"  />
+							</td>								
+						</tr>
+						<tr>								
+							<th><span>描述:</span></th>
+							<td>
+								<input class="form-control" type="text" ng-model="data.description"   ab-validate="{required:false}"  />
+							</td>								
+						</tr>
+			</table>
+		</form>
+		
+	</body>
+</html>

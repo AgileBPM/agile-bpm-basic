@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>角色下的用户</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body class="panel-body">
+	<div class="panel panel-default search-panel">
+         <div class="panel-heading">查询条件
+         	<a　href="javascript:void(0)" class="pull-right">　<i class="fa  fa-angle-double-up" toggle-collapse="#searchForm"></i> </a>
+         </div>
+         <div class="panel-body">
+             <form id="searchForm" class="form-horizontal">
+                 <div class="form-group">
+                     <label class="control-label col-sm-1" for="fullname_^VLK">名字</label>
+                     <div class="col-sm-2">
+                         <input type="text" class="form-control" id="fullname_^VLK">
+                     </div>
+                     <div class="col-sm-2" style="text-align:left;">
+                         <button type="button" style="margin-left:50px" class="btn btn-primary fa-search">查询</button>
+                     </div>
+                 </div>
+             </form>
+         </div>
+     </div>
+	 <div class="btn-group toolbar">
+		  <button class="btn btn-outline btn-primary fa-plus" onclick="addUser()">新增 </button>
+		  <a class="btn btn-outline btn-primary fa-back" onClick="javascript:$.Dialog.close(window);"><span>返回</span></a>
+     </div>
+	 <table ab-grid data-id-field="id" data-url="/org/userRole/listJson?roleId={roleId}">
+         <thead>
+         <tr>
+             <th data-checkbox="true">ID</th>
+             <th data-field="account">账户</th>
+             <th data-field="fullname" >用户姓名</th>
+             <th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+				<a class='btn btn-outline btn-primary fa  fa-trash' sendAction='删除' qtip='删除' url='/org/userRole/remove?id={id}'></a>
+             </th>
+         </tr>
+         </thead>
+     </table>
+</body>
+</html>
+<script>
+var roleId = $.getParam("roleId");
+	function addUser() {
+		CustUtil.openCustDialog("userSelector",function(arrData,innerWindow){
+ 			var ids = [];
+ 			for(var i=0,user;user=arrData[i++];){
+ 				ids.push(user.id);
+ 			}
+ 			
+ 			$.post(__ctx + "/org/userRole/saveRoleUsers",{userId:ids.join(","),roleId:roleId},function(data){
+				 data = JSON.parse(data);
+				 reloadGrid();
+				 if(data.isOk){
+					$.Dialog.success("添加成功！");
+ 		   			$.Dialog.close(innerWindow);
+				 }else{
+					 $.Dialog.error("操作失败"+data.msg);
+				 }
+			 })
+ 			
+ 		})
+	}
+</script>

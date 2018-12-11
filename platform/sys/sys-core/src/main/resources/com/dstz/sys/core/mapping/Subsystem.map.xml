@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.SubsystemDao">
+    <resultMap id="Subsystem" type="com.dstz.sys.core.model.Subsystem">
+        <id property="id" column="ID_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="alias" column="alias_" jdbcType="VARCHAR"/>
+        <result property="logo" column="logo_" jdbcType="VARCHAR"/>
+        <result property="enabled" column="enabled_" jdbcType="NUMERIC"/>
+        <result property="homeUrl" column="home_url_" jdbcType="VARCHAR"/>
+        <result property="baseUrl" column="base_url_" jdbcType="VARCHAR"/>
+        <result property="tenant" column="tenant_" jdbcType="VARCHAR"/>
+        <result property="memo" column="MEMO_" jdbcType="VARCHAR"/>
+        <result property="creatorId" column="creator_Id_" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator_" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="isDefault" column="is_default_" jdbcType="NUMERIC"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.Subsystem">
+		INSERT INTO sys_subsystem
+		(ID_,name_,alias_,logo_,enabled_,home_url_,base_url_,tenant_,MEMO_,creator_Id_,creator_,create_time_,is_default_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR}, #{logo,jdbcType=VARCHAR},
+		 #{enabled,jdbcType=NUMERIC}, #{homeUrl,jdbcType=VARCHAR}, #{baseUrl,jdbcType=VARCHAR}, #{tenant,jdbcType=VARCHAR}, 
+		 #{memo,jdbcType=VARCHAR}, #{creatorId,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+		 , #{isDefault,jdbcType=NUMERIC})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="Subsystem">
+		SELECT * FROM sys_subsystem 
+		WHERE 
+		ID_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="Subsystem">
+        SELECT * FROM sys_subsystem
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY ID_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.sys.core.model.Subsystem">
+		UPDATE sys_subsystem SET
+		name_=#{name,jdbcType=VARCHAR},
+		alias_=#{alias,jdbcType=VARCHAR},
+		logo_=#{logo,jdbcType=VARCHAR},
+		enabled_=#{enabled,jdbcType=NUMERIC},
+		home_url_=#{homeUrl,jdbcType=VARCHAR},
+		base_url_=#{baseUrl,jdbcType=VARCHAR},
+		tenant_=#{tenant,jdbcType=VARCHAR},
+		MEMO_=#{memo,jdbcType=VARCHAR},
+		creator_Id_=#{creatorId,jdbcType=VARCHAR},
+		creator_=#{creator,jdbcType=VARCHAR},
+		create_time_=#{createTime,jdbcType=TIMESTAMP},
+		is_default_=#{isDefault,jdbcType=NUMERIC}
+		WHERE
+		ID_=#{id}
+	</update>
+
+    <update id="updNoDefault" parameterType="com.dstz.sys.core.model.Subsystem">
+		UPDATE sys_subsystem SET is_default_=0
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM sys_subsystem 
+		WHERE
+		ID_=#{id}
+	</delete>
+
+    <select id="isExist" resultType="java.lang.Integer" parameterType="com.dstz.sys.core.model.Subsystem">
+        SELECT count(1) FROM sys_subsystem WHERE alias_=#{alias}
+        <if test="id!=null">
+            and ID_!=#{id}
+        </if>
+    </select>
+
+    <select id="getList" parameterType="java.lang.String" resultMap="Subsystem">
+		SELECT * FROM sys_subsystem where enabled_=1
+	</select>
+
+    <select id="getSystemByUser" parameterType="java.lang.String" resultMap="Subsystem">
+		SELECT distinct  s.* FROM sys_subsystem s,sys_res_role r,org_user_role ur
+		 where r.SYSTEM_ID_=s.ID_ and ur.user_id_=#{userId} and ur.role_id_=r.ROLE_ID_ and s.enabled_=1
+		ORDER BY s.create_time_
+	</select>
+
+
+</mapper>

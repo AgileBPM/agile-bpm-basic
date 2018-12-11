@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.bus.dao.BusColumnCtrlDao">
+    <resultMap id="BusColumnCtrl" type="com.dstz.bus.model.BusColumnCtrl">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="columnId" column="column_id_" jdbcType="VARCHAR"/>
+        <result property="type" column="type_" jdbcType="VARCHAR"/>
+        <result property="config" column="config_" jdbcType="VARCHAR"/>
+        <result property="validRule" column="valid_rule_" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.bus.model.BusColumnCtrl">
+		INSERT INTO bus_column_ctrl
+		(id_,column_id_,type_,config_,valid_rule_,create_time_,create_by_,update_time_,update_by_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{columnId,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{config,jdbcType=VARCHAR}, #{validRule,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="BusColumnCtrl">
+		SELECT * FROM bus_column_ctrl 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="BusColumnCtrl">
+        SELECT * FROM bus_column_ctrl
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.bus.model.BusColumnCtrl">
+		UPDATE bus_column_ctrl SET
+		column_id_=#{columnId,jdbcType=VARCHAR},
+		type_=#{type,jdbcType=VARCHAR},
+		config_=#{config,jdbcType=VARCHAR},
+		valid_rule_=#{validRule,jdbcType=VARCHAR},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		update_by_=#{updateBy,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM bus_column_ctrl 
+		WHERE
+		id_=#{id}
+	</delete>
+
+    <delete id="removeByTableId" parameterType="java.lang.String">
+		DELETE FROM bus_column_ctrl 
+		WHERE
+		column_id_ in (SELECT id_ FROM bus_column WHERE table_id_=#{tableId})
+	</delete>
+
+    <select id="getByColumnId" parameterType="java.lang.String" resultMap="BusColumnCtrl">
+		SELECT * FROM bus_column_ctrl 
+		WHERE 
+		column_id_=#{columnId}
+	</select>
+
+</mapper>

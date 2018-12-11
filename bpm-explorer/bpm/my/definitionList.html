@@ -1,0 +1,47 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>流程定义</title>
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body class="panel-body">
+	<div>
+		<!--搜索 .search-panel 必须 -->
+		<div class="panel panel-default search-panel">
+			<div class="panel-heading">
+				查询条件
+				<a　href="javascript:void(0)" class="pull-right">　<i class="fa fa-angle-double-up" toggle-collapse="#searchForm"></i> </a>
+			</div>
+			<div class="panel-body">
+				<form id="searchForm" class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-sm-1" for="name_^VLK">流程名字</label>
+						<div class="col-sm-3"> <input type="text" class="form-control" id="name_^VLK"> </div>
+						<div class="col-sm-4" style="text-align: left;">
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<table ab-grid data-id-field="id" data-url="bpm/my/definitionList">
+			<thead>
+				<tr>
+					<th data-checkbox="true">序号</th>
+					<th data-field="name">名称</th>
+					<th data-field="key">KEY</th>
+					<th data-field="status" data-formatter="labelFormatter"
+						data-value-style="deploy-发布-primary,forbidden-禁用-warning,draft-草稿-info,">状态</th>
+					<th data-field="version">版本</th>
+					<th data-field="desc">描述</th>
+					<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+						<span class="fa-send btn btn-outline btn-primary btn-sm" qtip='启动' openDialog="启动" top="true" url="bpm/definition/start.html?defId={id}"></span>
+					</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</body>
+</html>

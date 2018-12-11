@@ -1,0 +1,111 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../build/common/easyLayout.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/sys/sysTree/sysTreeEditController.js"></script>
+<script type="text/javascript">
+	//菜单对应项
+	function menuHandler(item) {
+		var scope = AngularUtil.getScope()
+		if ('add' === item.name) {
+			scope.addNode();
+		} else if ('remove' === item.name) {
+			scope.removeNode();
+		} else if ('sort' === item.name) {
+			alert("暂时不支持");
+		} else if ('fresh' === item.name) {
+			scope.loadTree();
+		}
+	}
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<div class="ibox-title">
+		<a class="btn btn-primary fa-save" href="javascript:void(0)" ng-model="data" ab-save="/sys/sysTree/save" use-default-after-save-event="true">保存</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+	</div>
+	<form name="form" ab-load="/sys/sysTree/getObject?id={id}" ng-model="data">
+		<table class="form-table">
+			<tr>
+				<th>名字</th>
+				<td>
+					<input ng-model="data.name" ab-validate="{required:true}" class="form-control" />
+				</td>
+				<th>别名</th>
+				<td>
+					<input ng-model="data.key" ab-validate="{required:true}" class="form-control" ab-pinyin="data.name" />
+				</td>
+			</tr>
+			<tr>
+				<th>描述</th>
+				<td>
+					<textarea ng-model="data.desc" class="form-control"></textarea>
+				</td>
+				<th>
+					是否系统内部树
+					<a href="javaScript:void(0)" style="text-decoration: none; color: red;" title="系统内部树，则表示项目本身需要这个树，用户请谨慎修改，否则有可能会导致系统功能异常" class="fa fa-exclamation-circle ab-help" ab-tip> </a>
+				</th>
+				<td>
+					<span ab-boolean ng-model="data.system" text="是/否"></span>
+				</td>
+			</tr>
+			<tr ng-if="!data.id">
+				<td colspan="4" style="color: red;">请先保存树信息后再编辑树节点</td>
+			</tr>
+			<tr ng-if="data.id">
+				<!-- 左侧树 -->
+				<td colspan="2">
+					<div id="sysTree" class="ztree"></div>
+				</td>
+				<!-- 右侧编辑页 -->
+				<td colspan="2">
+					<table class="form-table">
+						<tr>
+							<td colspan="2">
+								<a class="btn btn-primary fa-save" href="javascript:void(0)" ng-click="saveNode()">
+									<span ng-show="activeTreeNode.id">更新节点</span>
+									<span ng-show="!activeTreeNode.id">新增节点</span>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<th>父节点</th>
+							<td>{{activeTreeNode.parentName}}</td>
+						</tr>
+						<tr>
+							<th>名字</th>
+							<td>
+								<input ng-model="activeTreeNode.name" ab-validate="{required:true}" class="form-control" />
+							</td>
+						</tr>
+						<tr>
+							<th>别名</th>
+							<td>
+								<input ng-model="activeTreeNode.key" ab-validate="{required:true}" class="form-control" ab-pinyin="activeTreeNode.name" />
+							</td>
+						</tr>
+						<tr>
+							<th>描述</th>
+							<td>
+								<textarea ng-model="activeTreeNode.desc" class="form-control"></textarea>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</form>
+
+	<!-- 以下是树右击菜单 -->
+	<div class="hidden">
+		<div id="treeMenu" class="easyui-menu" data-options="onClick:menuHandler" style="width: 120px;">
+			<div data-options="name:'add'">增加节点</div>
+			<div data-options="name:'remove'">删除节点</div>
+			<div data-options="name:'fresh'">刷新树</div>
+			<div data-options="name:'sort'">子节点排序</div>
+		</div>
+	</div>
+</body>
+</html>

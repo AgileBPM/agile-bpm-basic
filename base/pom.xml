@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.dstz.agilebpm</groupId>
+        <artifactId>agile-bpm</artifactId>
+        <version>1.2.6</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>base</artifactId>
+    <packaging>pom</packaging>
+    <name>【基础组件模块】</name>
+    <description>基础组件及工具类</description>
+
+    <!-- 定义该项目聚合的子模块 -->
+    <modules>
+        <module>base-api</module>
+        <module>base-core</module>
+        <module>base-db</module>
+        <module>base-rest</module>
+    </modules>
+
+    <!-- 定义参数 -->
+    <properties>
+        <dom4j.version>1.6.1</dom4j.version>
+        <zip4j.version>1.3.1</zip4j.version>
+        <pingyin.version>2.5.0</pingyin.version>
+        <base.version>1.2.6</base.version>
+    </properties>
+
+    <!-- 定义全局的依赖，供子模块调用 -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>net.lingala.zip4j</groupId>
+                <artifactId>zip4j</artifactId>
+                <version>${zip4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.belerweb</groupId>
+                <artifactId>pinyin4j</artifactId>
+                <version>${pingyin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dom4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>oracledriver</artifactId>
+                <version>11.2.0.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>base-api</artifactId>
+                <version>${base.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>base-core</artifactId>
+                <version>${base.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>base-db</artifactId>
+                <version>${base.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>base-rest</artifactId>
+                <version>${base.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin> 
+        </plugins>
+    </build>
+</project>

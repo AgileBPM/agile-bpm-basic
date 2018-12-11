@@ -1,0 +1,85 @@
+<div class="form-inline" ng-controller="FlowConfController" style="height:200px;margin-left: 5px;
+    margin-right: 5px;">
+	
+	<div class="panel  panel-default inline col-md-4">
+	  	<div class="toolbar-head"> 节点表单初始化
+	  		<span class="btn btn-primary glyphicon glyphicon-plus pull-right btn-sm" ng-hide="b && nodeInitList.length>0" ng-click="editNodeInit()"></span>
+	  	 </div>
+	  	<div class="panel-body">
+		  	<table class="table table-hover table-striped table-bordered">
+		  		<tr><th style="max-width:100px">节点</th><th>描述</th><th>操作</th></tr>
+		  		<tr ng-repeat="nodeInit in nodeInitList">
+		  			<th ab-tip title="{{nodeInit.nodeId}}">{{bpmDefSetting.nodeMap[nodeInit.nodeId].nodeName}}</th>
+		  			<td>{{nodeInit.desc}}</td>
+		  			<td>
+		  			<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.up($index,nodeInitList)" class="btn btn-primary btn-xs glyphicon glyphicon-chevron-up"></a>
+		  			<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.down($index,nodeInitList)" class="btn btn-primary btn-xs glyphicon glyphicon-chevron-down"></a>
+		  			<span class="btn btn-danger btn-xs glyphicon glyphicon-trash pull-right"ng-click="ArrayTool.del($index,nodeInitList)"></span>
+		  			<span class="btn btn-primary btn-xs glyphicon glyphicon-edit pull-right" ng-click="editNodeInit($index)"></span></td>
+		  		</tr>
+			</table>
+		 </div>
+	</div>
+	<div class="panel  panel-default inline col-md-5">
+	  	<div class="toolbar-head"> 节点通知消息
+	  		<span class="btn btn-primary glyphicon glyphicon-plus pull-right btn-sm" ng-hide="b && nodeMessageList.length>1" ng-click="editNodeMessage()"></span>
+	  	 </div>
+	  	<div class="panel-body">
+		  	<table class="table table-hover table-striped table-bordered">
+		  		<tr><th style="max-width:100px">节点</th><th>时机</th><th>描述</th><th>操作</th></tr>
+		  		<tr  ng-repeat="nodeMessage in nodeMessageList track by $index" >
+		  			<th>{{nodeMessage.nodeId?nodeMessage.nodeId:'所有节点'}}</th>
+		  			<td>{{nodeMessage.event}}</td>
+		  			<td ab-tip title="任务创建时通知任务候选人处理任务">{{nodeMessage.desc}}</td>
+		  			<td>
+		  				<span class="btn btn-danger btn-xs glyphicon glyphicon-trash pull-right"ng-click="ArrayTool.del($index,nodeMessageList)"></span>
+		  				<span class="btn btn-primary btn-xs glyphicon glyphicon-edit pull-right" ng-click="editNodeMessage($index)"></span>
+		  			</td>
+		  		</tr>
+			</table>
+		 </div>
+	</div>
+	<div class="panel  panel-default inline col-md-3">
+	  	<div class="toolbar-head" ab-tip title="对流程中所使用的流程变量进行定义描述和约定"> 流程变量定义
+	  		<span class="btn btn-primary glyphicon glyphicon-plus pull-right btn-sm" ng-click="editVariable()"></span>
+	  	 </div>
+	  	<div class="panel-body">
+		  	<table class="table table-hover table-striped table-bordered">
+		  		<tr><th style="max-width:100px">KEY</th><th>描述</th><th>操作</th></tr>
+		  		<tr ng-repeat="var in variableList" >
+		  			<th>{{var.key}}</th>
+		  			<td>{{var.name}}</td>
+		  			<td>
+		  				<span class="btn btn-danger btn-sm  glyphicon glyphicon-trash pull-right" ng-click="ArrayTool.del($index,variableList)"></span>
+		  				<span class="btn btn-primary btn-sm  glyphicon glyphicon-edit pull-right" ng-click="editVariable($index)"></span>
+		  			</td>
+		  		</tr>
+			</table>
+		 </div>
+	</div>
+</div>
+
+<style>
+ .toolbar-head{
+	border : 1px solid #ddd;
+	padding: 10px 15px;
+	font-size: 12px;
+	font-weight: bold;
+	color: #0E2D5F;
+	height: 36px;
+	line-height: 16px;
+	background-color: #f5f5f5;
+} 
+.code{
+	white-space: pre-wrap!improtant;
+	color: #c7254e;
+	background-color: #f9f2f4;
+	white-space: nowrap;
+}
+ .panel.inline{
+ 	display: inline-block;
+ 	height: 100%
+ }
+ .panel.inline .panel-body{
+ height: 100%
+ }

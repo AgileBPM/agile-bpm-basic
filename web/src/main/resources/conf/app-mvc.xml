@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd 
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd 
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+
+    <!-- <context:component-scan base-package="com.dstz.**.rest.controller"/>
+    <context:component-scan base-package="com.dstz.**.rest.service"/> -->
+
+    <context:component-scan base-package="com.dstz.**.rest.*"/>
+
+    <!-- controller层异常代理注解，spring MVC作为spring子容器，必须放此处，control层代理使用注解才有效 -->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <!-- <context:component-scan base-package="com.dstz.activiti.rest"/> -->
+
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+        	<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/> 
+            <ref bean="fastJsonHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+                <value>application/json;charset=UTF-8</value>
+            </list>
+        </property>
+        <property name="features">
+            <array value-type="com.alibaba.fastjson.serializer.SerializerFeature">
+                <value>WriteDateUseDateFormat</value>
+               <!--  <value>DisableCircularReferenceDetect</value> 不关闭日后有循环索引会报错，用索引的话可以在前端操作一下就可以完成 -->
+            </array>
+        </property>
+    </bean>
+
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设置上传文件的最大尺寸为100MB -->
+        <property name="maxUploadSize">
+            <value>104857600</value>
+        </property>
+    </bean>
+</beans>

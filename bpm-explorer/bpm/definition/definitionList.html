@@ -1,0 +1,84 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>流程定义</title>
+<link href="../../build/common/gridList.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/gridList.js"></script>
+<script type="text/javascript" src="../../build/common/easyLayout.js"></script>
+</head>
+<body class="easy-layout">
+	<div data-options="region:'west',split:true,border:true,title:'分类'" style="width: 150px;">
+		<div sysTreeGroup treeKey="flow" groupColumn="type_id_"></div>
+	</div>
+
+	<div data-options="region:'center',border:false">
+		<!--搜索 .search-panel 必须 -->
+		<div class=" search-panel">
+			<div class="panel-heading">
+				查询条件
+				<a 　href="javascript:void(0)" class="pull-right">
+					<i class="fa fa-angle-double-up" toggle-collapse="#searchForm"></i>
+				</a>
+			</div>
+			<div class="panel-body">
+				<form id="searchForm" class="form-horizontal">
+					<div class="form-group" style="margin-right: 0px;">
+						<label class="control-label col-sm-1" for="name_^VLK">流程名字</label>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="name_^VLK">
+						</div>
+						<label class="control-label col-sm-1" for="subject">流程KEY</label>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="def_key_^VLK">
+							<input class="inputText" type="hidden" id="type_id_^L" />
+						</div>
+						<div class="col-sm-4" style="text-align: left;">
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!--grid区域  -->
+		<div class="btn-group toolbar">
+			<a class="btn btn-outline btn-primary fa-plus" openDialog="创建流程定义" url="definitionEdit" dialogConf="{height:300,width:500}" href="javascript:void(0)">新增 </a>
+			<button class="btn btn-outline btn-primary fa-clear" qtip='清除系统所有缓存，用于数据库更新发布内容等系统无法感知数据被更新的场景' sendAction="清除系统缓存" url="/bpm/definition/clearSysCache">清除系统缓存</button>
+		</div>
+		<table ab-grid data-id-field="id" data-url="bpm/definition/listJson">
+			<thead>
+				<tr>
+					<th data-checkbox="true">序号</th>
+					<th data-field="name">名称</th>
+					<th data-field="key">流程定义KEY</th>
+					<th data-field="actDefId">ActDefId</th>
+					<th data-field="status" data-formatter="labelFormatter" data-value-style="deploy-已发布-primary,forbidden-禁用-warning,draft-草稿-info,">状态</th>
+					<th data-field="version">版本</th>
+					<th data-field="supportMobile" data-formatter="labelFormatter" data-value-style="1-支持-primary,0-不支持-info,">移动端</th>
+					<th data-field="desc">描述</th>
+					<th data-field="createTime">创建时间</th>
+					<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+						<span class="fa-trash btn btn-outline  btn-primary btn-sm" qtip='删除' sendAction="删除" url="/bpm/definition/remove?id={id}"></span>
+						<span class="fa-user-times btn btn-outline  btn-primary btn-sm" dialogConf='"height":500,"width":600' qtip='授权' openDialog="{name}流程授权" top="true" url="sys/authorization/authorizationDialog.html?rightsObject=FLOW&rightsTarget={key}"></span>
+						<span class="fa-eye btn btn-outline btn-primary btn-sm" qtip='流程全局配置预览' openDialog="流程全局配置预览" top="true" url="bpm/overallView/overallViewEdit.html?defId={id}"></span>
+						<span class="fa-edit btn btn-outline btn-primary btn-sm" qtip='流程设计' openDialog="流程设计  (机器性能略差，请务必耐心等待加载... 流程实施方案请参考 doc.agilebpm.cn 【敏捷流程实施三步曲】)" top="true" url="flow-editor/modeler.html?modelId={actModelId}"></span>
+						<span if="'{actDefId}'" class="fa-send btn btn-outline btn-primary btn-sm" qtip='启动' openDialog="启动" top="true" url="bpm/definition/start.html?defId={id}"></span>
+						<span if="!'{actDefId}'" class="fa-send btn btn-outline btn-primary btn-sm" qtip='请完成流程设计后再启动流程！'></span>
+
+					</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</body>
+<script type="text/javascript">
+	function exportbpm() {
+		var ids = $.getDatagridCheckedId();
+		if (!ids || ids.length === 0) {
+			$.Dialog.warning("请至少选择一条流程定义！");
+			return;
+		}
+		window.open(__ctx + "/bpm/overallView/exportBpmDefinition?rand=" + Math.random() + "&defIds=" + ids.join(","));
+	}
+</script>
+</html>

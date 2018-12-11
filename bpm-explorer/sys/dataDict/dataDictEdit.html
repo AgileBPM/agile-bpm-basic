@@ -1,0 +1,64 @@
+<html ng-app="app">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	<script type="text/javascript">
+		var app = angular.module('app', [ 'baseDirective' ]);
+		app.controller("ctrl", [ '$scope', 'baseService', function(scope, baseService) {
+			var type = $.getParam("dictType");
+			var typeId = $.getParam("typeId");
+			var dictKey = $.getParam("dictKey");
+			var id = $.getParam("id");
+			var parentId = $.getParam("parentId");
+			if(!id){
+				scope.data = {dictKey:dictKey,dictType:type,typeId:typeId};
+				if(parentId){scope.data.parentId = parentId};
+			}
+			
+			scope.$root.$on('afterSaveEvent', function(event,data){
+				if(parent.reloadDictList){
+					parent.reloadDictList(scope.data.dictType);
+				}
+				if(data.r){
+					location.reload();
+				}
+			});
+		} ]);
+	</script>
+</head>
+<body class="panel success" ng-controller="ctrl">
+	<div class="panel-heading">
+		<button  class="btn btn-primary fa-save" ng-model="data" ab-save="/sys/dataDict/save">保存</button>
+		<button class="btn btn-primary fa-close" onclick="javascript:$.Dialog.close(window);">关闭</button>
+	</div>
+	<form name="form" method="post" ab-load="/sys/dataDict/get?id={id}" ng-model="data">
+		<table class="form-table" cellspacing="0">
+			<tr ng-if="data.dictType=='dict'">
+				<th>分类</th>
+				<td>
+					<span ab-combox="data.typeId" tree-key="dict" ng-model="data.typeId" ab-validate="{required:true}"></span>
+				</td>
+			</tr>
+			<tr>
+				<th ><span>名称:</span></th>
+				<td>
+					<input type="text" ng-model="data.name" class="form-control" ab-validate="{required:true}" />
+				</td>
+			</tr>
+			<tr>
+				<th><span>KEY</span></th>
+				<td>
+					<input type="text" ab-pinyin="data.name" ng-model="data.key" class="form-control" ab-validate="{required:true}" />
+				</td>
+			</tr>
+			<tr ng-if="data.dictType=='node'">
+				<th><span>序号</span></th>
+				<td>
+					<input type="text"  ng-model="data.sn" class="form-control" ab-validate="{number:true}" ng-init="data.sn? '':data.sn=1"/>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

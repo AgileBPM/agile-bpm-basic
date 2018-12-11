@@ -1,0 +1,91 @@
+<html ng-app="app">
+<head>
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+<script type="text/javascript">
+	var app = angular.module("app", [ 'base' ]);
+	app.controller('ctrl', [ '$scope', 'baseService', function($scope, baseService) {
+		$scope.conf = window.passData;
+
+		// 指定组
+		$scope.initList = [];
+		if ($scope.conf.groupName) {
+			var arrName = $scope.conf.groupName.split(',');
+			var arrkey = $scope.conf.groupKey.split(',')
+			$.each(arrName, function(i, item) {
+				var item = { name : arrName[i], key : arrkey[i] };
+				$scope.initList.push(item);
+			})
+		}
+
+		$scope.groupDialog = function() {
+			var callBack = function(data, dialog) {
+				$scope.$apply(function() {
+					$scope.initList = {};
+					$scope.initList = data;
+					$scope.conf.groupName = "";
+					$scope.conf.groupKey = "";
+					$(data).each(function() {
+						if ($scope.conf.groupKey){
+							$scope.conf.groupName += ",";
+							$scope.conf.groupKey += ",";
+						}
+						$scope.conf.groupName += this.name;
+						$scope.conf.groupKey += this.key;
+					});
+				});
+				$.Dialog.close(dialog);
+			};
+
+			CustUtil.openCustDialog($scope.conf.type + "Selector", callBack, $scope.initList);
+		};
+
+		var post = baseService.post(__ctx + "/bpm/processDef/getGroupTypes", {});
+		$.getResultData(post, function(data) {
+			$scope.typeList = data;
+		})
+
+		$scope.changeType = function() {
+			$scope.conf.typeName = $("#aaa").find("option:selected").text();
+			$scope.initList = [];
+		}
+
+	} ]);
+
+	function getResult() {
+		var scope = AngularUtil.getScope();
+		if (!scope.conf.groupName) {
+			$.Dialog.error("请选择组织！");
+			return false;
+		}
+		scope.conf.description = scope.conf.typeName +":"+ scope.conf.groupName;
+		return scope.conf;
+	}
+</script>
+</head>
+<body ng-controller="ctrl">
+	<div id="tempTree"></div>
+	<table class="form-table">
+		<tr>
+			<th>组织类型：</th>
+			<td>
+				<select id="aaa" ng-model="conf.type" class="form-control" ng-change="changeType()">
+					<option value="">请选择组类型</option>
+					<option ng-repeat="type in typeList"  value="{{type.alias}}"  ng-selected="type.alias===conf.type" >{{type.name}}</option>
+				</select>
+				
+			</td>
+			<td><a href="javascript:javaScript:void(0)" class="btn  btn-primary" ng-click="groupDialog()">选择{{conf.typeName}}</a></td>
+		</tr>
+		<tr>
+			<th>{{conf.typeName}}</th>
+			<td colspan="2">
+				<span ng-repeat="group in initList" class="label label-primary">{{group.name}}</span>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
+
+

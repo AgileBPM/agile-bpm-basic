@@ -1,0 +1,296 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+<script type="text/javascript">
+	var app = angular.module('app', [ 'baseDirective' ]);
+	app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', function($scope, baseService, ArrayToolService) {
+		$scope.ArrayTool = ArrayToolService;
+		$scope.boCode = window.passData.parentScope.data.boKey;
+		var currentSubTableName = window.passData.tableKey;
+		
+		$scope.init = function() {
+			$scope.data = {};
+			$scope.data.mapList = [];
+			if (window.passData.data) {
+				$scope.data = angular.copy(window.passData.data);
+				$scope.targetNgModelPath =  $scope.data.targetNgModelPath;
+				getDialog($scope.data.dialogKey,$scope.data.dialogName);
+			}
+			$scope.dialogParam =  $scope.data.dialogParam || {};
+			$scope.dialogSetting = $scope.data.dialogSetting || {};
+
+			//获取bo信息
+			var url = __ctx + "/bus/businessObject/getObject";
+			var defer = baseService.postForm(url, {
+				key : $scope.boCode ,
+				fill : true
+			});
+			$.getResultData(defer, function(data){
+				$scope.bo = data;
+				$scope.ngModelPathList = [];
+				$scope.initngModelPathList();
+			}, null, true);
+		};
+
+		//增加映射关系
+		$scope.addMap = function() {
+			if(!$scope.targetNgModelPath){
+				$.Toast.warning("请设置赋值方式");
+				return;
+			}
+			var map = {
+				path : "",//对应的路径
+				returnField : ""//对应的返回字段
+			};
+			$scope.data.mapList.push(map);
+		};
+
+		$scope.$watch("data.key", function(newValue, oldValue) {
+			if (newValue === oldValue) {
+				return;
+			}
+			getDialog(newValue);
+		});
+		
+		//初始化ngModelPathList
+		$scope.initngModelPathList = function() {
+			if(!$scope.bo){
+				return [];
+			}
+			$scope.ngModelPathList = [];
+			
+			var mainTable =$scope.bo.relation.table;
+			mainTable.support = "set";
+			mainTable.setPath = "data."+$scope.boCode;
+			$scope.ngModelPathList.push(mainTable);
+			
+			for(var i=0,child;child=$scope.bo.relation.children[i++];){
+				var subTable = child.table;
+				// 一对多第二层
+				if(child.type === "oneToMany"){
+					if(currentSubTableName === child.tableKey){
+						subTable.support = "all";
+						subTable.setPath = child.tableKey;
+					}
+					subTable.pushPath = "data."+$scope.boCode+"."+child.tableKey+"List";
+				}else{
+					subTable.support = "set";
+					subTable.setPath = "data."+$scope.boCode+"."+child.tableKey
+				}
+				$scope.ngModelPathList.push(subTable);
+				
+				setThridChildTablePath(child.children,subTable.setPath);
+			}
+			console.info($scope.ngModelPathList);
+			if($scope.targetNgModelPath){
+				for(var i=0,model;model=$scope.ngModelPathList[i++];){
+					if(model.setPath===$scope.targetNgModelPath || model.pushPath ===$scope.targetNgModelPath){
+						$scope.targetTable = model;
+					}
+				}
+			}
+			//初始化可以为对话框设置的scope阐述
+			$scope.initScopeValuePaths();
+		};
+		// 第三层往后，均不在支持一对一的主表设值
+		function setThridChildTablePath(children,parentPath){
+			if(!children || children.length==0)return ;
+			
+			for(var i=0,child;child=children[i++];){
+				var subTable = child.table;
+				// 一对多第二层
+				if(child.type === "oneToMany"){
+					if(currentSubTableName === child.tableKey){
+						subTable.support = "all";
+						subTable.setPath = child.tableKey;
+					}
+					subTable.pushPath = "subTempData."+child.tableKey+"List";
+				}else{
+					subTable.support = "set";
+					subTable.setPath =  child.tableKey;
+					if(currentSubTableName == child.parent.tableKey){
+						subTable.setPath = parentPath + "." + child.tableKey;
+						$scope.ngModelPathList.push(subTable);
+					}
+				}
+				//在改作用域则添加进可用path列表
+				if(currentSubTableName === child.tableKey){
+					$scope.ngModelPathList.push(subTable);
+				}
+				
+				setThridChildTablePath(child.children,subTable.path);
+			}
+		}
+		//获取对话框详细信息
+		function getDialog(key,dialogName) {
+			if (!key) {
+				return;
+			}
+			//获取对话框数据
+			var url = __ctx + "/form/formCustDialog/getObject";
+			var defer = baseService.postForm(url, {
+				key : key
+			});
+			$.getResultData(defer, function(data) {
+				$scope.dialog = data;
+				if(dialogName){
+					$scope.dialog.name = dialogName;
+				}
+				$scope.dialog.returnFieldList = [];
+				angular.forEach($scope.dialog.returnFields, function(field) {
+					$scope.dialog.returnFieldList.push(field.returnName.toLowerCase());
+				});
+				
+				
+				//说明重新选择了对话框，则重置参数调节
+				if(!dialogName){
+					$scope.dialogParam = {};
+					//更多可以在此处配置
+					$scope.dialogSetting = {multiple:$scope.dialog.multiple};
+				}
+				$scope.dialogParamArray = [];
+				angular.forEach($scope.dialog.conditionFields, function(condition) {
+					if(!condition.value.ctrlType && !condition.value.text){
+						var param = {key:condition.columnName,name:condition.showName,path:""};
+						if($scope.dialogParam[condition.columnName]){
+							param.path = $scope.dialogParam[condition.columnName];
+						}
+						$scope.dialogParamArray.push(param) 
+					}
+				});
+				
+			});
+		}
+		
+		//获取可设值得对话框参数值
+		$scope.initScopeValuePaths = function(){
+			$scope.scopeValuePath = [];
+			angular.forEach($scope.ngModelPathList, function(ngModelPath) {
+				//处理当前选中的子表作用域
+				if(currentSubTableName === ngModelPath.key){
+					angular.forEach(ngModelPath.columns,function(colom){
+						$scope.scopeValuePath.push({path:ngModelPath.key+"."+colom.key,name: ngModelPath.comment+"-"+colom.comment});
+					});
+				}
+				
+				angular.forEach($scope.bo.relation.table.columns,function(colom){
+					$scope.scopeValuePath.push({path:"data."+$scope.boCode+"."+colom.key,name:$scope.bo.relation.table.comment+"-"+colom.comment});
+				});
+			});
+		}
+		 
+		$scope.clearMappingSet = function(){
+			$scope.targetNgModelPath = "";
+			$scope.data.mapList = [];
+		}
+
+	} ]);
+
+	//父页面打开按【确定】按钮时的回调函数
+	function getData() {
+		var scope = AngularUtil.getScope();
+		if(scope.form.$invalid){
+			$.Toast.error("请完善表单！");
+			return;
+		}
+		var dialogParam = {};
+		angular.forEach(scope.dialogParamArray,function(param){
+			if(param.path){
+				dialogParam[param.key] = param.path;
+			}
+		});
+		
+		
+		var data = {
+			mapList:scope.data.mapList,
+			dialogKey:scope.dialog.key,		//对话框KEY
+			dialogName:scope.dialog.name,	//对话框的名字
+			targetNgModelPath:scope.targetNgModelPath, // ngModel
+			dialogParam:dialogParam,	//对话框动态参数
+			dialogSetting:scope.dialogSetting //是否多选二次配置
+		}
+		return data;
+	}
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<form name="form">
+		<table class="form-table">
+			<tr>
+				<th>对话框名字</th>
+				<td><input ng-show="dialog.key" type="text" class="form-control" ng-model="dialog.name" style="width: 120px"><span ng-show="!dialog.key" class="text-warning">请选择一个自定义对话框</span><a class="btn btn-outline btn-primary fa-edit" value-key="data.key" ab-cust-dialog="zdydhklb" href="javascript:void(0)" dialog-setting="{multiple:false}">选择 </a></td>
+				<th>对话框别名</th>
+				<td>{{dialog.key}}</td>
+			</tr>
+			<tr ng-show="ngModelPathList.length>0">
+				<th>赋值对象(选填)</th>
+				<td style="width: 300px">
+					<select class="form-control" ng-model="targetTable" ab-validate="{required:true}" ng-change="clearMappingSet()" ng-options="m as m.comment for m in ngModelPathList">
+						<option value="">请选择</option>
+					</select>
+				</td>
+				<th >赋值模式</th>
+				<td>
+					<label ng-show="targetTable.setPath" ab-tip="{}" title="对象属性字段赋值">
+						<input type="radio" ab-validate="{require:true}" ng-model="targetNgModelPath" value="{{targetTable.setPath}}">{{targetTable.comment}}内部属性赋值 </label>
+					<label ng-show="targetTable.pushPath" ab-tip="{}" title="对话框选择数据后，对当前子表以添加行的形式push 数据，常用于从数据库选择子表数据，做特殊场景的添加按钮">
+						<input type="radio" ng-model="targetNgModelPath" ab-validate="{require:true}"  value="{{targetTable.pushPath}}"   on-click="initngModelPathList()">{{targetTable.comment}}数组PUSH </label>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					 <table ng-if="dialogParamArray.length>0" class="form-table" >
+					 	<tr>
+					 		<th>对话框动态参数</th><th>参数值</th>
+					 	</tr>
+					 	<tr ng-repeat="param in dialogParamArray">
+					 		<td>{{param.name}}</td>
+					 		<td>
+					 			<select ng-options="m.path as m.name for m in scopeValuePath" ng-model="param.path" ng-show="!showScript">
+					 			</select>
+					 			<input type="text" ng-model="param.path" class="form-control" ng-show="showScript">
+					 			<label ab-tip title="可以手动写js脚本获取当前作用域下值"> <input type="checkbox" ng-model="showScript" >展示取值脚本</label>
+					 		</td>
+					 	</tr>
+					 </table>
+				</td>
+				<th>对话框特殊属性配置</th>
+				<td><label><span ab-boolean text="多选/单选" ab-tip title="不配置则使用默认属性" ng-model="dialogSetting.multiple"></label></td>
+			</tr>
+		</table>
+		<div class="btn-group toolbar">
+			<a ng-show="data.key" class="fa fa-plus btn btn-primary" href="javascript:void(0)" ng-click="addMap()">添加映射字段</a>
+		</div>
+		<table class="form-table">
+			<tr>
+				<th>赋值对象字段名</th>
+				<th>赋值路径</th>
+				<th>对话框返回字段</th>
+				<th>
+					删除
+				</th>
+			</tr>
+			<tr ng-repeat="map in data.mapList">
+				<td>
+					<select class="form-control" ab-validate="{required:true}" ng-model="map.key"  ng-options="m.key as m.comment for m in targetTable.columns">
+					</select> 
+				</td>
+				<td>
+					<span  >{{targetNgModelPath}}.{{map.key}}</span>  
+				
+				</td>
+				<td>
+					<select class="form-control" ab-validate="{required:true}" ng-model="map.returnField" ng-options="m for m in dialog.returnFieldList">
+					</select>
+				</td>
+				<td>
+					<a class="btn btn-danger fa-trash " href="javascript:void(0)" ng-click="ArrayTool.del($index,data.mapList)"></a>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

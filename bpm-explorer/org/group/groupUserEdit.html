@@ -1,0 +1,100 @@
+<!doctype html>
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		<script type="text/javascript">
+			 var id = $.getParam("id");
+			 var groupId=$.getParam("groupId");
+	
+			 var app = angular.module('app', ['baseDirective']);
+			 app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
+			 	$scope.data={groupId:groupId}
+			 	
+			 	//选择用户
+			 	$scope.selectUser = function(){
+			 		CustUtil.openCustDialog("userSelector",function(arrData,innerWindow){
+			 			var ids = [],names=[];
+			 			for(var i=0,user;user=arrData[i++];){
+			 				ids.push(user.id);
+			 				names.push(user.name);
+			 			}
+			 			
+			 			$scope.$apply(function(){
+				 			$scope.data.userIds = ids.join(",");
+				 			$scope.data.userNames = names.join(",");
+				 			
+				 			$scope.userList = arrData;
+			 			})
+			 			
+			 		    $.Dialog.close(innerWindow);
+			 		},$scope.userList||[])
+			 		
+			 	}
+			 	
+				var get = baseService.get(__ctx+"/org/groupRelation/getByGroupId?groupId="+groupId,{});
+			 	$.getResultData(get,function(data){
+			 		$scope.groupRelList = data;
+			 	})
+			 	
+			 	var get = baseService.get(__ctx+"/org/group/get?id="+groupId,{});
+			 	$.getResultData(get,function(data){
+			 		$scope.group = data;
+			 	})
+			 	
+			 	
+			 	$scope.save = function(){
+			 		var get = baseService.postForm(__ctx+"/org/groupUser/saveGroupUserRel",$scope.data);
+			 		
+			 		get.then(function(data){
+			 			if(data.isOk){
+			 				parent.reloadGrid();
+			 				$.Dialog.confirm("提示信息","添加成功，是否需要继续添加",function(){
+					 		  window.location=window.location;
+					 		},function(){
+					 			$.Dialog.close(window);
+					 		})
+			 			}else{
+			 				$.Dialog.error(data.msg);
+			 			}
+			 			
+			 			
+			 		},function(e){
+			 			alert(e);
+			 		});
+			 	}
+			 	
+			 }]);
+		</script>
+	</head>
+	<body ng-controller="ctrl">
+			<div class="panel-heading">
+				<a class="btn btn-primary fa-save"   ng-click="save()" > 保存 </a>
+				<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回 </a>
+			</div>
+			<form name="form" method="post">
+				<table class="form-table" >
+						<tr>								
+							<th>组织名称</th>
+							<td>
+								 {{group.name}}
+							</td>								
+						</tr>
+						<tr>								
+							<th>用户</th>
+							<td class="form-inline">
+								<input class="form-control" readonly="readonly" type="text" ng-model="data.userNames" ab-validate="{required:true,maxlength:192}"  />
+								　　　<span class="btn btn-primary" ng-click="selectUser()">选择</span>
+							</td>								
+						</tr>
+						<tr>								
+							<th>岗位:</th>
+							<td>
+								<label ng-repeat="rel in groupRelList"><input type="checkbox" ab-checkbox="" ng-model="data.relIds"  value="{{rel.id}}">{{rel.name}}</label>
+							</td>								
+						</tr>
+				</table>
+			</form>
+	</body>
+</html>

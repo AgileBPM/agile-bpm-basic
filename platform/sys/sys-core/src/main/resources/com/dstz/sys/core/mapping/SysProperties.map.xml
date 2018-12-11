@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.SysPropertiesDao">
+    <resultMap id="SysProperties" type="com.dstz.sys.core.model.SysProperties">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="alias" column="alias_" jdbcType="VARCHAR"/>
+        <result property="group" column="group_" jdbcType="VARCHAR"/>
+        <result property="value" column="value_" jdbcType="VARCHAR"/>
+        <result property="encrypt" column="encrypt_" jdbcType="NUMERIC"/>
+        <result property="description" column="description_" jdbcType="VARCHAR"/>
+        <result property="environment" column="environment_" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.SysProperties">
+		INSERT INTO SYS_PROPERTIES
+		(id_,name_,alias_,group_,value_,encrypt_,description_,environment_,create_time_,update_time_,create_by_,update_by_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR}, 
+		#{group,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{encrypt,jdbcType=NUMERIC},#{description,jdbcType=VARCHAR},#{environment,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},#{createBy,jdbcType=VARCHAR},#{updateBy,jdbcType=VARCHAR} )
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="SysProperties">
+		SELECT * FROM SYS_PROPERTIES 
+		WHERE 
+		id_=#{id_}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="SysProperties">
+        SELECT * FROM SYS_PROPERTIES
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY create_time_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.sys.core.model.SysProperties">
+		UPDATE SYS_PROPERTIES SET
+		name_=#{name,jdbcType=VARCHAR},
+		alias_=#{alias,jdbcType=VARCHAR},
+		group_=#{group,jdbcType=VARCHAR},
+		value_=#{value,jdbcType=VARCHAR},
+		encrypt_=#{encrypt,jdbcType=NUMERIC},
+		description_= #{description,jdbcType=VARCHAR},
+		create_time_=#{createTime,jdbcType=TIMESTAMP},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		create_by_=#{createBy,jdbcType=VARCHAR},
+		update_by_=#{updateBy,jdbcType=VARCHAR},
+		environment_= #{environment,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM SYS_PROPERTIES 
+		WHERE
+		id_=#{id}
+	</delete>
+
+
+    <select id="getGroups" resultType="java.lang.String">
+		SELECT distinct group_ FROM SYS_PROPERTIES
+	</select>
+
+    <select id="isExist" resultType="java.lang.Integer">
+        SELECT count(1) FROM SYS_PROPERTIES where alias_=#{alias}
+        <if test="id!=null">
+            and id_!=#{id}
+        </if>
+        <if test="environment!=null">
+            and environment_ = #{environment}
+        </if>
+    </select>
+
+
+</mapper>

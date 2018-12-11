@@ -1,0 +1,19 @@
+.search-panel{
+		margin-bottom: 0px !important;
+	}
+	.search-panel .panel-body{
+		padding-top: 10px;
+		padding-right: 2px;
+		padding-bottom: 0px;
+		padding-left: 2px;
+	}
+	.search-panel .panel-heading {
+		padding: 7px 16px;
+	}
+	.panel-body {
+		padding: 6px;
+	}
+	
+	.btn-outline{
+	margin-right: 3px;
+	}

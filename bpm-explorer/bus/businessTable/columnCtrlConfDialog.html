@@ -1,0 +1,57 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+<script type="text/javascript">
+	var app = angular.module('app', [ 'baseDirective' ]);
+	app.controller("ctrl", [ '$scope', 'baseService','ArrayToolService', function($scope, baseService,ArrayToolService) {
+		$scope.ArrayTool = ArrayToolService;
+		
+		$scope.column = angular.copy(window.passData);
+		
+		/**
+		 * 增加选项
+		 */
+		$scope.addOption = function(options) {
+			var option = {
+				key : "",
+				txt : ""
+			};
+			options.push(option);
+		};
+	} ]);
+	
+	//父页面打开按【确定】按钮时的回调函数
+	function getData(){
+		return AngularUtil.getScope().column;
+	}
+</script>
+</head>
+<body ng-controller="ctrl">
+	<form name="form">
+		<table class="table table-hover table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>描述</th>
+					<th>值</th>
+					<th><a class="fa fa-plus btn btn-primary" href="javascript:void(0)" ng-click="addOption(column.ctrl.config.options)"></a></th>
+				 </tr>
+			
+			</thead>
+			<tr ng-repeat="opt in column.ctrl.config.options">
+				<td>
+					<input class="form-control" type="text" ng-model="opt.txt" style="width: 90%" ab-validate="{required:true}" />
+				</td>
+				<td>
+					<input class="form-control" type="text" ng-model="opt.key" style="width: 90%" ab-validate="{required:true}" />
+				</td>
+				<td>
+					<a class="btn  btn-danger fa-trash " href="javascript:void(0)" ng-click="ArrayTool.del($index,column.ctrl.config.options)"></a>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.SysResourceDao">
+    <resultMap id="SysResource" type="com.dstz.sys.core.model.SysResource">
+        <id property="id" column="ID_" jdbcType="VARCHAR"/>
+        <result property="systemId" column="SYSTEM_ID_" jdbcType="VARCHAR"/>
+        <result property="alias" column="ALIAS_" jdbcType="VARCHAR"/>
+        <result property="name" column="NAME_" jdbcType="VARCHAR"/>
+        <result property="defaultUrl" column="default_url_" jdbcType="VARCHAR"/>
+        <result property="enableMenu" column="ENABLE_MENU_" jdbcType="NUMERIC"/>
+        <result property="hasChildren" column="HAS_CHILDREN_" jdbcType="NUMERIC"/>
+        <result property="opened" column="OPENED_" jdbcType="NUMERIC"/>
+        <result property="icon" column="ICON_" jdbcType="VARCHAR"/>
+        <result property="newWindow" column="NEW_WINDOW_" jdbcType="NUMERIC"/>
+        <result property="sn" column="SN_" jdbcType="NUMERIC"/>
+        <result property="parentId" column="PARENT_ID_" jdbcType="VARCHAR"/>
+        <result property="createTime" column="CREATE_TIME_" jdbcType="TIMESTAMP"/>
+
+
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.SysResource">
+		INSERT INTO sys_resource
+		(ID_,SYSTEM_ID_,ALIAS_,NAME_,default_url_,ENABLE_MENU_,HAS_CHILDREN_,OPENED_,ICON_,NEW_WINDOW_,SN_,PARENT_ID_,CREATE_TIME_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{systemId,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{defaultUrl,jdbcType=VARCHAR}, #{enableMenu,jdbcType=NUMERIC}, #{hasChildren,jdbcType=NUMERIC}, #{opened,jdbcType=NUMERIC}, #{icon,jdbcType=VARCHAR}, #{newWindow,jdbcType=NUMERIC}, #{sn,jdbcType=NUMERIC},#{parentId}, #{createTime,jdbcType=TIMESTAMP})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="SysResource">
+		SELECT * FROM sys_resource 
+		WHERE 
+		ID_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="SysResource">
+        SELECT * FROM sys_resource
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY ID_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.sys.core.model.SysResource">
+		UPDATE sys_resource SET
+		SYSTEM_ID_=#{systemId,jdbcType=VARCHAR},
+		ALIAS_=#{alias,jdbcType=VARCHAR},
+		NAME_=#{name,jdbcType=VARCHAR},
+		default_url_=#{defaultUrl,jdbcType=VARCHAR},
+		ENABLE_MENU_=#{enableMenu,jdbcType=NUMERIC},
+		HAS_CHILDREN_=#{hasChildren,jdbcType=NUMERIC},
+		OPENED_=#{opened,jdbcType=NUMERIC},
+		ICON_=#{icon,jdbcType=VARCHAR},
+		NEW_WINDOW_=#{newWindow,jdbcType=NUMERIC},
+		SN_=#{sn,jdbcType=NUMERIC},
+		PARENT_ID_=#{parentId}
+		WHERE
+		ID_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM sys_resource 
+		WHERE
+		ID_=#{id}
+	</delete>
+
+    <select id="getBySystemId" parameterType="java.lang.String" resultMap="SysResource">
+		SELECT * FROM sys_resource 
+		WHERE 
+		SYSTEM_ID_=#{id} order by SN_ asc, ID_ asc
+	</select>
+
+    <select id="getBySystemAndRole" parameterType="java.util.Map" resultMap="SysResource">
+		SELECT a.* FROM sys_resource a, sys_res_role b
+		WHERE  a.ID_=b.RES_ID_ AND 	b.ROLE_ID_=#{roleId}  AND b.SYSTEM_ID_=#{systemId}
+		order by SN_ asc
+	</select>
+
+    <select id="isExist" resultType="java.lang.Integer">
+        SELECT count(1) FROM sys_resource where ALIAS_=#{alias} and SYSTEM_ID_=#{systemId}
+        <if test="id!=null">
+            and ID_!=#{id}
+        </if>
+    </select>
+
+    <select id="getByParentId" parameterType="java.lang.String" resultMap="SysResource">
+		SELECT * FROM sys_resource 
+		WHERE 
+		PARENT_ID_=#{parentId}
+	</select>
+
+    <select id="getBySystemAndUser" resultMap="SysResource">
+		SELECT distinct res.* FROM sys_resource res,sys_res_role rel,org_user_role ur
+		where res.SYSTEM_ID_=#{systemId} and res.ID_=rel.RES_ID_ and 
+		rel.ROLE_ID_=ur.role_id_ and ur.user_id_=#{userId}
+		ORDER BY res.SN_ asc , res.ID_ ASC
+	</select>
+</mapper>

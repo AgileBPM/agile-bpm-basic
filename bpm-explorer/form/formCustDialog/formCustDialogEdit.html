@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/form/formCustDialog/formCustDialogEditController.js"></script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<div class="ibox-title">
+		<a href="javascript:void(0)" class="btn btn-primary fa-save" ng-model="data" ab-save="/form/formCustDialog/save" use-default-after-save-event="true">保存</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+		<a href="javascript:void(0)" ng-show="data.objName" ng-click="openSettingDialog()" class="btn btn-primary fa fa-edit">设置字段参数</a>
+	</div>
+	<form name="form" ab-load="/form/formCustDialog/getObject?id={id}" ng-model="data">
+		<table class="form-table">
+			<tr>
+				<th>名字</th>
+				<td>
+					<input type="text" ng-model="data.name" class="form-control" ab-validate="{required:true}" />
+				</td>
+
+				<th>别名</th>
+				<td>
+					<input type="text" ab-pinyin="data.name" ng-model="data.key" class="form-control" ab-validate="{required:true}" />
+				</td>
+			</tr>
+			<tr>
+				<th>描述</th>
+				<td>
+					<textarea ng-model="data.desc" class="form-control"></textarea>
+				</td>
+				<th>
+					是否系统内部对话框
+					<a href="javaScript:void(0)" style="text-decoration: none; color: red;" title="系统内部对话框，则表示项目本身需要这个对话框，用户请谨慎修改，否则有可能会导致系统功能异常" class="fa fa-exclamation-circle ab-help" ab-tip> </a>
+				</th>
+				<td>
+					<span ab-boolean ng-model="data.system" text="是/否"></span>
+				</td>
+			</tr>
+			<tr>
+				<th>显示类型</th>
+				<td>
+					<select class="form-control" ng-model="data.style" ng-options="v.key as v.desc for (k,v) in FormCustDialogSTYLE">
+					</select>
+				</td>
+				<th>尺寸</th>
+				<td class="form-inline">
+					<lable>宽度: <input type="text" ng-model="data.width" class="form-control" style="width: 80px" ab-validate="{required:true,number:true}" /></lable>
+					<lable>高度: <input type="text" ng-model="data.height" class="form-control" style="width: 80px" ab-validate="{required:true,number:true}" /></lable>
+				</td>
+			</tr>
+			<tr>
+				<th>单选/多选</th>
+				<td>
+					<span ab-boolean ng-model="data.multiple" text="多选/单选"></span>
+				</td>
+				<th ng-show="data.style==FormCustDialogSTYLE.LIST.key">分页</th>
+				<td ng-show="data.style==FormCustDialogSTYLE.LIST.key" class="form-inline">
+					<span>
+						<span ab-boolean ng-model="data.page" text="是/否"></span>
+					</span>
+					<span ng-if="data.page">
+						分页大小:
+						<input type="text" ng-model="data.pageSize" class="form-control" ab-validate="{required:true,number:true}" />
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<th>数据来源</th>
+				<td colspan="{{data.dataSource=='database'?3:1}}" >
+					<span ab-boolean="interface/database" text="系统服务接口/数据库" ng-model="data.dataSource"></span>
+				</td>
+				<th ng-if="data.dataSource=='interface'"><a herf="#" class="fa fa-exclamation-circle ht-help" ab-tip 
+				title="接口格式为：beanId.method<br> eg:userService.list <br>提供参数为:QueryFilter"></a>接口：</th>
+				<td ng-if="data.dataSource=='interface'">
+					<input type="text" ng-model="data.objName" class="form-control" placeholder="beanId.method eg:userService.list" style="width: 300px"/>
+				<td>
+									
+				</td>
+			</tr>
+			<tr  ng-if="data.dataSource != 'interface'">
+				<th>数据源</th>
+				<td>
+					<select ng-disabled="data.id" class="form-control" ng-model="data.dsKey" ng-options="m.key as m.name for m in AllSysDataSources">
+					</select>
+				</td>
+				<th>查询</th>
+				<td class="form-inline">
+					<select ng-disabled="data.id" class="form-control" ng-model="data.objType" ng-options="v.key as v.desc for (k,v) in FormCustDialogOBJTYPE">
+					</select>
+					<input ng-disabled="data.id" type="text" ng-model="data.objName" class="form-control" ab-validate="{required:true}" />
+					<a ng-hide="data.id" href="javascript:void(0)" class="btn btn-primary fa-search" ng-click="searchObjName()">查询</a>
+				</td>
+			</tr>
+			<tr ng-if="!data.id && data.dataSource != 'interface'">
+				<th>选择对象</th>
+				<td colspan="3">
+					<select class="form-control" ng-model="data.objName" ng-options="k as (k+'('+v+')') for (k,v) in AllObjNames">
+					</select>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

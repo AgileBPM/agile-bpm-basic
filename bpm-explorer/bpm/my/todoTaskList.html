@@ -1,0 +1,50 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>我的待办</title>
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+     <div class="panel panel-default search-panel">
+         <div class="panel-heading" data-toggle="collapse" toggle="true" data-target="#formSearch" >查询条件</div>
+         <div class="panel-body">
+             <form id="searchForm" class="form-horizontal">
+                 <div class="form-group">
+                     <label class="control-label col-sm-1" for="name_^VLK">名字</label>
+                     <div class="col-sm-3">
+                         <input type="text" class="form-control" id="name_^VLK">
+                     </div>
+                     <label class="control-label col-sm-1" for="subject_^VLK">标题</label>
+                     <div class="col-sm-3">
+                         <input type="text" class="form-control" id="subject_^VLK">
+                     </div>
+                     <div class="col-sm-4" style="text-align:left;">
+                     		<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+                     </div>
+                 </div>
+             </form>
+         </div>
+     </div>       
+      <table ab-grid data-id-field="id" data-url="/bpm/my/todoTaskList">
+          <thead>
+          <tr>
+              <th data-checkbox="true">ID</th>
+              <th data-field="subject">任务标题</th>
+              <th data-field="name">任务名称</th>
+              <th data-field="taskType" data-formatter="labelFormatter" 
+              			data-value-style="NORMAL-普通-primary,SIGN-会签-info,SIGN_SOURCE-会签_父-info,TRANSFORMING-事项-warning,DELIVERTO-转办-warning,">类型</th>
+              <th data-field="status" data-formatter="labelFormatter" 
+              			data-value-style="NORMAL-普通-primary,SUSPEND-挂起-info,LOCK-锁定-warning,BACK-驳回-warning,DESIGNATE-指派-info,">状态</th>
+              <th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">任务创建时间</th>
+              <th data-formatter="innerHtmlFormatter" data-title="管理">
+					<span class="fa-check-square-o btn btn-outline btn-primary btn-sm" openDialog="处理"   qtip="办理" top="true" url="bpm/task/taskComplete.html?taskId={id}"></span>
+			  </th>
+          </tr>
+          </thead>
+      </table>
+    </div>
+</body>
+</html>

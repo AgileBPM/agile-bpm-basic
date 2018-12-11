@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/form/formCustDialog/formCustDialogSettingDialogController.js"></script>
+<script type="text/javascript" src="../../build/common/easyLayout.js"></script>
+<script type="text/javascript">
+	//父页面打开按【确定】按钮时的回调函数
+	function getData() {
+		return AngularUtil.getScope().data;
+	}
+</script>
+</head>
+<body ng-controller="ctrl" class="easyui-layout" ng-init="init()">
+	<div region="west" title="获取字段信息" style="width: 300px; overflow: auto;" collapsible="false">
+		<table class="table">
+			<tr>
+				<th>
+					<input type="checkbox" ng-model="selectAll" />
+				</th>
+				<th ng-if="data.dataSource!='interface'">字段</th>
+				<th ng-if="data.dataSource=='interface'">JSON字段KEY</th>
+				<th ng-if="data.dataSource!='interface'">类型  </th>
+				<th>注解  <a class="btn btn-outline btn-primary fa-plus" ng-click="addTableColom()"></a></th>
+			</tr>
+			<tr ng-if="data.dataSource!='interface'" ng-repeat="column in table.columns">
+				<td>
+					<input type="checkbox" ng-model="column.selected" ab-checked="selectAll" />
+				</td>
+				<td>{{column.name}}</td>
+				<td >{{column.type}}</td>
+				<td>{{column.comment}}</td>
+			</tr>
+			
+			<tr ng-if="data.dataSource=='interface'" ng-repeat="column in table.columns">
+				<td>
+					<input type="checkbox" ng-model="column.selected" ab-checked="selectAll" />
+				</td>
+				<td><input type="text" class="form-control" ng-model="column.name" ></td>
+				<td><input type="text" class="form-control" ng-model="column.comment"  ></td>
+			</tr>
+		</table>
+	</div>
+	<div region="center" style="padding-left: 5px; padding-top: 200px; width: 60px;">
+		<a href="javaScript:void(0)" ng-click="addColumns()" class="btn btn-info fa-arrow-right"></a>
+	</div>
+	<div region="east" title="字段设置" style="width: 700px; overflow: auto;" collapsible="false">
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active">
+				<a href="#showCol" aria-controls="showCol" role="tab" data-toggle="tab">显示字段</a>
+			</li>
+			<li>
+				<a href="#condition" aria-controls="condition" role="tab" data-toggle="tab">条件字段</a>
+			</li>
+			<li>
+				<a href="#result" aria-controls="result" role="tab" data-toggle="tab">返回字段</a>
+			</li>
+			<li>
+				<a href="#sort" aria-controls="sort" role="tab" data-toggle="tab">排序字段</a>
+			</li>
+		</ul>
+		<div class="tab-content">
+			<!-- 显示字段 -->
+			<div id="showCol" class="tab-pane active">
+				<!-- 列表型 -->
+				<table class="table table-hover">
+					<thead ng-if="data.style=='list'">
+						<tr>
+							<th>字段名</th>
+							<th>显示名</th>
+							<th>
+								<abbr ab-tip title="参考ab-grid:function(value, row, index)">格式化</abbr>
+							</th>
+							<th>管理</th>
+						</tr>
+					</thead>
+					<tbody ng-if="data.style=='list'">
+						<tr ng-repeat="field in data.displayFields">
+							<td>
+								<input type="text" ng-model="field.columnName" class="form-control" readonly/>
+								<a ng-if="$index==0" href="javaScript:void(0)" style="text-decoration: none; color: red;" title="第一个字段为回显的显示字段" class="fa fa-exclamation-circle ab-help" ab-tip> </a>
+							</td>
+							<td>
+								<input type="text" class="form-control" ng-model="field.showName" />
+							</td>
+							<td>
+								<textarea ng-model="field.formatter"></textarea>
+							</td>
+							<td>
+								<a href="javaScript:void(0)" ng-click="ArrayTool.up($index,data.displayFields)" class="btn btn-sm btn-default fa-chevron-up"></a>
+								<a href="javaScript:void(0)" ng-click="ArrayTool.down($index,data.displayFields)" class="btn btn-sm btn-default fa-chevron-down"></a>
+								<a href="javaScript:void(0)" ng-click="ArrayTool.del($index,data.displayFields)" class="btn btn-sm btn-default fa-times"></a>
+							</td>
+						</tr>
+					</tbody>
+					<!-- 树型 -->
+					<tbody ng-if="data.style=='tree'">
+						<tr>
+							<th>
+								<span>ID:</span>
+							</th>
+							<td>
+								<input type="text" ng-model="data.treeConfig.id" class="form-control" />
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<span>父ID:</span>
+							</th>
+							<td>
+								<input type="text" ng-model="data.treeConfig.pid" class="form-control" />
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<span>父ID初始值:</span>
+							</th>
+							<td>
+								<textarea ng-model="data.treeConfig.pidInitVal"></textarea>
+								<input type="checkbox" ng-model="data.treeConfig.pidInitValScript" />
+								脚本
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<span>显示名称:</span>
+							</th>
+							<td>
+								<input type="text" ng-model="data.treeConfig.showColumn" class="form-control" />
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- 条件字段 -->
+			<div id="condition" class="tab-pane">
+				<table class="table">
+					<tr>
+						<th style="width: 100px">字段名</th>
+						<th style="width: 100px">显示名</th>
+						<th>条件</th>
+						<th>值来源</th>
+						<th>默认值</th>
+						<th>管理</th>
+					</tr>
+					<tr ng-repeat="field in data.conditionFields">
+						<td>
+							<input type="text" class="form-control" ng-model="field.columnName" readonly/>
+						</td>
+						<td>
+							<input type="text" class="form-control" ng-model="field.showName" />
+						</td>
+						<td>
+							<select ng-model="field.condition" ng-options="m.val as m.desc for m in getSupportCondition(field)" class="form-control"></select>
+						</td>
+						<td>
+							<select ng-model="field.valueSource" ng-options="m.key as m.desc for m in getSupportValueSource()" class="form-control"></select>
+						</td>
+						<td>
+							<!-- 参数传入 -->
+							<span ng-show="field.valueSource==FormCustDialogConditionFieldVALUESOURCE.PARAM.key">
+								<select class="form-control" ng-model="field.value.ctrlType">
+									<option value="">动态参数</option>
+									<option ng-if="field.dbType!='date'" value="inputText">单行文本框</option>
+									<option ng-if="field.dbType=='date'" value="inputDate">日期输入框</option>
+									<option value="formCustDialog">自定义对话框</option>
+								</select>
+							</span>
+							<!-- 固定值 -->
+							<span ng-show="field.valueSource==FormCustDialogConditionFieldVALUESOURCE.FIXED_VALUE.key">
+								<input type="text" class="form-control" ng-model="field.value.text" />
+							</span>
+							<!-- 脚本 -->
+							<span ng-show="field.valueSource==FormCustDialogConditionFieldVALUESOURCE.SCRIPT.key">
+								<a class="btn btn-primary btn-xs" ng-click="openCommonScript(field)">常用脚本</a>
+								<textarea ng-model="field.value.text" class="form-control"></textarea>
+							</span>
+						</td>
+						<td>
+							<a href="javaScript:void(0)" ng-click="ArrayTool.up($index,data.conditionFields)" class="btn btn-sm btn-default fa-chevron-up"></a>
+							<a href="javaScript:void(0)" ng-click="ArrayTool.down($index,data.conditionFields)" class="btn btn-sm btn-default fa-chevron-down"></a>
+							<a href="javaScript:void(0)" ng-click="ArrayTool.del($index,data.conditionFields)" class="btn btn-sm btn-default fa-times"></a>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- 返回字段 -->
+			<div id="result" class="tab-pane">
+				<table class="table">
+					<tr>
+						<th>字段名</th>
+						<th>返回名</th>
+						<th>管理</th>
+					</tr>
+					<tr ng-repeat="field in data.returnFields">
+						<td>
+							<input type="text" class="form-control" ng-model="field.columnName" readonly/>
+						</td>
+						<td>
+							<input type="text" class="form-control" ng-model="field.returnName" />
+						</td>
+						<td>
+							<a href="javaScript:void(0)" ng-click="ArrayTool.up($index,data.returnFields)" class="btn btn-sm btn-default fa-chevron-up"></a>
+							<a href="javaScript:void(0)" ng-click="ArrayTool.down($index,data.returnFields)" class="btn btn-sm btn-default fa-chevron-down"></a>
+							<a href="javaScript:void(0)" ng-click="ArrayTool.del($index,data.returnFields)" class="btn btn-sm btn-default fa-times"></a>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- 排序字段 -->
+			<div id="sort" class="tab-pane">
+				<table class="table">
+					<tr>
+						<th>字段名</th>
+						<th>排序类型</th>
+						<th>管理</th>
+					</tr>
+					<tr ng-repeat="field in data.sortFields">
+						<td>
+							<input type="text" class="form-control" ng-model="field.columnName" readonly/>
+						</td>
+						<td>
+							<select ng-model="field.sortType" ng-options="v.key as v.desc for (k,v) in Direction" class="form-control"></select>
+						</td>
+						<td>
+							<a href="javaScript:void(0)" ng-click="ArrayTool.up($index,data.sortFields)" class="btn btn-sm btn-default fa-chevron-up"></a>
+							<a href="javaScript:void(0)" ng-click="ArrayTool.down($index,data.sortFields)" class="btn btn-sm btn-default fa-chevron-down"></a>
+							<a href="javaScript:void(0)" ng-click="ArrayTool.del($index,data.sortFields)" class="btn btn-sm btn-default fa-times"></a>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

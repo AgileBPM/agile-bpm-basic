@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.dstz.agilebpm</groupId>
+        <artifactId>platform</artifactId>
+        <version>1.2.6</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>sys</artifactId>
+    <packaging>pom</packaging>
+    <description>流程引擎基础框架定义及实现</description>
+
+    <modules>
+        <module>sys-api</module>
+        <module>sys-core</module>
+        <module>sys-rest</module>
+    </modules>
+
+    <!-- 定义参数 1-->
+    <properties>
+        <com.jayway.jsonpath>0.9.1</com.jayway.jsonpath>
+        <activeMq.version>5.9.0</activeMq.version>
+    </properties>
+
+    <!-- 定义全局的依赖，供子模块调用 -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-core</artifactId>
+                <version>${activeMq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path</artifactId>
+                <version>${com.jayway.jsonpath}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>2.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4.7</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

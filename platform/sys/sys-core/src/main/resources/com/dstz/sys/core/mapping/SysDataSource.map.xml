@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.SysDataSourceDao">
+    <resultMap id="SysDataSource" type="com.dstz.sys.core.model.SysDataSource">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="key" column="key_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="desc" column="desc_" jdbcType="VARCHAR"/>
+        <result property="dbType" column="db_type_" jdbcType="VARCHAR"/>
+        <result property="classPath" column="class_path_" jdbcType="VARCHAR"/>
+        <result property="attributesJson" column="attributes_json_" jdbcType="CLOB"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.SysDataSource">
+		INSERT INTO sys_data_source
+		(id_,key_,name_,desc_,db_type_,class_path_,attributes_json_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{dbType,jdbcType=VARCHAR}, #{classPath,jdbcType=VARCHAR}, #{attributesJson,jdbcType=CLOB})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="SysDataSource">
+		SELECT * FROM sys_data_source 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="SysDataSource">
+        SELECT * FROM sys_data_source
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.sys.core.model.SysDataSource">
+		UPDATE sys_data_source SET
+		key_=#{key,jdbcType=VARCHAR},
+		name_=#{name,jdbcType=VARCHAR},
+		desc_=#{desc,jdbcType=VARCHAR},
+		db_type_=#{dbType,jdbcType=VARCHAR},
+		class_path_=#{classPath,jdbcType=VARCHAR},
+		attributes_json_=#{attributesJson,jdbcType=CLOB}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM sys_data_source 
+		WHERE
+		id_=#{id}
+	</delete>
+
+
+</mapper>

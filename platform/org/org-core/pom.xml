@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.dstz.agilebpm</groupId>
+        <artifactId>org</artifactId>
+        <version>1.2.6</version>
+    </parent>
+    <artifactId>org-core</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>base-db</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>org-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>sys-api</artifactId>
+        </dependency>
+
+    </dependencies>
+</project>

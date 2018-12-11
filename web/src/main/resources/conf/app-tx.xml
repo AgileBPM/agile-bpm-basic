@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd"
+       default-autowire="byType" default-lazy-init="false">
+
+ 	<!-- <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean> -->
+		
+	<!-- 我们约定只有manager层被事物保护。若有特殊的需要添加@Transactional注解 -->
+    <!-- service 方法勿用事物保护,需要将独立逻辑放在manager层。有利于功能逻辑的复用，且对接口异常拦截后方便使用标准resultMsg反馈，减少service方法的异常处理代码 -->
+    <aop:config proxy-target-class="true">
+        <aop:advisor advice-ref="abTxAdvice" pointcut="execution(* com.dstz.*.*.manager.*.*(..))"/>
+        <aop:advisor advice-ref="abTxAdvice" pointcut="execution(* com.dstz.*.manager.*.*(..))"/>
+    </aop:config>
+
+    <tx:annotation-driven transaction-manager="abTransactionManager"/>
+
+    <!-- <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="is*" read-only="true"/>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="query*" read-only="true"/>
+            <tx:method name="*" isolation="READ_COMMITTED" propagation="SUPPORTS"/>
+        </tx:attributes>
+    </tx:advice> -->
+	
+	<!-- ab 的bo操作支持多数据源的事务管理器 -->
+	<bean id="abTransactionManager" class="com.dstz.base.db.transaction.AbDataSourceTransactionManager"></bean>
+	<!-- ab的txAdvice -->
+	<tx:advice id="abTxAdvice" transaction-manager="abTransactionManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="is*" read-only="true"/>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="query*" read-only="true"/>
+            <tx:method name="*" isolation="READ_COMMITTED"/>
+        </tx:attributes>
+    </tx:advice>
+</beans>

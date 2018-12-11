@@ -1,0 +1,99 @@
+<html ng-app="app">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="../../build/common/ngEdit.css" rel="stylesheet">
+    <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+    <script type="text/javascript">
+        var app = angular.module("app", ['base', 'baseDirective']);
+        app.controller('ctrl', ['$scope', 'baseService', 'ArrayToolService', '$filter', function ($scope, baseService, ArrayToolService, $filter) {
+
+            /**
+             * 初始化操作
+             */
+            $scope.init = function () {
+
+
+
+            };
+
+
+
+        }]);
+    </script>
+</head>
+
+
+<body ng-controller="ctrl" ng-init="init()">
+
+    <div class="ibox-title">
+        <a class="btn btn-primary fa-save" href="javascript:void(0)" ng-model="data" ab-save="/sys/scheduleJob/edit">保存</a>
+        <a href="javaScript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+    </div>
+
+    <form name="form" ab-load="/sys/scheduleJob/get?id={id}" ng-model="data">
+        <table class="form-table">
+            <input type="hidden" ng-if="data.id" ng-model="data.id" />
+            <tr>
+                <th>任务分组</th>
+                <td>
+                    <select ng-model="data.group" class="form-control">
+                        <option value="key1">分组一</option>
+                        <option value="key2">分组二</option>
+                        <option value="key3">分组三</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>计划名称</th>
+                <td>
+                    <input ng-model="data.name" ab-validate="{required:true}" class="form-control"/>
+                </td>
+            </tr>
+
+            <tr>
+                <th>调用目标</th>
+                <td>
+                    <input ng-model="data.invokeTarget" ab-validate="{required:true}" class="form-control"/>
+                </td>
+            </tr>
+
+            <tr>
+                <th>运行表达式</th>
+                <td>
+                    <input ng-model="data.cronExpression" ab-validate="{required:true}" class="form-control"/>
+                </td>
+            </tr>
+
+            <tr>
+                <th>是否并发执行</th>
+                <td>
+                    <label class="radio-inline"><input type="radio" checked value="1" ng-model="data.concurrent" ab-validate="{required:true}" />是</label>
+                    <label class="radio-inline"><input type="radio" value="0" ng-model="data.concurrent" ab-validate="{required:true}" />否</label>
+                </td>
+            </tr>
+
+            <tr>
+                <th>运行状态</th>
+                <td>
+                    <select ng-model="data.runningState" class="form-control" >
+                        <option value="ENABLE" selected="selected">启用</option>
+                        <option value="DISABLE">禁用</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>任务计划说明</th>
+                <td>
+                    <textarea ng-model="data.description" ab-validate="{required:true}" class="form-control"></textarea>
+                </td>
+            </tr>
+
+        </table>
+
+    </form>
+
+</body>
+
+</html>

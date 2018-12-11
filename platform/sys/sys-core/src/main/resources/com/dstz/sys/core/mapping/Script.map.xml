@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.ScriptDao">
+    <resultMap id="Script" type="com.dstz.sys.core.model.Script">
+        <id property="id" column="ID_" jdbcType="VARCHAR"/>
+        <result property="name" column="NAME_" jdbcType="VARCHAR"/>
+        <result property="script" column="SCRIPT_" jdbcType="CLOB"/>
+        <result property="category" column="CATEGORY_" jdbcType="VARCHAR"/>
+        <result property="memo" column="MEMO_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="columns">
+		ID_,NAME_,SCRIPT_,CATEGORY_,MEMO_
+	</sql>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.Script">
+        INSERT INTO SYS_SCRIPT
+        (<include refid="columns"/>)
+        VALUES
+        (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{script,jdbcType=CLOB}, #{category,jdbcType=VARCHAR},
+        #{memo,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="query" parameterType="java.util.Map" resultMap="Script">
+        SELECT * FROM SYS_SCRIPT
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY ID_ DESC
+        </if>
+    </select>
+
+    <select id="get" parameterType="java.lang.String" resultMap="Script">
+		SELECT * FROM SYS_SCRIPT 
+		WHERE 
+		ID_=#{id}
+	</select>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM SYS_SCRIPT 
+		WHERE
+		ID_=#{id}
+	</delete>
+
+    <update id="update" parameterType="com.dstz.sys.core.model.Script">
+		UPDATE SYS_SCRIPT SET
+		NAME_=#{name,jdbcType=VARCHAR} , 
+		SCRIPT_=#{script,jdbcType=CLOB} , 
+		CATEGORY_=#{category,jdbcType=VARCHAR} , 
+		MEMO_=#{memo,jdbcType=VARCHAR} 
+		WHERE
+		ID_=#{id}
+	</update>
+
+    <select id="getDistinctCategory" resultType="java.lang.String">
+		SELECT DISTINCT CATEGORY_ FROM SYS_SCRIPT 
+	</select>
+
+    <select id="isNameExists" resultType="int" parameterType="java.lang.String">
+		SELECT COUNT(*) FROM SYS_SCRIPT WHERE NAME_=#{name}
+	</select>
+</mapper>

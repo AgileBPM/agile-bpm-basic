@@ -1,0 +1,23 @@
+<html ng-app="bpm">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>启动流程</title>
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	<script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
+	<script type="text/javascript" src="../../build/common/custForm.js"></script>
+	<style media="print">.print-hidden{display:none}</style>
+	<script type="text/javascript">
+		var StartController = ['$scope','baseService',function($scope,baseService){
+			$scope.bpmInitParam = {"defId":$.getParam("defId"),instanceId:$.getParam("instanceId")};
+		}];
+		</script>
+</head>
+
+	<body ng-controller="StartController" class="panel panel-default">
+		<div class="panel-heading print-hidden">
+			<div bpm-buttons></div>
+		</div>
+		<div bpm-init ></div>
+	</body>
+</html>

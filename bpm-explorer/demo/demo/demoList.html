@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>DEMO MODULE</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body class="panel-body">
+	<div class="panel panel-default search-panel">
+         <div class="panel-heading">查询条件
+         	<a　href="javascript:void(0)" class="pull-right">　<i class="fa  fa-angle-double-up" toggle-collapse="#searchForm"></i> </a>
+         </div>
+         <div class="panel-body">
+             <form id="searchForm" class="form-horizontal">
+                 <div class="form-group">
+                     <label class="control-label col-sm-1" for="name_^VLK">参数名</label>
+                     <div class="col-sm-2">
+                         <input type="text" class="form-control" id="name_^VLK">
+                     </div>
+                     <div class="col-sm-3" style="text-align:left;">
+                         <button type="button" style="margin-left:50px" class="btn btn-primary fa-search">查询</button>
+                         <button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+                     </div>
+                 </div>
+             </form>
+         </div>
+     </div>
+	 <div class="btn-group toolbar">
+		  <button class="btn btn-outline btn-primary fa-plus" openDialog="新增DEMO" url="/form/formDef/formDefPreview.html?key=demo">新增 </button>
+     </div>
+     <table ab-grid data-id-field="id" data-url="/demo/demo/listJson">
+         <thead>
+         <tr>
+             <th data-checkbox="true">ID</th>
+             <th data-field="mz">名字</th>
+             <th data-field="xb" >性别</th>
+             <th data-field="ah"  data-formatter="labelFormatter" 
+             		data-value-style="1-游泳-primary,2-羽毛器-success,3-篮球-info,">爱好</th>
+             <th data-field="xb" data-sort='xb_' data-formatter="labelFormatter" data-value-style="1-男-primary,2-女-success,">分组</th>
+             <th data-field="bm"  >部门</th>
+             <th data-field="nl" >年龄</th>
+             <th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+             	<a class='btn btn-outline btn-primary fa fa-edit' openDialog='编辑' qtip='编辑' url='/form/formDef/formDefPreview.html?key=demo&id={id}'></a>
+				<a class='btn btn-outline btn-primary fa  fa-trash' sendAction='删除' qtip='此处删除可能影响流程数据，请注意' url='/form/formDefData/removeData/demo/{id}'></a>
+             </th>
+         </tr>
+         </thead>
+     </table>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.dstz.agilebpm</groupId>
+        <artifactId>agile-bpm</artifactId>
+        <version>1.2.6</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>bus-form</artifactId>
+    <packaging>pom</packaging>
+    <name>【业务表单】</name>
+    <description>业务表单模块</description>
+
+    <modules>
+        <module>bus</module>
+        <module>form</module>
+    </modules>
+
+    <properties>
+        <base.version>1.2.6</base.version>
+        <platform.version>1.2.6</platform.version>
+        <bus-form.version>1.2.6</bus-form.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>bus-api</artifactId>
+                <version>${bus-form.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>bus-core</artifactId>
+                <version>${bus-form.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>bus-rest</artifactId>
+                <version>${bus-form.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>form-api</artifactId>
+                <version>${bus-form.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>form-core</artifactId>
+                <version>${bus-form.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>form-rest</artifactId>
+                <version>${bus-form.version}</version>
+            </dependency>
+  
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>auth</artifactId>
+                <version>${platform.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>org-api</artifactId>
+                <version>${platform.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>sys-api</artifactId>
+                <version>${platform.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>base-api</artifactId>
+                <version>${base.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>base-core</artifactId>
+                <version>${base.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>base-db</artifactId>
+                <version>${base.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dstz.agilebpm</groupId>
+                <artifactId>base-rest</artifactId>
+                <version>${base.version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+</project>

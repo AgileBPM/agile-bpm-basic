@@ -1,0 +1,85 @@
+<!doctype html>
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		
+		<script type="text/javascript">
+
+		var app = angular.module('app', ['baseDirective']);
+		app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
+			
+			$scope.changeGroup=function(){
+				$scope.data.group=$scope.data.category;
+			}
+			
+		}]);
+		
+		</script>
+	</head>
+	<body ng-controller="ctrl" class="panel success">
+			<!-- 顶部按钮 -->
+			<div class="panel-heading">
+				<a class="btn  btn-primary fa-save" ng-model="data" ab-save="/sys/sysProperties/save" use-default-after-save-event="true"><span>保存</span></a>
+				<a class="btn  btn-primary fa-back" onClick="javascript:$.Dialog.close(window);"><span>返回</span></a>
+			</div>
+			<form name="form" method="post" ab-load="/sys/sysProperties/getJson?id={id}"  ng-model="data">
+				<table class="form-table">
+							<tr>								
+								<th>参数名:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.name"   ab-validate="{required:true,maxlength:150}"  />
+								</td>								
+							</tr>
+							<tr>								
+								<th>别名:</th>
+								<td>
+									<input class="form-control" type="text"  ng-model="data.alias" ab-validate="{required:true,maxlength:150}"  />
+								</td>								
+							</tr>
+							<tr>								
+								<th>系统环境TODO:</th>
+								<td class="form-inline">
+									<select class="form-control" ng-model="data.environment">
+			                    	 	<option value="DEV" selected="selected">开发</option>
+			                    	 	<option value="SIT">测试</option>
+			                    	 	<option value="UAT">用户测试</option>
+			                    	 	<option value="GRAY">灰度</option>
+			                    	 	<option value="PROD">生产</option>
+			                    	</select><span class="text-success">默认开发环境DEV，若当前环境为测试环境。则将该环境(测试)配置信息覆盖默认(开发)属性配置</span>
+								</td>								
+							</tr>
+							<tr>								
+								<th>分组:</th>
+								<td  class="form-inline">
+									<input class="form-control" type="text" ng-model="data.group"   ab-validate="{required:true,maxlength:150}"  />
+									
+									<select class="form-control" ng-model="data.category" ng-options="item for item in data.categorys" ng-change="changeGroup()">
+										<option value="">-- 请选择 --</option>
+									</select>
+									
+								</td>								
+							</tr>
+							<tr>								
+								<th>参数值:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.value"   ab-validate="{required:true,maxlength:300}"  />
+								</td>								
+							</tr>
+							<tr>								
+								<th>加密存储:</th>
+								<td>
+									<span  ab-boolean="1/0" text="参数加密存储" ng-model="data.encrypt" ab-tip title="参数加密存储"></span>
+								</td>								
+							</tr>
+							<tr>								
+								<th>描述:</th>
+								<td>
+									<textarea rows="3" cols="80" ng-model="data.description"></textarea>
+								</td>								
+							</tr>
+				</table>
+			</form>
+	</body>
+</html>

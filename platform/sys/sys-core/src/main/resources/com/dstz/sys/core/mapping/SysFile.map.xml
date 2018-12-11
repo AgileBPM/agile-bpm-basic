@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.SysFileDao">
+	<resultMap id="SysFile" type="com.dstz.sys.core.model.SysFile">
+		<id property="id" column="id_" jdbcType="VARCHAR"/>
+		<result property="name" column="name_" jdbcType="VARCHAR"/>
+		<result property="uploader" column="uploader_" jdbcType="VARCHAR"/>
+		<result property="path" column="path_" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+		<result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+		<result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+		<result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+		<result property="version" column="version_" jdbcType="NUMERIC"/>
+		<result property="delete" column="delete_" jdbcType="NUMERIC"/>
+	</resultMap>
+	
+	<insert id="create" parameterType="com.dstz.sys.core.model.SysFile">
+		INSERT INTO sys_file
+		(id_,name_,uploader_,path_,create_time_,create_by_,update_time_,update_by_,version_,delete_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{uploader,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{version,jdbcType=NUMERIC}, #{delete,jdbcType=NUMERIC})
+	</insert>
+	
+	<select id="get"   parameterType="java.lang.String" resultMap="SysFile">
+		SELECT * FROM sys_file 
+		WHERE 
+		id_=#{id}
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultMap="SysFile">
+		SELECT * FROM sys_file
+		<where>
+			<if test="whereSql!=null">
+				${whereSql}
+			</if>
+		</where>
+		<if test="orderBySql!=null">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="orderBySql==null">
+			ORDER BY id_ DESC
+		</if>
+	</select>
+	
+	<update id="update" parameterType="com.dstz.sys.core.model.SysFile">
+		UPDATE sys_file SET
+		name_=#{name,jdbcType=VARCHAR},
+		uploader_=#{uploader,jdbcType=VARCHAR},
+		path_=#{path,jdbcType=VARCHAR},
+		create_time_=#{createTime,jdbcType=TIMESTAMP},
+		create_by_=#{createBy,jdbcType=VARCHAR},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		update_by_=#{updateBy,jdbcType=VARCHAR},
+		version_=#{version,jdbcType=NUMERIC},
+		delete_=#{delete,jdbcType=NUMERIC}
+		WHERE
+		id_=#{id}
+	</update>
+	
+	<delete id="remove" parameterType="java.lang.String">
+		DELETE FROM sys_file 
+		WHERE
+		id_=#{id}
+	</delete>
+	
+	
+</mapper>

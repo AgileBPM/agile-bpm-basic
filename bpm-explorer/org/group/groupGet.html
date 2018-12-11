@@ -1,0 +1,33 @@
+<html ng-app="baseDirective">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	</head>
+	<body class="panel">
+		<form name="form" ab-load="/org/group/get?id={id}"   ng-model="data">
+		<table class="form-table">
+					<tr>								
+						<th style="width:350px;"><span>组织名称:</span></th>
+						<td> {{data.name }}</td>
+					</tr>
+					<tr>								
+						<th><span>上级组织名称:</span></th>
+						<td> {{data.parentOrgName }}</td>
+					</tr>
+					<tr>								
+						<th><span>排序号:</span></th>
+						<td> {{data.orderNo }}</td>
+					</tr>
+					<tr>								
+						<th><span>组织编码:</span></th>
+						<td> {{data.code }}</td>
+					</tr>
+					<tr>								
+						<th><span>级别:</span></th>
+						<td> {{data.grade }}</td>
+					</tr>
+		</table>
+		</form>
+	</body>
+</html>

@@ -1,0 +1,20 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/form/formDef/formDefPreviewController.js"></script>
+<script type="text/javascript" src="../../build/common/custForm.js"></script>
+<script type="text/javascript">
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<div class="ibox-title">
+		<a class="btn btn-primary fa-save" href="javascript:void(0)" ng-model="data" ab-save="/form/formDefData/saveData?key={key}">保存</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+	</div>
+	<form name="form" ab-load="/form/formDefData/getData?id={id}&key={key}" ng-model="data">
+		<div ab-bind-html="html"></div>
+	</form>
+</body>
+</html>

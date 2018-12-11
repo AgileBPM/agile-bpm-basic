@@ -1,0 +1,125 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+<script type="text/javascript">
+		    //------------用户选择框可选多人设置-----------------//
+			var app = angular.module('app', ['baseDirective']);
+			app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
+				$scope.data = {type:"single"};
+				$scope.data.startTime =parseInt($.getParam("startTime"));		
+				$scope.data.endTime = parseInt($.getParam("endTime"));	 
+				//-------------选择参与者-----------------------//
+				$scope.openCustom = function() {
+					$scope.data.scheduleParticipantList = new Array();
+					CustUtil.openCustDialog('userSelector',function(data,dialog){
+						var participants = "";
+						for(var i = 0; i < data.length; i++) {
+							participants += data[i].name;
+							var a = new Object();
+							a.participantorName = data[i].name;
+							a.participantor = data[i].id;
+							$scope.data.scheduleParticipantList.push(a);
+							if(i < data.length - 1) {
+								participants+=',';
+							}
+						}
+						$scope.data.participantNames = participants;
+						//$("#participant").val(participants);
+						document.getElementById("participant").value=participants;
+						$.Dialog.close(dialog);//关闭弹出框
+					});
+				}
+				 
+				//----------------删除参与者-----------------//
+				$scope.itemDelete = function(itemId) {
+					$.ajax({
+			               url: __ctx+'/calendar/schedule/itemDelete',
+			               data: {
+			                   id: itemId,
+			               },
+			               success: function() {
+			            	   location.reload();
+			               }
+			           });
+				}
+				//-------------------保存前监听事件------------------//
+/* 				$scope.$on("beforeSaveEvent",function(event,data){
+					if(Date.parse($scope.data.endTime) <= $scope.data.startTime || $scope.data.endTime <= $scope.data.startTime) {
+						data.pass = false;
+						$.topCall.error("结束日期不能小于开始日期");
+					}
+			    }); */
+				//-----------------保存后监听事件-----------------//
+				$scope.$on("afterSaveEvent",function(event,data){
+					if(data.r == false) {
+						parent.location.reload();
+					}
+					if(data.r == true) {
+						location.reload();
+					}
+			    });
+				//初始化选中时间：若选中一天，将开始时间改为早上9点，结束时间改为下午6点
+				/* $scope.$on("afterLoadEvent",function(event,data){
+					if("${param.startTime}") {
+						var start = ${param.startTime}-8*60*60*1000;
+						if(start%86400000 == 57600000) {
+							start += 9*60*60*1000;
+						}
+						data.startTime = new Date(start);
+					}
+					if("${param.endTime}") {
+						var end = ${param.endTime}-8*60*60*1000;
+						if(end%86400000 == 57600000) {
+							end -= 6*60*60*1000;
+						}
+						data.endTime = new Date(end);
+					}
+					
+				}); */
+			}]);
+		</script>
+</head>
+
+<body ng-controller="ctrl">
+	<!-- 顶部按钮 -->
+	<div class="panel-heading">
+		<a class="btn btn-primary fa-save" ng-model="data" ab-save="/calendar/schedule/save"><span>保存</span></a> <a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回</a>
+	</div>
+	<form name="form" ng-model="data">
+		<table class="form-table">
+			<tr>
+				<th>标题:</th>
+				<td><input class="form-control" type="text" ng-model="data.title" ab-validate="{required:true}" /></td>
+			</tr>
+			<tr>
+				<th>类型:</th>
+				<td><select class="form-control" type="text" ng-model="data.type" ab-validate="{required:true,maxlength:192}">
+						<option value=""></option>
+						<option value="single">个人日程待办</option>
+						<option value="share">共同完成的待办任务</option>
+						<option value="ilka">每个人均需要完成的待办任务</option>
+				</select></td>
+			</tr>
+			<tr ng-if="data.type == 'share' || data.type == 'ilka'">
+				<th>参与者:</th>
+				<td><input id="participant" class="form-control" type="text" ng-model="data.participantNames" ab-validate="{required:false}" readonly="readonly" /> <span class="btn  btn-sm btn-primary fa" ng-click="openCustom()">选择</span></td>
+			</tr>
+			<tr>
+				<th>开始日期:</th>
+				<td><input  class="form-control" type="text" ng-model="data.startTime" ab-date="yyyy-MM-dd HH:mm:ss" ab-validate="{required:true}" /></td>
+			</tr>
+			<tr>
+				<th>结束日期:</th>
+				<td><input  class="form-control" type="text" ng-model="data.endTime" ab-date="yyyy-MM-dd HH:mm:ss" ab-validate="{required:true}" /></td>
+			</tr>
+			<tr>
+				<th>描述:</th>
+				<td><textarea class="form-control" type="text"  ng-model="data.remark" ab-validate="{required:false}"> </textarea> </td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

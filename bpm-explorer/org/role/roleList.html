@@ -1,0 +1,73 @@
+<html>
+<head>
+<title>角色管理</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body class="panel-body">
+	<div class="panel panel-default search-panel">
+         <div class="panel-heading">查询条件
+         	<a　href="javascript:void(0)" class="pull-right">　<i class="fa  fa-angle-double-up" toggle-collapse="#searchForm"></i> </a>
+         </div>
+         <div class="panel-body">
+             <form id="searchForm" class="form-horizontal">
+                 <div class="form-group">
+                     <label class="control-label col-sm-1" for="name_^VLK">角色名称</label>
+                     <div class="col-sm-2">
+                         <input type="text" class="form-control" id="name_^VLK">
+                     </div>
+                     <label class="control-label col-sm-1" for="alias_^VLK">角色别名</label>
+                     <div class="col-sm-2">
+                    	 <input class="form-control" type="text" id="alias_^VLK">
+                     </div> 
+                     <label class="control-label col-sm-1" for="enabled_^VLK">状态</label>
+                     <div class="col-sm-2">
+                    	 <select class="form-control" id="enabled_^VLK">
+						   	<option value="">全部</option>
+						  	<option value="0">禁用</option>
+						   	<option value="1">启用</option>
+						</select>
+                     </div>
+                     <div class="col-sm-3" style="text-align:left;">
+                         <button type="button" style="margin-left:50px" class="btn btn-primary fa-search">查询</button>
+                         <button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+                     </div>
+                 </div>
+             </form>
+         </div>
+     </div>
+	<div class="btn-group toolbar">
+		<button class="btn btn-outline btn-primary fa-plus" openDialog="新增参数" url="roleEdit.html">新增 </button>
+    </div>
+	<table ab-grid data-id-field="id" data-url="/org/role/listJson">
+         <thead>
+         <tr>
+             <th data-checkbox="true">ID</th>
+             <th data-field="name">角色名称</th>
+             <th data-field="alias" >角色别名</th>
+             <th data-field="enabled" data-sort='enabled_' data-formatter="labelFormatter"  data-value-style="1-启用-primary,0-禁用-danger">状态</th>
+             <th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+             	<a class='btn btn-outline btn-primary fa fa-edit' openDialog='编辑' qtip='编辑' url='roleEdit.html?id={id}'></a>
+			<!-- 	<a class='btn btn-outline btn-primary fa fa-detail' openDialog='明细' qtip='明细' url='roleGet.html?id={id}'></a> -->
+				<a class='btn btn-outline btn-primary fa fa-wrench'   qtip='资源分配' onclick="assignRoleRes('{id}')"></a>
+				<a class='btn btn-outline btn-primary fa fa-users' openDialog='分配用户' qtip='分配用户' url='roleUserList.html?roleId={id}'></a>
+				<a class='btn btn-outline btn-primary fa fa-trash' sendAction='删除' qtip='删除' url='/org/role/remove?id={id}'></a>
+             </th>
+         </tr>
+         </thead>
+     </table>
+</body>
+</html>
+<script>
+	function assignRoleRes(roleId){
+		var conf = { height:600,width:800,
+			    url:"/sys/sysResource/sysResourceRole.html?roleId="+roleId,
+			    title:"角色资源分配",
+			    width : 400,
+			    height : 600,
+			    btn:false
+			};
+		 $.Dialog.open(conf);
+	}
+</script>

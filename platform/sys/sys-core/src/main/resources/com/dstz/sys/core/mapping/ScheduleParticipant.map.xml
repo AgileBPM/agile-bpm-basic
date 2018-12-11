@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.ScheduleParticipantDao">
+	<resultMap id="ScheduleParticipant" type="com.dstz.sys.api.model.calendar.ScheduleParticipant">
+		<id property="id" column="id_" jdbcType="VARCHAR"/>
+		<result property="scheduleId" column="schedule_id_" jdbcType="VARCHAR"/>
+		<result property="participantorName" column="participantor_name_" jdbcType="VARCHAR"/>
+		<result property="participantor" column="participantor_" jdbcType="VARCHAR"/>
+		<result property="rateProgress" column="rate_progress_" jdbcType="NUMERIC"/>
+		<result property="submitComment" column="submit_comment_" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+		<result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+		<result property="actualStartTime" column="actual_start_time_" jdbcType="TIMESTAMP"/>
+		<result property="completeTime" column="complete_time_" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<insert id="create" parameterType="com.dstz.sys.api.model.calendar.ScheduleParticipant">
+		INSERT INTO c_schedule_participant
+		(id_,schedule_id_,participantor_name_,participantor_,rate_progress_,submit_comment_,create_time_,update_time_,actual_start_time_,complete_time_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{scheduleId,jdbcType=VARCHAR}, #{participantorName,jdbcType=VARCHAR}, #{participantor,jdbcType=VARCHAR}, #{rateProgress,jdbcType=NUMERIC}, #{submitComment,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{actualStartTime,jdbcType=TIMESTAMP}, #{completeTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<select id="get"   parameterType="java.lang.String" resultMap="ScheduleParticipant">
+		SELECT * FROM c_schedule_participant 
+		WHERE 
+		id_=#{id}
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultMap="ScheduleParticipant">
+		SELECT * FROM c_schedule_participant
+		<where>
+			<if test="whereSql!=null">
+				${whereSql}
+			</if>
+		</where>
+		<if test="orderBySql!=null">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="orderBySql==null">
+			ORDER BY id_ DESC
+		</if>
+	</select>
+	
+	<update id="update" parameterType="com.dstz.sys.api.model.calendar.ScheduleParticipant">
+		UPDATE c_schedule_participant SET
+		schedule_id_=#{scheduleId,jdbcType=VARCHAR},
+		participantor_name_=#{participantorName,jdbcType=VARCHAR},
+		participantor_=#{participantor,jdbcType=VARCHAR},
+		rate_progress_=#{rateProgress,jdbcType=NUMERIC},
+		submit_comment_=#{submitComment,jdbcType=VARCHAR},
+		create_time_=#{createTime,jdbcType=TIMESTAMP},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		actual_start_time_=#{actualStartTime,jdbcType=TIMESTAMP},
+		complete_time_=#{completeTime,jdbcType=TIMESTAMP}
+		WHERE
+		id_=#{id}
+	</update>
+	
+	<delete id="remove" parameterType="java.lang.String">
+		DELETE FROM c_schedule_participant 
+		WHERE
+		id_=#{id}
+	</delete>
+	
+	<delete id="delByMainId">
+	    DELETE FROM c_schedule_participant
+	    WHERE
+	    schedule_id_=#{scheduleId}
+	</delete>    
+	
+	<select id="getScheduleParticipantList" resultMap="ScheduleParticipant">
+	    SELECT *
+	    FROM c_schedule_participant 
+	    WHERE schedule_id_=#{scheduleId}
+	</select>
+	
+	<select id="getByName" resultMap="ScheduleParticipant">
+	    SELECT *
+	    FROM c_schedule_participant 
+	    WHERE participantor_name_=#{name,jdbcType=VARCHAR}
+	</select>
+	
+</mapper>

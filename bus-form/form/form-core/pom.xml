@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>form</artifactId>
+        <groupId>com.dstz.agilebpm</groupId>
+        <version>1.2.6</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>form-core</artifactId>
+    <dependencies>
+
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>form-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>bus-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>sys-api</artifactId>
+        </dependency>
+		
+		<!-- 专门针对html -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.8.1</version>
+		</dependency>
+		
+    </dependencies>
+</project>

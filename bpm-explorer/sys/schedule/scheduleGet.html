@@ -1,0 +1,115 @@
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		<script type="text/javascript">
+			var app = angular.module('app', ['baseDirective']);
+			app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
+				//
+			}]);
+		</script>
+	</head>
+	<body class="panel" ng-controller="ctrl">
+		<!-- 顶部按钮 -->
+		<div class="panel-heading">
+			<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回</a>	
+		</div>
+		<form name="form" ab-load="/calendar/schedule/get?id={id}"  ng-model="data">
+		<table class="form-table">
+					<tr>								
+						<th>标题:</th>
+						<td> {{data.title }}</td>
+					</tr>
+					<tr>								
+						<th>描述:</th>
+						<td> {{data.remark }}</td>
+					</tr>
+					<tr>								
+						<th>任务连接:</th>
+						<td> {{data.taskUrl }}</td>
+					</tr>
+					<tr>								
+						<th>类型:</th>
+						<td> {{data.type == "single" ? "个人" : data.type == "share" ? "共享" : "共同完成" }}</td>
+					</tr>
+					<tr>								
+						<th>所属人姓名:</th>
+						<td> {{data.ownerName }}</td>
+					</tr>
+					<tr>								
+						<th>参与者:</th>
+						<td> {{data.participantNames }}</td>
+					</tr>
+					<tr>								
+						<th>开始日期:</th>
+						<td> {{data.startTime | date :'yyyy-MM-dd hh:mm:ss'}}</td>
+					</tr>
+					<tr>								
+						<th>结束日期:</th>
+						<td> {{data.endTime | date :'yyyy-MM-dd hh:mm:ss'}}</td>
+					</tr>
+					<tr>								
+						<th>实际开始日期:</th>
+						<td> {{data.actualStartTime | date :'yyyy-MM-dd hh:mm:ss'}}</td>
+					</tr>
+					<tr>								
+						<th>完成时间:</th>
+						<td> {{data.completeTime | date :'yyyy-MM-dd hh:mm:ss'}}</td>
+					</tr>
+					<tr>								
+						<th>进度:</th>
+						<td> {{data.rateProgress }}</td>
+					</tr>
+					<tr>								
+						<th>提交人姓名:</th>
+						<td> {{data.submitNamer }}</td>
+					</tr>
+					<tr>								
+						<th>锁定:</th>
+						<td> {{data.isLock == 0 ? "否" : "是"}}</td>
+					</tr>
+					<tr>								
+						<th>创建时间:</th>
+						<td> {{data.createTime | date :'yyyy-MM-dd hh:mm:ss'}}</td>
+					</tr>
+					<tr>								
+						<th>创建人:</th>
+						<td> {{data.createBy }}</td>
+					</tr>
+		</table>
+			<table class="form-table" cellspacing="0" ng-if="(data.type == 'share' || data.type == 'ilka') && data.participantNames.length > 0">
+				<tr>
+					<td colspan="9" style="font-size:15px">
+						日程参与者详细信息
+					</td>
+				</tr>
+				<tr>
+						<th>参与者名字</th>
+						<th>完成比例</th>
+						<th>提交注释</th>
+						<th>实际开始时间</th>
+						<th>实际完成时间</th>
+				</tr>
+				<tr ng-repeat="item in data.scheduleParticipantList track by $index">
+						<td>
+							{{item.participantorName}}
+						</td>
+						<td>
+							{{item.rateProgress}}
+						</td>
+						<td>
+							{{item.submitComment}}
+						</td>
+						<td>
+							{{item.actualStartTime |date :'yyyy-MM-dd hh:mm:ss'}}
+						</td>
+						<td>
+							{{item.completeTime |date :'yyyy-MM-dd hh:mm:ss'}}
+						</td>
+				</tr>
+			</table>
+		
+		</form>
+	</body>
+</html>

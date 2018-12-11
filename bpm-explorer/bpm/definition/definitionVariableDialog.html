@@ -1,0 +1,108 @@
+<html ng-app="app">
+<head>
+<title>脚本选择器</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+<script type="text/javascript">
+
+	var app = angular.module('app', [ 'baseDirective']);
+	app.controller("ctrl", [ '$scope', 'baseService', function(scope, baseService) {
+		scope.variable = passData.variable;
+		scope.variableList = passData.variableList;
+		
+		
+		scope.valid = function(includeForm){
+			
+			if (!AngularUtil.getScope().form.$valid && includeForm){
+				$.Dialog.warning("表单校验未通过！");
+				return false;
+			}
+			if(scope.variable.isUpdate){
+				return true;
+			}
+			
+			for(var i=0,v;v=scope.variableList[i++];){
+				if(v.key==scope.variable.key){
+					$.Dialog.error("流程定义KEY必须在当前流程中唯一！");
+					return false
+				}
+			}
+			
+			return true;
+		}
+	} ]);
+	 
+	function getData(){
+		if(!AngularUtil.getScope().valid(true))return false;
+			
+		return AngularUtil.getScope().variable;
+	}
+	
+</script>
+</head>
+<body ng-controller="ctrl">
+  <form name="form">
+		<table class="form-table">
+			<tr>
+				<th>
+					<span>变量名:</span>
+					<span class="required">*</span>
+				</th>
+				<td>
+					<input type="text" ng-model="variable.name" class="form-control" ab-validate="{required:true,maxlength:192}" />
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>变量Key:</span>
+				</th>
+				<td>
+					<input type="text" ng-blur="valid()" ng-readonly="variable.isUpdate" ng-model="variable.key" class="form-control" ab-validate="{required:true,maxlength:192}" />
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>数据类型:</span>
+				</th>
+				<td>
+					<select ng-model="variable.dataType" class="form-control">
+						<option value="string">字符串</option>
+						<option value="int">整形</option>
+						<option value="float">浮点型</option>
+						<option value="double">双精度</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>是否必须:</span>
+				</th>
+				<td>
+					<select ng-model=" variable.isRequired" class="form-control">
+						<option value="true">是</option>
+						<option value="false">否</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>缺省值:</span>
+				</th>
+				<td>
+					<input type="text" ng-model="variable.defaultVal" class="form-control"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>变量描述:</span>
+				</th>
+				<td>
+					<textarea type="text" ng-model="variable.desc" class="form-control" ></textarea>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

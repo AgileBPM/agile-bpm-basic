@@ -1,0 +1,26 @@
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	</head>
+	<body class="panel success">
+		<!-- 顶部按钮 -->
+		<div class="panel-heading">
+			<a class="btn btn-primary fa-save" ng-model="data" ab-save="/org/groupRelation/save"> 保存 </a>
+			<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回 </a>
+		</div>
+		<form name="form" ab-load="/org/groupRelation/getJson?id={id}" ng-model="data">
+		<table class="form-table"   cellspacing="0">
+					<tr>								
+						<th><span>岗位名称:</span></th>
+						<td> {{data.relName }}</td>
+					</tr>
+					<tr>								
+						<th><span>岗位编码:</span></th>
+						<td> {{data.relCode }}</td>
+					</tr>
+		</table>
+		</form>
+	</body>
+</html>

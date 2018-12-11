@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.SysDataSourceDefDao">
+    <resultMap id="SysDataSourceDef" type="com.dstz.sys.core.model.SysDataSourceDef">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="classPath" column="class_path_" jdbcType="VARCHAR"/>
+        <result property="attributesJson" column="attributes_json_" jdbcType="CLOB"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.SysDataSourceDef">
+		INSERT INTO sys_data_source_def
+		(id_,name_,class_path_,attributes_json_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{classPath,jdbcType=VARCHAR}, #{attributesJson,jdbcType=CLOB})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="SysDataSourceDef">
+		SELECT * FROM sys_data_source_def 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="SysDataSourceDef">
+        SELECT * FROM sys_data_source_def
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.sys.core.model.SysDataSourceDef">
+		UPDATE sys_data_source_def SET
+		name_=#{name,jdbcType=VARCHAR},
+		class_path_=#{classPath,jdbcType=VARCHAR},
+		attributes_json_=#{attributesJson,jdbcType=CLOB}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM sys_data_source_def 
+		WHERE
+		id_=#{id}
+	</delete>
+
+
+</mapper>

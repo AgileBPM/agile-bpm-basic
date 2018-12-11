@@ -1,0 +1,60 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+<script type="text/javascript">
+	var type = $.getParam("type")
+	var app = angular.module('app', [ 'baseDirective' ]);
+	app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', function($scope, baseService, ArrayToolService) {
+		$scope.ArrayTool = ArrayToolService;
+		$scope.init = function() {
+			$scope.parentScope = window.passData.parentScope;
+			//获取bo信息
+			var url = __ctx + "/form/formDef/templateData?boKey=" + $scope.parentScope.data.boKey+"&type="+type;
+			var defer = baseService.post(url, {});
+			$.getResultData(defer, function(data) {
+				$scope.data = data;
+			});
+		};
+
+		//生成html
+		$scope.createHtml = function() {
+			var url = __ctx + "/form/formDef/createHtml?boKey=" + $scope.parentScope.data.boKey;
+			var defer = baseService.post(url, $scope.data);
+			$.getResultData(defer, function(data) {
+				$scope.parentScope.$apply(function() {
+					$scope.parentScope.data.html = data;
+				});
+				$.Dialog.close(window);
+			});
+		};
+	} ]);
+
+	function createHtml() {
+		AngularUtil.getScope().createHtml();
+	}
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<form name="form">
+		<table class="form-table">
+			<tr>
+				<th>表名</th>
+				<th>类型</th>
+				<th>模板</th>
+			</tr>
+			<tr ng-repeat="item in data" ng-if="item.typeDesc!='一对一'">
+				<td>{{item.tableComment}}
+				</th>
+				<td>{{item.typeDesc}}</td>
+				<td>
+					<select class="form-control" ng-model="item.templateKey" ng-options="m.key as m.name for m in item.templates" ng-init="">
+					</select>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

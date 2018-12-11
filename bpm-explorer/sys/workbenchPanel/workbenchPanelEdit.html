@@ -1,0 +1,143 @@
+<!doctype html>
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		<script type="text/javascript">
+
+		var app = angular.module('app', ['baseDirective',]);
+		app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
+			
+			$scope.selectQuery = function(){
+				CustomDialog.openCustomDialog('custQueryDialog',function(data,dialog){
+					$scope.$apply(function(){
+						$scope.data.dataSource = data[0].alias;
+					})
+				    dialog.dialog('close');
+				},{selectNum:1});
+			}
+			
+			
+			$scope.selectTemp = function(){
+				CustomDialog.openCustomDialog('workbenchPanelTempl',function(data,dialog){
+					$scope.$apply(function(){
+						$scope.data.type = data[0].key;
+						
+						$scope.data.displayContent = data[0].html.replaceAll("data-alias",$scope.data.alias);
+					})
+				    dialog.dialog('close');
+				},{selectNum:1});
+			}
+			
+			$scope.preview = function(){
+				var conf = {  
+					    url:"/sys/workbenchPanel/workbenchPrew.html",
+					    title:"预览",
+					    passData:$scope.data
+					};
+				$.Dialog.open(conf); 
+			}
+			
+			$scope.typeChange = function(){
+				if($scope.data.dataType =='iframe'){
+					$scope.data.type = "iframe";
+				}
+				
+			}
+		}]);
+		
+		</script>
+	</head>
+	<body ng-controller="ctrl">
+			<!-- 顶部按钮 -->
+			<div class="toolbar-panel">
+				<div class="buttons">
+					<a class="btn btn-primary fa-save" ng-model="data" ab-save="/sys/workbenchPanel/save" use-default-after-save-event="true"><span>保存</span></a>
+					<a class="btn btn-primary fa-back" onClick="$.Dialog.close();"><span>返回</span></a>
+					<a class="btn btn-primary fa-eye" ng-click="preview()"><span>调试预览</span></a>
+				</div>
+			</div>
+			<form name="form" method="post" ab-load="/sys/workbenchPanel/get?id={id}"  ng-model="data">
+				<table class="form-table"  cellspacing="0" >
+							<tr>								
+								<th>名字:<span class="required">*</span></th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.name"   ab-validate="{required:true,maxlength:765}"  />
+								</td>								
+								<th>别名:<span class="required">*</span></th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.alias"   ab-validate="{required:true,maxlength:765}"  />
+								</td>								
+							</tr>
+							<tr>								
+								<th>数据类型:</th>
+								<td>
+									<select ng-model="data.dataType" class="form-control" ng-change="typeChange()" ng-init="data.type?'':data.dataType='custQuery'" >
+										<option value="interface">接口</option>
+									<!-- 	<option value="custQuery">自定义查询</option> -->
+										<option value="iframe">iframe</option>
+									</select>
+								</td>								
+								<th>数据来源:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.dataSource" style="width: 300px" ab-validate="{required:false,maxlength:765}"  />
+									<p class="text-muted" ng-if="data.dataType=='interface'">spring 环境中 service接口 eg:userService.getUserInfo</p>
+									<p class="text-muted" ng-if="data.dataType=='iframe'">填写一个系统URL连接，可以忽略展示内容，若以http开头则不会添加ctx信息</p>
+									<a class="btn btn-primary" ng-if="data.dataType=='custQuery'" ng-click="selectQuery()"><span>选择</span></a>
+								</td>								
+							</tr>
+							<tr>								
+								<th>宽:</th>
+								<td>
+									<select ng-model="data.width" class="form-control" ab-validate="{required:true,number:true,maxIntLen:10}" 
+											ng-init="data.width?'':data.width=6">
+										<option value="">请选择屏幕占比</option>
+										<option value="25">25%</option>
+										<option value="50">50%</option>
+										<option value="75">75%</option>
+										<option value="100">100%</option>
+									</select>
+								</td>								
+								<th>高:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.height"   ab-validate="{required:false,number:true,maxIntLen:10}"  />px
+								</td>								
+							</tr>
+							<tr>								
+								<th>更多链接:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.moreUrl"   ab-validate="{required:false,maxlength:765}"  />
+								</td>
+								<th>自动刷新时间间隔:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.autoRefresh"  placeholder="默认不刷新，单位秒" ab-validate="{required:false,number:true,maxIntLen:10}"  />
+								</td>
+							</tr>
+							<tr>								
+								<th>类型:</th>
+								<td colspan="3">
+									<input class="form-control" type="text" ng-model="data.type" disabled="disabled" ng-init="data.type?'':data.type='basic'" /> 
+									<a class="btn btn-primary" ng-click="selectTemp()" ng-if="data.dataType!='iframe'"><span>选择</span></a>
+									<span class="text-muted">不同的类型对应不同的展示内容模板 </span>
+								</td>								
+							</tr>
+							<tr>								
+								<th>描述:</th>
+								<td colspan="3">
+									<textarea rows="2" cols="50" ng-model="data.desc" ></textarea>
+								</td>								
+							</tr>
+							<tr ng-if="data.dataType!='iframe'">								
+								<th>展示内容:</th>
+								<td colspan="3">
+									<textarea rows="10" cols="100" ng-model="data.displayContent" ></textarea>
+								</td>								
+							</tr>
+				</table>
+				
+				
+			</form>
+		
+	</body>
+</html>

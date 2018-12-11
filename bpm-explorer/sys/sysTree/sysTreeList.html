@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>系统数据源模板</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/gridList.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body class="panel-body">
+	<div class="panel panel-default search-panel">
+		<div class="panel-heading">
+			查询条件
+			<a 　href="javascript:void(0)" class="pull-right">
+				<i class="fa  fa-angle-double-up" toggle-collapse="#searchForm"></i>
+			</a>
+		</div>
+		<div class="panel-body">
+			<form id="searchForm" class="form-horizontal">
+				<div class="form-group">
+					<label class="control-label col-sm-1" for="name_^VLK">名称</label>
+					<div class="col-sm-2">
+						<input type="text" class="form-control" id="name_^VLK">
+					</div>
+					<div class="col-sm-3" style="text-align: left;">
+						<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+						<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="btn-group toolbar">
+		<button class="btn btn-outline btn-primary fa-plus" openDialog="新增" url="sysTreeEdit">新增</button>
+	</div>
+	<table ab-grid data-id-field="id" data-url="/sys/sysTree/listJson">
+		<thead>
+			<tr>
+				<th data-checkbox="true">ID</th>
+				<th data-field="name">名称</th>
+				<th data-field="key">别名</th>
+				<th data-field="system" data-formatter="labelFormatter" data-val-text="{'true':'是','false':'否'}" data-val-style="{'false':'primary','true':'warning'}">系统内置</th>
+				<th data-formatter="innerHtmlFormatter" data-title="管理">
+					<span class='btn btn-outline btn-primary fa-edit' openDialog='编辑' qtip='编辑' url='./sysTreeEdit.html?id={id}'></span>
+					<span class='btn btn-outline btn-primary fa  fa-trash' sendAction='删除' qtip='删除'  url='/sys/sysTree/remove?id={id}'></span>
+				</th>
+			</tr>
+		</thead>
+	</table>
+</body>
+</html>

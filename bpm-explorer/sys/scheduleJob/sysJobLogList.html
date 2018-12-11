@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>执行日志</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="../../build/common/gridList.css" rel="stylesheet">
+    <script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body>
+
+<div class="panel panel-default search-panel">
+    <table ab-grid data-id-field="id" data-url="/sys/scheduleJob/log/list?jobId={id}">
+        <thead>
+        <tr>
+            <th data-checkbox="true">ID</th>
+            <th data-field="runState" data-formatter="labelFormatter" data-value-style="SUC-成功-success,FAIL-失败-danger," >执行状态</th>
+            <th data-field="runMs">执行耗时(ms)</th>
+            <th data-field="startTime">执行启动时间</th>
+            <th data-field="endTime">执行结束时间</th>
+            <th data-field="script" data-title="管理" data-formatter="innerHtmlFormatter">
+                <span if="'{runState}' == 'FAIL'" class='btn btn-outline btn-primary fa fa-street-view' openDialog="详细" qtip='详细' url="sysJobLogView.html?id={id}"></span>
+            </th>
+        </tr>
+        </thead>
+    </table>
+
+</div>
+
+</body>
+</html>

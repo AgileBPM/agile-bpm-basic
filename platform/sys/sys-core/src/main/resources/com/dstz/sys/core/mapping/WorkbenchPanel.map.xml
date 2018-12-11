@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.WorkbenchPanelDao">
+    <resultMap id="WorkbenchPanel" type="com.dstz.sys.core.model.WorkbenchPanel">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="alias" column="alias_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="type" column="type_" jdbcType="VARCHAR"/>
+        <result property="desc" column="desc_" jdbcType="VARCHAR"/>
+        <result property="dataType" column="data_type_" jdbcType="VARCHAR"/>
+        <result property="dataSource" column="data_source_" jdbcType="VARCHAR"/>
+        <result property="autoRefresh" column="auto_refresh_" jdbcType="NUMERIC"/>
+        <result property="width" column="width_" jdbcType="NUMERIC"/>
+        <result property="height" column="height_" jdbcType="NUMERIC"/>
+        <result property="displayContent" column="display_content_" jdbcType="VARCHAR"/>
+        <result property="moreUrl" column="more_url_" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+        <result property="deleteFlag" column="delete_flag_" jdbcType="VARCHAR"/>
+
+        <result property="custWidth" column="cust_width_" jdbcType="NUMERIC"/>
+        <result property="custHeight" column="cust_height_" jdbcType="NUMERIC"/>
+        <result property="custLayOutId" column="custLayOutId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.WorkbenchPanel">
+		INSERT INTO sys_workbench_panel
+		(id_,alias_,name_,type_,desc_,data_type_,data_source_,auto_refresh_,width_,height_,display_content_,more_url_,create_time_,create_by_,update_time_,update_by_,delete_flag_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{dataType,jdbcType=VARCHAR}, #{dataSource,jdbcType=VARCHAR}, #{autoRefresh,jdbcType=NUMERIC}, #{width,jdbcType=NUMERIC}, #{height,jdbcType=NUMERIC}, #{displayContent,jdbcType=CLOB}, #{moreUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="WorkbenchPanel">
+		SELECT * FROM sys_workbench_panel 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="WorkbenchPanel">
+        SELECT * FROM sys_workbench_panel
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.sys.core.model.WorkbenchPanel">
+		UPDATE sys_workbench_panel SET
+		alias_=#{alias,jdbcType=VARCHAR},
+		name_=#{name,jdbcType=VARCHAR},
+		type_=#{type,jdbcType=VARCHAR},
+		desc_=#{desc,jdbcType=VARCHAR},
+		data_type_=#{dataType,jdbcType=VARCHAR},
+		data_source_=#{dataSource,jdbcType=VARCHAR},
+		auto_refresh_=#{autoRefresh,jdbcType=NUMERIC},
+		width_=#{width,jdbcType=NUMERIC},
+		height_=#{height,jdbcType=NUMERIC},
+		display_content_=#{displayContent,jdbcType=CLOB},
+		more_url_=#{moreUrl,jdbcType=VARCHAR},
+		create_time_=#{createTime,jdbcType=TIMESTAMP},
+		create_by_=#{createBy,jdbcType=VARCHAR},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		update_by_=#{updateBy,jdbcType=VARCHAR},
+		delete_flag_=#{deleteFlag,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM sys_workbench_panel 
+		WHERE
+		id_=#{id}
+	</delete>
+
+    <select id="getBylayoutKey" parameterType="java.lang.String" resultMap="WorkbenchPanel">
+		 select DISTINCT * from (SELECT l.sn_, p.id_,p.alias_,p.name_,p.type_,p.desc_,p.data_type_,p.data_source_,p.auto_refresh_,p.width_,p.height_,
+		 <if test='dbType=="oracle"'>to_char(p.display_content_) display_content_, </if> 
+		 <if test='dbType!="oracle"'>p.display_content_,</if>
+		 p.more_url_,l.cust_width_,l.cust_height_,l.id_ as custLayOutId
+		FROM sys_workbench_panel p inner join sys_workbench_layout l on p.id_ = l.panel_id_
+		WHERE l.user_id_ = #{layoutKey}
+		)t  order by sn_
+	</select>
+
+    <select id="getByUser" parameterType="java.lang.String" resultMap="WorkbenchPanel">
+		select DISTINCT * from ( SELECT  l.sn_, p.id_,p.alias_,p.name_,p.type_,p.desc_,p.data_type_,p.data_source_,p.auto_refresh_,p.width_,p.height_,
+		<if test='dbType=="oracle"'>to_char(p.display_content_) display_content_, </if> 
+		<if test='dbType!="oracle"'>p.display_content_,</if>
+		p.more_url_,l.cust_width_,l.cust_height_,l.id_ as custLayOutId
+		FROM sys_workbench_panel p inner join sys_workbench_layout l on p.id_ = l.panel_id_
+	    ${rightsSql}
+		where l.user_id_ = #{userId} )t   order by sn_
+	</select>
+
+    <select id="getUsablePanelsByUserRight" parameterType="java.util.Map" resultMap="WorkbenchPanel">
+        SELECT DISTINCT panel.* FROM sys_workbench_panel panel ${rightsSql}
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+    </select>
+</mapper>

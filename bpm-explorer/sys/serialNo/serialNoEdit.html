@@ -1,0 +1,110 @@
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+		<script type="text/javascript">
+		var app = angular.module('app', ['baseDirective']);
+		app.controller("SerialNoController", [ '$scope', 'baseService', 'ArrayToolService', function($scope, baseService, ArrayTool) {
+			$scope.ArrayTool = ArrayTool;
+			$scope.serialNo={"genType":"1","step":"1","initValue":"1","noLength":"5","regulation":"{yyyy}{MM}{DD}{NO}"};
+		} ]);
+		
+		function preview(){
+			var alias = ngUtil.getScope().serialNo.alias;
+			$.post(__ctx+"/sys/serialNo/preview?alias="+alias,{},function(data){
+				var data = JSON.parse(data);
+				var str = "请保存后预览";
+				for(var i=0,no;no=data[i++];){
+					str = str + "<br>" + no.curIdenValue;
+				}
+				$.Dialog.alert(str,1);
+			})
+		}
+		</script>
+	</head>
+	<body  ng-controller="SerialNoController" class="panel">
+			<!-- 顶部按钮 -->
+			<div class="panel-heading">
+				<div class="buttons">	      
+					<a href="javascript:void(0)" class="btn btn-primary fa-save btn-sm" ng-model="serialNo" ab-save="/sys/serialNo/save" use-default-after-save-event="true">保存</a>
+					<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回</a>	
+					<a ng-if="serialNo.id" class="btn  btn-primary fa-eye" onClick="preview()"><span>预览</span></a>		
+				</div>
+			</div>
+			<form  name="form" ab-load="/sys/serialNo/getById?id={id}" ng-model="serialNo">
+				<table class="form-table">
+						<tr>
+				    		<th>流水号名称:<span class="required">*</span></th>
+				    		<td>
+					    		<input ng-model="serialNo.name" type="text" class="form-control" ht-validate="{required:true}"  />
+				    		</td>
+		    			</tr>
+		    			<tr>
+				    		<th>流水号别名:<span class="required">*</span></th>
+				    		<td>
+					    		<input  ng-model="serialNo.alias" type="text" class="form-control" ab-pinyin="serialNo.name" ht-validate="{'required':true,'varirule':true}"  placeholder="请输入流水号别名" />
+				    			
+				    		</td>
+		    			</tr>
+		    			<tr>
+				    		<th>流水号规则:<span class="required">*</span></th>
+				    		<td>
+					    		<input  ng-model="serialNo.regulation" type="text" class="form-control" ht-validate="{'required':true}"/>
+				    			<ul><li >{yyyy}{MM}{dd}{NO}</li>
+				        	 			<li >{yyyy}:表示年份</li>
+				        	 			<li >{MM}  :表示月份，如果月份小于10，则加零补齐，如1月份表示为01。</li>
+				        	 			<li >{mm}  :表示月份，月份不补齐，如1月份表示为1。</li>
+				        	 			<li >{DD}  :表示日，如果小于10号，则加零补齐，如1号表示为01。</li>
+				        	 			<li >{dd}  :表示日，日期不补齐，如1号表示为1。</li>
+				        	 			<li >{NO}  :表示流水号，前面补零。</li>
+				        	 			<li >{no}  :表示流水号，后面补零。</li>
+				        	 		</ul>
+				    		</td>
+		    			</tr>
+		    			<tr>
+				    		<th >生成类型:<span class="required">*</span></th>
+				    		<td >
+								<input type="radio" id="genType_everyDay" ng-model="serialNo.genType" value="1"><label for="genType_everyDay">每天生成</label>
+								
+								<input type="radio" id="genType_increase" ng-model="serialNo.genType" value="0"><label for="genType_increase">递增</label>
+								<br>
+									流水号生成规则：
+									<ul>
+										<li >1.每天生成。每天从初始值开始计数。</li>
+										<li >2.递增，流水号一直增加。</li>
+									</ul>
+				    		</td>
+		    			</tr>
+		    			<tr>
+				    		<th >流水号长度:<span class="required">*</span></th>
+				    		<td >
+					    		<input ng-model="serialNo.noLength" type="text" class="form-control" ht-validate='{"required":true,"number":true}'/>
+				    			<br>
+									<li >这个长度表示当前流水号的长度数，只包括流水号部分{NO},如果长度为5，当前流水号为5，则在流水号前补4个0，表示为00005。</li>
+									<li >{no}如果长度为5，当前流水号为501，则在流水号后面补5个0，表示为50100000，如果长度为1，则流水号一直递增。</li>
+				    		</td>
+				    		
+		    			</tr>
+		    			<tr>
+				    		<th >初始值:<span class="required">*</span></th>
+				    		<td >
+					    		<input ng-model="serialNo.initValue" type="text" class="form-control" ht-validate='{"required":true,"number":true}'/>
+				    		<br>
+									<li >这个初始值表示流水号部分{NO}的初始值。如 2015102700001,初始值为1，则流水号部分的初始值为00001</li>
+				    		</td>
+		    			</tr>
+		    			<tr>
+				    		<th >步长:<span class="required">*</span></th>
+				    		<td >
+					    		<input  ng-model="serialNo.step" type="text" class="form-control" ht-validate='{"required":true,"number":true}'/>
+				    		<br>
+								<li>流水号每次递加的数字，默认步长为1。比如步长为2，则每次获取流水号则在原来的基础上加2。</li>
+				    		</td>
+		    			</tr>
+				</table>
+			</form>
+		</div>
+	</body>
+</html>

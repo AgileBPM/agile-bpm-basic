@@ -1,0 +1,24 @@
+<!doctype html>
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		<script type="text/javascript">
+			var ComplateController = ['$scope','baseService',function($scope,baseService){
+				scope.flowParam = window.passData;
+				
+			}];
+		</script>
+	</head>
+	<body class="panel success" ng-controller="ComplateController">
+			<table class="form-table">
+				<tr>								
+					<th><span>意见:</span><span class="required">*</span></th>
+					<td>
+						 <textarea rows="2" cols="20" class="form-control" ng-model="flowParam.opinion"></textarea>
+					</td>								
+				</tr>
+			</table>
+	</body>
+</html>

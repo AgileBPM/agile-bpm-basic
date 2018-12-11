@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.demo.core.dao.DemoDao">
+	<resultMap id="Demo" type="com.dstz.demo.core.model.Demo">
+		<id property="id" column="id" jdbcType="VARCHAR"/>
+		<result property="mz" column="mz" jdbcType="VARCHAR"/>
+		<result property="ah" column="ah" jdbcType="VARCHAR"/>
+		<result property="xb" column="xb" jdbcType="VARCHAR"/>
+		<result property="bm" column="bm" jdbcType="VARCHAR"/>
+		<result property="bmId" column="bm_id" jdbcType="VARCHAR"/>
+		<result property="zjlx" column="zjlx" jdbcType="VARCHAR"/>
+		<result property="nl" column="nl" jdbcType="NUMERIC"/>
+		<result property="zd1" column="zd1" jdbcType="VARCHAR"/>
+		<result property="zd2" column="zd2" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="create" parameterType="com.dstz.demo.core.model.Demo">
+		INSERT INTO biz_demo
+		(id,mz,ah,xb,bm,bm_id,zjlx,nl,zd1,zd2)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{mz,jdbcType=VARCHAR}, #{ah,jdbcType=VARCHAR}, #{xb,jdbcType=VARCHAR}, #{bm,jdbcType=VARCHAR}, #{bmId,jdbcType=VARCHAR}, #{zjlx,jdbcType=VARCHAR}, #{nl,jdbcType=NUMERIC}, #{zd1,jdbcType=VARCHAR}, #{zd2,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="get"   parameterType="java.lang.String" resultMap="Demo">
+		SELECT * FROM biz_demo 
+		WHERE 
+		id=#{id}
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultMap="Demo">
+		SELECT * FROM biz_demo
+		<where>
+			<if test="whereSql!=null">
+				${whereSql}
+			</if>
+		</where>
+		<if test="orderBySql!=null">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="orderBySql==null">
+			ORDER BY id DESC
+		</if>
+	</select>
+	
+	<update id="update" parameterType="com.dstz.demo.core.model.Demo">
+		UPDATE biz_demo SET
+		mz=#{mz,jdbcType=VARCHAR},
+		ah=#{ah,jdbcType=VARCHAR},
+		xb=#{xb,jdbcType=VARCHAR},
+		bm=#{bm,jdbcType=VARCHAR},
+		bm_id=#{bmId,jdbcType=VARCHAR},
+		zjlx=#{zjlx,jdbcType=VARCHAR},
+		nl=#{nl,jdbcType=NUMERIC},
+		zd1=#{zd1,jdbcType=VARCHAR},
+		zd2=#{zd2,jdbcType=VARCHAR}
+		WHERE
+		id=#{id}
+	</update>
+	
+	<delete id="remove" parameterType="java.lang.String">
+		DELETE FROM biz_demo 
+		WHERE
+		id=#{id}
+	</delete>
+	
+	
+</mapper>

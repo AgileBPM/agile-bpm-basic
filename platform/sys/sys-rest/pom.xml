@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>sys</artifactId>
+        <groupId>com.dstz.agilebpm</groupId>
+        <version>1.2.6</version>
+    </parent>
+    <artifactId>sys-rest</artifactId>
+    <name>sys-rest</name>
+    <dependencies>
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>sys-core</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>base-rest</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+    </dependencies>
+</project>

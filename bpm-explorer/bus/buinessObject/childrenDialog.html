@@ -1,0 +1,94 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/bus/businessObject/editAndDialogCommon.js"></script>
+
+<script type="text/javascript">
+	var app = angular.module('app', [ 'baseDirective' ]);
+	app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', function($scope, baseService, ArrayToolService) {
+		$scope.ArrayTool = ArrayToolService;
+
+		$scope.init = function() {
+			editAndDialogCommon.init($scope, baseService);//初始化公用js
+
+			$scope.data = angular.copy(window.passData);
+			
+			$scope.addTableDetail($scope.data.tableKey);
+			if (!$scope.data.children) {
+				$scope.data.children = [];
+			} else {
+				angular.forEach($scope.data.children, function(item) {
+					$scope.addTableDetail(item.tableKey);
+				});
+			}
+
+			ToolsController.getEnum("com.dstz.bus.api.constant.BusTableRelType").then(function(data) {
+				$scope.$apply(function() {
+					$scope.BusTableRelType = data;
+				});
+			});
+
+			ToolsController.getEnum("com.dstz.bus.api.constant.BusTableRelFkType").then(function(data) {
+				$scope.$apply(function() {
+					$scope.BusTableRelFkType = data;
+				});
+			});
+		};
+
+	} ]);
+
+	//父页面打开按【确定】按钮时的回调函数
+	function getData() {
+		return AngularUtil.getScope().data;
+	}
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<form name="form">
+		 <br/>
+		 <div class="btn-group toolbar">
+		  <a class="btn btn-primary fa-add btn-outline" ng-click="addSubTable(data.children)"> <span>添加子业务实体</span> </a>
+	   	 </div>
+		<table class="table table-hover table-bordered" cellspacing="0">
+			<tr>
+				<th style="width: 150px;">关系类型</th>
+				<th style="width: 180px;">名称</th>
+				<th style="width: 180px;">实体名</th>
+				<th>外键</th>
+				<th> 操作 </th>
+			</tr>
+			<tr ng-repeat="child in data.children">
+				<td>
+					<select class="form-control" ng-model="child.type" ng-options="v.key as v.desc for (k,v) in BusTableRelType">
+					</select>
+				</td>
+				<td>{{child.tableKey}}</td>
+				<td>{{child.tableComment}}</td>
+				<td>
+					<a href="javaScript:void(0)" class="btn btn-xs btn-primary btn-outline fa-add" ng-click="addFk(child.fks)"></a>
+					<div ng-repeat="fk in child.fks">
+						<select ng-model="fk.from" ng-options="m.key as m.comment for m in tableMap[child.tableKey].columns">
+							<option value="">请选择</option>
+						</select>
+						<select ng-model="fk.type" ng-options="v.key as v.desc for (k,v) in BusTableRelFkType">
+						</select>
+						<input ng-if="fk.type=='fixedValue'" type="text" ng-model="fk.value" />
+						<span ng-if="fk.type=='parentField'||fk.type=='childField'">
+							<select ng-model="fk.value" ng-options="m.key as m.comment for m in tableMap[data.tableKey].columns">
+								<option value="">请选择</option>
+							</select>
+						</span>
+						<a href="javaScript:void(0)" class="btn btn-xs btn-primary btn-outline fa-times" ng-click="child.fks.remove(fk)"></a>
+					</div>
+				</td>
+				<td>
+					<a href="javaScript:void(0)" ng-click="ArrayTool.del($index,data.children)" class="btn btn-sm btn-primary btn-outline fa-times"></a>
+					<a href="javaScript:void(0)" ng-click="openChildrenDialog(child)" class="btn btn-sm btn-primary btn-outline fa-edit">配置子表</a>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.SysTreeDao">
+    <resultMap id="SysTree" type="com.dstz.sys.core.model.SysTree">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="key" column="key_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="desc" column="desc_" jdbcType="VARCHAR"/>
+        <result property="system" column="system_" jdbcType="NUMERIC"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.SysTree">
+		INSERT INTO sys_tree
+		(id_,key_,name_,desc_,system_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{system,jdbcType=NUMERIC})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="SysTree">
+		SELECT * FROM sys_tree 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="SysTree">
+        SELECT * FROM sys_tree
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.sys.core.model.SysTree">
+		UPDATE sys_tree SET
+		key_=#{key,jdbcType=VARCHAR},
+		name_=#{name,jdbcType=VARCHAR},
+		desc_=#{desc,jdbcType=VARCHAR},
+		system_=#{system,jdbcType=NUMERIC}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM sys_tree 
+		WHERE
+		id_=#{id}
+	</delete>
+
+
+</mapper>

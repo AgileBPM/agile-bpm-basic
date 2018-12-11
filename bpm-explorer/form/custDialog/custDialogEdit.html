@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html ng-app="app" >
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	<script type="text/javascript" src="../../assets/js/platform/form/custQuery/custQueryService.js"></script>
+	<script type="text/javascript" src="../../assets/js/platform/form/custDialog/custDialogService.js"></script>
+	<script type="text/javascript" src="../../assets/js/platform/form/custDialog/custDialogController.js"></script>
+</head>
+<body ng-controller="CustDialogCtrl" class="panel success">
+	<div class="panel-heading">
+		<a class="btn btn-primary fa-save" ng-click="save()"> 保存 </a>
+		<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回 </a>
+		<a ng-if="prop.objName!=null" ng-click="showSettingDialog();" href="javascript:void(0)" class="btn btn-primary fa fa-edit">设置字段参数返回值</a>
+	</div>
+	<form name="form">
+		<table class="form-table">
+			<tr>
+				<th>
+					名字:
+				</th>
+				<td>
+					<input type="text" id="name" name="name" ng-model="prop.name" class="form-control" ab-validate="{required:true}" />
+				</td>
+
+				<th>
+					<span class="required">*</span>
+					别名:
+				</th>
+				<td>
+					<input type="text" id="alias" name="alias" ab-pinyin="prop.name" ng-model="prop.alias" class="form-control" ab-validate="{required:true}" />
+				</td>
+			</tr>
+
+			<tr>
+				<th>样式:</th>
+				<td>
+					<lable><input value="0" type="radio" ng-model="prop.style" ng-disabled="id" />列表</lable>
+					<lable><input value="1" type="radio" ng-model="prop.style" ng-disabled="id" />树形</lable>
+				</td>
+				<th>尺寸:</th>
+				<td class="form-inline">
+					<lable>宽度:
+					<input type="text" ng-model="prop.width" class="form-control" style="width:80px " /></lable>
+					<lable>高度:
+					<input type="text" ng-model="prop.height" class="form-control" style="width: 80px " /></lable>
+				</td>
+			</tr>
+			<tr ng-if="prop.style=='0'">
+				<th>分页:</th>
+				<td colspan="{{prop.needPage=='1'?1:3}}">
+					<input value="1" type="radio" ng-model="prop.needPage" />
+					是
+					<input value="0" type="radio" ng-model="prop.needPage" />
+					否
+				</td>
+				<th ng-if="prop.needPage=='1'">分页大小:</th>
+				<td ng-if="prop.needPage=='1'">
+					<input type="text" id="pageSize" name="pageSize" ng-model="prop.pageSize" class="form-control" />
+				</td>
+			</tr>
+			<tr>
+				<th>单选多选:</th>
+				<td>
+					<label><input value="1" type="radio" ng-model="prop.selectNum" />单选</label>
+					<label><input value="-1" type="radio" ng-model="prop.selectNum" />多选</label>
+				</td>
+				<th>是否系统内置:</th>
+				<td>
+					<select class="form-control" ng-model="prop.system">
+						<option value="1">是</option>
+						<option value="0">否</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>数据来源</th>
+				<td colspan="3" >
+					<label><input value="interface" type="radio" ng-model="prop.dataSource" />系统服务接口</label>
+					<label><input value="database" type="radio" ng-model="prop.dataSource" />数据库</label>
+				</td>
+			</tr>
+			<!-- 树多选时 -->
+			<tr ng-if="prop.style=='1'&&prop.selectNum=='-1'">
+				<th>父级联动</th>
+				<td>
+					<span ab-boolean="1/0" text="是/否" ng-model="prop.parentCheck"></span>
+				</td>
+				<th>子表联动</th>
+				<td>
+					<span ab-boolean="1/0" text="是/否" ng-model="prop.childrenCheck"></span>
+				</td>
+			</tr>
+			
+			<tr ng-if="prop.id=='' && prop.dataSource!='interface'">
+				<th>
+					<span class="required">*</span>
+					数据源:
+				</th>
+				<td>
+					<select class="form-control" ng-model="prop.dsalias" ng-options="m.alias as m.name for m in dataSourcesInBean">
+					</select>
+				</td>
+
+				<th>
+					<span class="required">*</span>
+					查询表(视图):
+				</th>
+				<td>
+					<select class="form-control" ng-model="prop.isTable" ng-options="m.value as m.key for m in isTableList">
+					</select>
+					<input type="text" ng-model="prop.objName" class="form-control" />
+					<a ng-click="getByDsObjectName()" type="button" class="btn btn-primary fa fa-search">查询</a>
+				</td>
+			</tr>
+			<tr ng-if="prop.dataSource != 'interface'">
+				<th>选择表或视图:</th>
+				<td colspan="3" valign="top">
+					<span ng-if="prop.id!=''">对象名称：<span class="label label-info">{{prop.objName}}</span>所属数据源：<span class="label label-info">{{prop.dsalias}}</span></span>
+					</br>
+					<div ng-if="prop.isTable==1&&tableOrViewList.length>0">
+						<select class="form-control" ng-if="prop.id==''" ng-model="prop.objName" ng-options="m.name as (m.name+'('+m.comment+')') for m in tableOrViewList">
+						</select>
+					</div>
+					<div ng-if="prop.isTable==0&&tableOrViewList.length>0">
+						<select class="form-control" ng-model="prop.objName" ng-options="m.name as m.name for m in tableOrViewList">
+						</select>
+					</div>
+				</td>
+			</tr>
+			<tr ng-if="prop.dataSource=='interface'">
+				<th>接口：</th>
+				<td colspan="3" class="form-inline">
+					<input type="text" ng-model="prop.objName" class="form-control" placeholder="beanId.method eg:userService.list" />
+					<a herf="#" class="fa fa-exclamation-circle" ab-tip title="接口格式为：beanId.method <br/>eg:userService.list <br/>提供参数为:QueryFilter"></a>
+				</td>
+			
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

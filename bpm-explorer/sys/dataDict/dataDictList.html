@@ -1,0 +1,179 @@
+<html ng-app="app">
+<head>
+	<title>数据字典</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	<script type="text/javascript" src="../../build/common/easyLayout.js"></script>
+	<script type="text/javascript" src="../../assets/js/common/tools/sysTreeUtil.js"></script>
+	<script type="text/javascript">
+		function loadByType(e,treeId,node){
+			AngularUtil.getScope().getDictList(node.id);
+		}
+		
+		function reloadDictList(type){
+			if(type=="dict"){
+				AngularUtil.getScope().getDictList(AngularUtil.getScope().typeId);
+			}else{
+				AngularUtil.getScope().getDictNode();
+			}
+		}
+		
+		var app = angular.module('app', [ 'baseDirective']);
+		app.controller("ctrl", [ '$scope', 'baseService', function(scope, baseService) {
+			//获取数据列表
+			scope.getDictList = function(typeId){
+				scope.typeId = typeId;
+				var defer = baseService.postForm(__ctx+"/sys/dataDict/getDictList",{"type_id_^VEQ":typeId});				 
+				 $.getResultData(defer,function(data){
+					 scope.dictList = data;
+				 });
+			 }
+			 
+			scope.add = function(type){
+				var url = "/sys/dataDict/dataDictEdit.html?dictType="+type;
+				if(type=="dict"){
+					url = url + "&typeId="+scope.typeId;
+				}
+				
+				 var conf = {title:"添加数据字典",url:url,height:300,width:500};
+				 $.Dialog.open(conf);
+			 }
+			
+			scope.edit = function(id){
+				var url = "/sys/dataDict/dataDictEdit.html?id="+id;
+				 var conf = {title:"修改数据字典",url:url,height:300,width:500};
+				 $.Dialog.open(conf);
+			 }
+			scope.removeDict = function(dict){
+				deleteDic(dict.id,dict.name);
+			}
+			
+			// 获取数据字典
+			scope.getDictNode = function(dictKey){
+				if(!dictKey){
+					dictKey = curSelectNode.dictKey;
+				}
+				var url = __ctx + "/sys/dataDict/getDictData";
+				var ztreeCreator = new ZtreeCreator("treeNode", url)
+					.setCallback({onRightClick:scope.onRightClick})
+					.initZtree({hasRoot:true,dictKey:dictKey});
+			}
+			
+			scope.onRightClick = function(e, treeId, treeNode){
+				if (!treeNode) return ;
+				
+				window.curSelectNode = treeNode;
+				
+				var h = $(window).height();
+				var w = $(window).width();
+				var menuWidth = 120;
+				var menuHeight = 75;
+				var menu = treeNode.dictType=='dict'?$('#dict'):$('#node');
+
+				var x = e.pageX, y = e.pageY;
+				if (e.pageY + menuHeight > h) {
+					y = e.pageY - menuHeight;
+				}
+				if (e.pageX + menuWidth > w) {
+					x = e.pageX - menuWidth;
+				}
+				menu.menu('show', {
+					left : x,
+					top : y
+				});
+			}
+			
+		} ]);
+		
+		function menuHandler(item) {
+			eval(item.name+"()");
+		};
+		function addNode(){
+			var url = "/sys/dataDict/dataDictEdit.html?dictType=node&parentId={id}&dictKey={dictKey}";
+			url = url.format(curSelectNode);
+			var conf = {title:"修改数据字典",url:url,height:300,width:500};
+			$.Dialog.open(conf);
+		}
+		
+		function editNode(){
+			var url = "/sys/dataDict/dataDictEdit.html?id="+curSelectNode.id;
+			var conf = {title:"修改数据字典",url:url,height:300,width:500};
+			$.Dialog.open(conf);
+		}
+		function remove(){
+			deleteDic(curSelectNode.id,curSelectNode.name);
+		}
+		
+		function deleteDic(id,name){
+			var url = __ctx+"/sys/dataDict/remove?id="+id;
+			$.Dialog.confirm("提示信息", "是否确定要删除["+name+"]", function() {
+				$.post(url, {}, function(data) {
+					var result	= eval('(' + data + ')');
+					if (result.isOk) {
+						toastr.success("删除成功");
+					} else {
+						$.Dialog.alert("删除失败：" + result.msg());
+					}
+					fresh();
+				});
+			});			
+		}
+		
+	  function fresh(){
+		  AngularUtil.getScope().getDictNode();
+	  }
+		
+	</script>
+</head>
+<body class="easyui-layout" ng-controller="ctrl">
+	<div data-options="region:'west',split:true,border:true,title:'分类'" style="width: 200px;">
+		<div sysTree treeKey="dict" callBack="loadByType"></div>
+	</div>
+	<div data-options="region:'center',split:true,border:true,title:'字典'">
+		<div class="col-sm-12">
+			<div class="panel-heading">
+				<button  class="btn btn-primary fa-plus"  ng-click="add('dict')">添加数据字典</button>
+			</div>
+			<table class="bootstrap-table table  table-hover">
+				<thead>
+				<tr>
+					<td>字典名</td>
+					<td>字典Key</td>
+					<td>创建日期</td>
+					<td>管理</td>
+				</tr>
+				</thead>
+				<tr ng-repeat="dict in dictList" ng-click="getDictNode(dict.key)" >
+					<td>{{dict.name}}</td>
+					<td>{{dict.key}}</td>
+					<td>{{dict.createTime | date}}</td>
+					<td>
+						<span class='btn btn-outline btn-primary fa-edit' qtip='编辑' ng-click="edit(dict.id)"></span>
+						<span class='btn btn-outline btn-primary fa fa-trash' qtip='删除' ng-click="removeDict(dict)" ></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		<div class="hidden">
+			<div id="dict" class="easyui-menu" data-options="onClick:menuHandler" style="width: 120px;">
+				 <div data-options="name:'addNode'" class="menu-item">添加字典项</div>
+				 <div data-options="name:'fresh'"  class="menu-item">刷新</div>
+			</div>
+			
+			<div id="node" class="easyui-menu" data-options="onClick:menuHandler" style="width: 120px;">
+				 <div data-options="name:'editNode'"  class="menu-item">编辑</div> 
+				 <div data-options="name:'remove'"  class="menu-item">删除</div> 
+				 <div data-options="name:'addNode'"  class="menu-item">添加子项</div> 
+				 <div data-options="name:'fresh'"  class="menu-item">刷新</div>
+			</div>
+		</div>
+ 	</div>
+ 	
+ 	<div data-options="region:'east',split:true,border:true,title:'字典项'" style="width: 300px;">
+		<div id="treeNode" class="ztree"></div>
+	</div>
+</body>
+</html>
+

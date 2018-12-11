@@ -1,0 +1,7 @@
+@import url(./mobile/weui.css);
+@import url(../../../../css/font-awesome.min.css);
+
+.fa {
+  display: inline-block;
+  line-height: 1.8;
+}

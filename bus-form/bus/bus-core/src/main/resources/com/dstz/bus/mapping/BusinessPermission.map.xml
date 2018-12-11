@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.bus.dao.BusinessPermissionDao">
+	<resultMap id="BusinessPermission" type="com.dstz.bus.model.BusinessPermission">
+		<id property="id" column="id_" jdbcType="VARCHAR"/>
+		<result property="objType" column="obj_type_" jdbcType="VARCHAR"/>
+		<result property="objVal" column="obj_val_" jdbcType="VARCHAR"/>
+		<result property="busObjMapJson" column="bus_obj_map_json_" jdbcType="CLOB"/>
+		<result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="create" parameterType="com.dstz.bus.model.BusinessPermission">
+		INSERT INTO bus_permission
+		(id_,obj_type_,obj_val_,bus_obj_map_json_,create_time_,create_by_,update_time_,update_by_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR},  #{objType,jdbcType=VARCHAR}, #{objVal,jdbcType=VARCHAR}, #{busObjMapJson,jdbcType=CLOB}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="get"   parameterType="java.lang.String" resultMap="BusinessPermission">
+		SELECT * FROM bus_permission 
+		WHERE 
+		id_=#{id}
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultMap="BusinessPermission">
+		SELECT * FROM bus_permission
+		<where>
+			<if test="whereSql!=null">
+				${whereSql}
+			</if>
+		</where>
+		<if test="orderBySql!=null">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="orderBySql==null">
+			ORDER BY id_ DESC
+		</if>
+	</select>
+	
+	<update id="update" parameterType="com.dstz.bus.model.BusinessPermission">
+		UPDATE bus_permission SET
+		obj_type_=#{objType,jdbcType=VARCHAR},
+		obj_val_=#{objVal,jdbcType=VARCHAR},
+		bus_obj_map_json_=#{busObjMapJson,jdbcType=CLOB},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		update_by_=#{updateBy,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+	
+	<delete id="remove" parameterType="java.lang.String">
+		DELETE FROM bus_permission 
+		WHERE
+		id_=#{id}
+	</delete>
+	
+	<select id="getByObjTypeAndObjVal" parameterType="java.util.Map" resultMap="BusinessPermission">
+		SELECT * FROM bus_permission 
+		WHERE 
+		obj_type_=#{objType} and obj_val_=#{objVal}
+	</select>
+	
+</mapper>

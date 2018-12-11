@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.LogErrDao">
+    <resultMap id="LogErr" type="com.dstz.sys.core.model.LogErr">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="account" column="account_" jdbcType="VARCHAR"/>
+        <result property="ip" column="ip_" jdbcType="VARCHAR"/>
+        <result property="url" column="url_" jdbcType="VARCHAR"/>
+        <result property="content" column="content_" jdbcType="CLOB"/>
+        <result property="stackTrace" column="stack_trace_" jdbcType="CLOB"/>
+        <result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        
+        <result property="ipAddress" column="ip_address_" jdbcType="VARCHAR"/>
+        <result property="status" column="status_" jdbcType="VARCHAR"/>
+        <result property="requestParam" column="request_param_" jdbcType="VARCHAR"/>
+        
+    </resultMap>
+
+    <sql id="columns">
+		id_,account_,ip_,url_,content_,stack_trace_,create_time_,ip_address_,status_,request_param_
+	</sql>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.LogErr">
+		INSERT INTO SYS_LOG_ERR
+		(id_,account_,ip_,url_,content_,stack_trace_,create_time_,ip_address_,status_,request_param_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{content,jdbcType=CLOB},#{stackTrace,jdbcType=CLOB}, #{createTime,jdbcType=TIMESTAMP}
+				, #{ipAddress,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},#{requestParam,jdbcType=CLOB})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="LogErr">
+        SELECT
+        <include refid="columns"/>
+        FROM SYS_LOG_ERR
+        WHERE
+        id_=#{id}
+    </select>
+    
+    <update id="update" parameterType="com.dstz.sys.core.model.LogErr">
+		UPDATE SYS_LOG_ERR SET
+		status_=#{status,jdbcType=VARCHAR},
+		content_=#{content,jdbcType=VARCHAR}
+		WHERE
+		ID_=#{id}
+	</update>
+
+    <select id="query" parameterType="java.util.Map" resultMap="LogErr">
+        SELECT id_,account_,ip_,url_,create_time_,ip_address_,status_,content_ FROM SYS_LOG_ERR
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+</mapper>

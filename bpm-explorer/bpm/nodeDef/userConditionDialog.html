@@ -1,0 +1,122 @@
+<html ng-app="app">
+<head>
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/bpm/nodeDef/userConditionController.js"></script>
+
+<script type="text/javascript">
+	var flowKey = $.getParam("flowKey");
+	var defId = $.getParam("defId");
+	var nodeId = $.getParam("nodeId");
+	var nodeType = $.getParam("nodeType");
+</script>
+</head>
+<body ng-controller="userConditionCtrl">
+	<div>
+		<fieldset class="scheduler-border">
+			<legend style="width: 110px; border-bottom: 0; margin-bottom: 10px;">
+				<span ab-tip tilte="boolean 表达式，若返回false则不会进行使用该人员条件配置！">人员条件</span>
+				<span ng-click="editRule()" class="btn btn-primary btn-xs fa fa-edit"></span></legend>
+			<div class="code" style="white-space: pre-wrap;">{{userCondition.condition}}</div>
+		</fieldset>
+		<fieldset class="scheduler-border">
+			<legend style="width: 90px; border-bottom: 0; margin-bottom: 10px;">
+				<span>人员设置</span>
+			</legend>
+			<div class="datagrid-toolbar" style="height: 35px; text-align: right;">
+				<a class="btn btn-primary fa fa-plus" ng-click="addCalc()">添加</a>
+				<a ng-click="preview()" class="btn btn-primary">预览</a>
+			</div>
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr style="background:#E6E6E6;">
+						<th width="200">人员类型</th>
+						<th width="360">人员选择</th>
+						<th ab-tip title="若人员为组类型，抽取则候选人为当前组所有人，若不抽取。则候选人为组。<br>eg:如果某岗位，抽取。则候选人在任务产生时确定为当时该岗位所有人员，若不抽取，则候选人为该岗位，任务产生后该岗位进行人员变动也不会受到影响。">
+						是否抽取</th>
+						<th ab-tip title="与前一列进行运算，eg:且，则说明与前一列共有的人员才会作为任务候选人">运算类型</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="calc in userCondition.calcs track by $index">
+						<td>
+							<select id="select{{$index}}" ng-model="calc.pluginType" ng-options="m.type as m.title for m in nodeUserPluginList" class="form-control" ng-change="calcTypeChange(calc)">
+							</select>
+						</td>
+						<td>
+							<a ng-show="calc.pluginType!='approver'" href="javascript:javaScript:void(0)" class="btn btn-xs {{calc.description?'btn-primary':'btn-danger'}}" ng-click="selector(calc)">选择</a>
+							<span ng-if="calc.description">[{{calc.description}}]</span>
+						</td>
+						<td>
+							<select ng-if="nodeType=='UserTask'" ng-model="calc.extract" class="form-control">
+								<option value="no">不抽取</option>
+								<option value="extract">抽取</option>
+							</select>
+							<select ng-if="nodeType=='SignTask'" ng-model="calc.extract">
+								<option value="no">不抽取</option>
+								<option value="extract">抽取</option>
+								<option value="delayExtract">延迟抽取</option>
+								<option value="groupUserExtract">用户组合</option>
+							</select>
+						</td>
+						<td>
+							<select ng-if="!$first" ng-model="calc.logicCal" class="form-control">
+								<option value='or'>或</option>
+								<option value='and'>与</option>
+								<option value='exclude'>排除</option>
+							</select>
+						</td>
+						<td>
+							<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.up($index,userCondition.calcs)" class="btn btn-sm btn-default fa-chevron-up"></a>
+							<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.down($index,userCondition.calcs)" class="btn btn-sm btn-default fa-chevron-down"></a>
+							<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.del($index,userCondition.calcs)" class="btn btn-sm btn-default fa-close"></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
+		</fieldset>
+	</div>
+</body>
+</html>
+
+
+<style type="text/css">
+.code{
+	color: #c7254e;
+	background-color: #f9f2f4;
+	white-space: nowrap;
+}
+
+ .panel.inline{
+ 	display: inline-block;
+ 	height: 100%
+ }
+ .panel.inline .panel-body{
+ height: 100%
+ }
+
+
+fieldset.scheduler-border {
+    border: 1px groove #ddd !important;
+    padding: 0 0.4em 1.4em 0.4em !important; 
+    /* margin: 0 0 1.5em 0 !important; */
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+}
+legend{ 
+	font-size:18px!important;
+	padding: initial;
+	margin: 10px;
+}
+fieldset{
+	margin:5px!important;
+}
+legend.scheduler-border {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    text-align: left !important;
+}
+</style>
+
+

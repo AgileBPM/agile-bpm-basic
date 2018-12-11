@@ -1,0 +1,56 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>流程实例</title>
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+     <div class="panel panel-default search-panel">
+         <div class="panel-heading" data-toggle="collapse" toggle="true" data-target="#formSearch" >查询条件</div>
+         <div class="panel-body">
+             <form id="searchForm" class="form-horizontal">
+                 <div class="form-group">
+                     <label class="control-label col-sm-1" for="def_name_^VLK">名字</label>
+                     <div class="col-sm-3">
+                         <input type="text" class="form-control" id="def_name_^VLK">
+                     </div>
+                     <label class="control-label col-sm-1" for="subject_^VLK">标题</label>
+                     <div class="col-sm-3">
+                         <input type="text" class="form-control" id="subject_^VLK">
+                     </div>
+                     <div class="col-sm-4" style="text-align:left;">
+                     		<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+                     </div>
+                 </div>
+             </form>
+         </div>
+     </div>       
+      <table ab-grid data-id-field="id" data-url="/bpm/instance/listJson">
+          <thead>
+          <tr>
+              <th data-checkbox="true">ID</th>
+              <th data-field="subject">标题</th>
+              <th data-field="defName">名称</th>
+              <th data-field="defKey">流程KEY</th>
+              <th data-field="isForbidden" data-formatter="labelFormatter" data-value-style="0-正常-primary,1-禁止-danger,">是否禁止</th>
+              <th data-field="status" data-formatter="labelFormatter" 
+              			data-value-style="running-运行中-primary,draft-草稿-warninginfo,end-终止-default,manualend-人工终止-danger,back-驳回-danger,revoke-撤销-danger,">状态</th>
+              <th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">创建时间</th>
+              <th data-field="creator">创建人</th>
+              <th data-field="endTime" data-formatter=dateTimeFormatter data-sort-name="end_time_" data-sortable="true">完成时间</th>
+              <th data-field="duration" data-formatter="$.timeLag">持续时间</th>
+              
+              <th data-formatter="innerHtmlFormatter" data-title="管理">
+					<a class="fa-detail btn btn-outline btn-primary btn-sm" openDialog='详情' qtip='详情' url='instanceDetail.html?id={id}' ></a>
+					<span if="{isForbidden}===0" class="fa-ban btn btn-outline btn-primary btn-sm" qtip='挂起' sendAction="挂起" url="/bpm/instance/toForbidden?id={id}&forbidden=true"></span>
+					<span if="{isForbidden}===1" class="fa-undo btn btn-outline btn-primary btn-sm" qtip='取消挂起' sendAction="取消挂起" url="/bpm/instance/toForbidden?id={id}&forbidden=false"></span>
+			  </th>
+          </tr>
+          </thead>
+      </table>
+    </div>
+</body>
+</html>

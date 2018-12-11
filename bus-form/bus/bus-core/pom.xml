@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.dstz.agilebpm</groupId>
+        <artifactId>bus</artifactId>
+        <version>1.2.6</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>bus-core</artifactId>
+    <name>bus-core</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>base-db</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-context</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>sys-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>org-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <artifactId>spring-context</artifactId>
+            <groupId>org.springframework</groupId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>bus-api</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>form-api</artifactId>
+        </dependency>
+
+    </dependencies>
+</project>

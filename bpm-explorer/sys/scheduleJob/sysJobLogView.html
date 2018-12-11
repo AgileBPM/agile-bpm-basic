@@ -1,0 +1,30 @@
+<html ng-app="app">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="../../build/common/ngEdit.css" rel="stylesheet">
+    <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+    <script type="text/javascript">
+        var app = angular.module("app", ['base', 'baseDirective']);
+        app.controller('ctrl', ['$scope', 'baseService', 'ArrayToolService', '$filter', function ($scope, baseService, ArrayToolService, $filter) {
+
+            /**
+             * 初始化操作
+             */
+            $scope.init = function () {
+                baseService.get(__ctx + '/sys/scheduleJob/log/detail?id=' + $.getParam("id")).then(function(responseBody){
+                    if(responseBody.isOk){
+                        $scope.sysJobLog = responseBody.data;
+                    }
+                });
+            };
+
+
+        }]);
+    </script>
+</head>
+
+<body ng-controller="ctrl" ng-init="init()">
+    <pre ng-bind="sysJobLog.content"></pre>
+</body>
+
+</html>

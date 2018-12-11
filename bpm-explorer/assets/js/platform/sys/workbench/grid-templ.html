@@ -1,0 +1,10 @@
+	<div  class="content">
+		<div class="ibox-title sort-handle">
+			<h5>{{panel.name}}</h5>
+			<div class="ibox-tools">
+			      <a href="#" ng-click=openTab(panel) ng-if="panel.moreUrl"><i class="fa fa-reply"></i></a>
+			      <a href="#" ng-click="removePanel(panel.custLayOutId,panel.id)"><i class="fa fa-times"></i></a>
+			</div>
+		</div>
+		<div ab-bind-html="panel.displayContent" class="ibox-content"></div>
+	</div>

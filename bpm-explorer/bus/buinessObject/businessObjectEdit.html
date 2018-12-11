@@ -1,0 +1,99 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/bus/businessObject/businessObjectEditController.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/bus/businessObject/editAndDialogCommon.js"></script>
+<script type="text/javascript">
+	
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<div class="ibox-title">
+		<a class="btn btn-primary fa-save" href="javascript:void(0)" ng-model="data" ab-save="/bus/businessObject/save">保存</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+	</div>
+	<form name="form" ab-load="/bus/businessObject/getObject?id={id}" ng-model="data" fastjson>
+		<table class="form-table">
+			<tr>
+				<th>分类</th>
+				<td>
+					<span ab-combox="data.groupId" value-name="data.groupName" tree-key="ywdxfl" ng-model="data.groupName" ab-validate="{required:true}"></span>
+				</td>
+				<th>持久化方式</th>
+				<td>
+					<select class="form-control" ng-model="data.persistenceType" ng-options="v.key as v.desc for (k,v) in BusinessObjectPersistenceType">
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>名字</th>
+				<td>
+					<input ng-model="data.name" ab-validate="{required:true}" class="form-control" />
+				</td>
+				<th>对象名</th>
+				<td>
+					<input ng-model="data.key" ab-validate="{required:true,varirule:true}" class="form-control" ab-pinyin="data.name" />
+				</td>
+			</tr>
+			<tr>
+				<th>描述</th>
+				<td>
+					<textarea ng-model="data.desc" class="form-control"></textarea>
+				</td>
+				<th>主业务表</th>
+				<td>
+					{{data.relation.tableComment}}({{data.relation.tableKey}})
+					<a class="btn btn-sm btn-primary fa-search" href="javascript:void(0)" ng-click="selectMainTable()">选择</a>
+				</td>
+			</tr>
+		</table>
+		<br />
+		<div class="btn-group toolbar">
+			<a class="btn btn-primary btn-outline fa-add " ng-click="addSubTable(data.relation.children)">
+				<span>添加子业务实体</span>
+			</a>
+		</div>
+		<table ng-show="data.relation" class="table table-hover table-bordered" cellspacing="0">
+			<tr>
+				<th style="width: 150px;">类型</th>
+				<th style="width: 180px;">名称</th>
+				<th style="width: 180px;">实体名</th>
+				<th>外键</th>
+				<th style="width: 150px;">操作</th>
+			</tr>
+			<tr ng-repeat="child in data.relation.children">
+				<td>
+					<select class="form-control" ab-validate="{required:true}" ng-model="child.type" ng-options="v.key as v.desc for (k,v) in BusTableRelType">
+					</select>
+				</td>
+				<td>{{child.tableComment}}</td>
+				<td>{{child.tableKey}}</td>
+				<td>
+					<a href="javaScript:void(0)" class="btn btn-xs btn-default fa-add" ng-click="addFk(child.fks)"></a>
+					<div ng-repeat="fk in child.fks">
+						<select ng-model="fk.from" ab-validate="{required:true}" ng-options="m.key as m.comment for m in tableMap[child.tableKey].columns">
+							<option value="">请选择</option>
+						</select>
+						<select ng-model="fk.type" ng-options="v.key as v.desc for (k,v) in BusTableRelFkType">
+						</select>
+						<input ng-if="fk.type=='fixedValue'" type="text" ng-model="fk.value" />
+						<span ng-if="fk.type=='parentField'||fk.type=='childField'">
+							<select ng-model="fk.value" ab-validate="{required:true}" ng-options="m.key as m.comment for m in tableMap[data.relation.tableKey].columns">
+								<option value="">请选择</option>
+							</select>
+						</span>
+						<a ng-show="child.fks.length>1" href="javaScript:void(0)" class="btn btn-xs btn-default fa-times" ng-click="child.fks.remove(fk)"></a>
+					</div>
+				</td>
+				<td>
+					<a href="javaScript:void(0)" ng-click="ArrayTool.del($index,data.relation.children)" class="btn btn-outline btn-primary fa  fa-trash"></a>
+					<a href="javaScript:void(0)" ng-click="openChildrenDialog(child)" class="btn btn-sm btn-primary btn-outline fa-edit">配置子表</a>
+					<a href="javaScript:void(0)" onclick="javascript:alert('复制表的字段控件，控件可配置顺序，控件列表可插入换行符')" class="btn btn-sm btn-primary btn-outline fa-edit">配置控件与布局</a>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

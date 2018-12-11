@@ -1,0 +1,18 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/form/formCustDialog/formCustDialogShowTreeController.js"></script>
+<script type="text/javascript">
+	//返回数据
+	function getData(){
+		var scope = AngularUtil.getScope();
+		return scope.getData();
+	}
+</script>
+</head>
+<body ng-controller="ctrl" class="panel-body" ng-init="init()" ab-load="/form/formCustDialog/getObject?key={key}" ng-model="data">
+	<div id="tree" class="ztree"></div>
+</body>
+</html>

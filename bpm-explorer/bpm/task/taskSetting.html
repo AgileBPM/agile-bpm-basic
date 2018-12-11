@@ -1,0 +1,78 @@
+<html ng-app="base">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>任务设置</title>
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	<script type="text/javascript">
+		var TaskSettingController = ['$scope','baseService',function(scope,baseService){
+			scope.taskParam = window.passData;
+			var taskId = scope.param.taskId;
+			
+			var defer=baseService.get(__ctx+"/bpm/task/getTaskConf?taskId="+taskId);
+			$.getReaultData(defer,function(data){
+				scope.nodeConf = data;
+			});
+			
+			$scope.bpmInitParam = {"taskId":1,"defId":2,"instanceId":1};
+			
+			
+			scope.hasSelectUserPermission = function(key){
+				if(scope.taskParam.actionName != 'agree') return false;
+				
+				if(key){
+					return true;
+				}
+				//
+				return true;
+			}
+		}];
+		</script>
+</head>
+
+<body ng-controller="TaskSettingController">
+	<div class="ibox-title">
+		<a class="btn btn-primary fa-save"  href="javascript:void(0)" id="aaa" ng-click="ok()"></a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a> 
+		
+	</div>
+	<form name="myForm">
+		<table class="form-table">
+			<tr ng-show="hasSelectUserPermission()"> 
+				<th>跳转类型</th>
+				<td colspan="3">
+					<label class="radio-inline" > 
+						<input type="radio" name="jumpType" ng-model="taskParam.jumpType" value="common" checked="checked" />正常跳转
+					</label>
+					<label class="radio-inline" ng-show="hasSelectUserPermission('select')"> 
+						<input type="radio" name="jumpType" ng-model="taskParam.jumpType" value="select" />选择路径跳转
+					</label>
+					<label class="radio-inline" ng-show="hasSelectUserPermission('free')">
+						<input type="radio" name="jumpType" ng-model="taskParam.jumpType" value="free" />自由跳转
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<th>设置目标节点</th>
+				<td>
+					<select style="margin:6px;" class="inputText" ng-model="taskParam.destination">
+						 <option ng-repeat="node in nodeConf.outcomeNodes" value="node.nodeId}}" >{{nodes.name}}</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>流程名字</th>
+				<td><input ng-model="def.name" ab-validate="{required:true}" class="form-control"/></td>
+			</tr>
+			<tr>
+				<th>流程KEY</th>
+				<td><input ng-model="def.defKey" ab-validate="{required:true}" class="form-control"/></td>
+			</tr>
+			<tr>
+				<th>说明</th>
+				<td><input ng-model="def.desc" ab-validate="{required:true}" class="form-control"/></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html ng-app="app">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	
+	<script type="text/javascript" >
+	
+	var parentId =  $.getParam("parentId");
+	var parentOrgName =  parent.getSelectNode().name;
+	var id =  $.getParam("id");
+	var code =  $.getParam("code");
+	
+	
+	var app = angular.module('app', ['baseDirective']);
+	app.controller("ctrl", [ '$scope', 'baseService' ,function($scope, baseService) {
+		if(!$scope.data){
+			$scope.data = {parentOrgName:parentOrgName,parentId:parentId};
+		}
+		
+		$scope.save = function(){
+			if (!$scope.form.$valid) return;
+			var rtn = baseService.post(__ctx+"/org/group/save", $scope.data);
+			$.getResultMsg(rtn,function(){
+				parent.refreshNode();
+				window.location = window.location;
+			});
+		}
+	}]);
+	
+	
+	</script>
+
+</head>
+<body ng-controller="ctrl">
+
+	<!-- 顶部按钮 -->
+	<div class="panel-body">
+			<a class="btn btn-primary fa-save" ng-model="data" ng-click="save()"><span>保存</span></a>
+	</div>
+	<form name="form" method="post" ng-model="data" ab-load="/org/group/get?id={id}">
+		<table class="form-table" cellspacing="0">
+			<tr>
+				<th><span>上级组织：</span></th>
+				<td> <input class="form-control" ng-model="data.parentOrgName" disabled="disabled" style="border: 0" name="parentOrgName" /></td>
+			</tr>
+			<tr>
+				<th><span>组织名称：</span></th>
+				<td><input class="form-control" type="text" ng-model="data.name" ab-validate="{required:true,maxlength:192}" /></td>
+			</tr>
+			<tr>
+				<th><span>组织编码：</span></th>
+				<td><input class="form-control" type="text" ng-model="data.code" ng-disabled="data.id" ab-validate="{required:true,maxlength:192}"/></td>
+			</tr>
+
+			<tr>
+				<th><span>排序：</span></th>
+				<td><input class="form-control" type="text" ng-model="data.sn" ab-validate="{required:false,number:true,maxIntLen:10}" /></td>
+			</tr>
+
+			<tr>
+				<th><span>级别：</span></th>
+				<td><input class="form-control" type="text" ng-model="data.grade" ab-validate="{required:false,maxlength:192}" /></td>
+			</tr>
+			<tr>
+				<th>描述</th>
+				<td>	<textarea rows="3"  ng-model="data.desc" class="form-control"></textarea>
+						</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

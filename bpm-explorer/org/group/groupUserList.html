@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>组织用户</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+	<script>
+		var groupId=$.getParam("groupId");
+	</script>
+</head>
+<body class="panel-body">
+	<div  class="panel panel-default search-panel ">
+		<div class="panel-heading">查询条件
+         	<a　href="javascript:void(0)" class="pull-right">　<i class="fa  fa-angle-double-up" closed="true" toggle-collapse="#searchForm"></i> </a>
+        </div>
+        <div class="panel-body">
+             <form id="searchForm" class="form-horizontal">
+                 <div class="form-group">
+                     <label class="control-label col-sm-1" for="fullname_^VLK">姓名</label>
+                     <div class="col-sm-2">
+                         <input type="text" class="form-control" id="fullname_^VLK">
+                     </div>
+                     <label class="control-label col-sm-1" for="account_^VLK">账号</label>
+                     <div class="col-sm-2">
+                         <input type="text" class="form-control" id="account_^VLK">
+                     </div>
+                     <div class="col-sm-3" style="text-align:left;">
+                         <button type="button" style="margin-left:50px" class="btn btn-primary fa-search">查询</button>
+                         <button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+                     </div>
+                 </div>
+             </form>
+         </div>
+	</div>
+	<div class="btn-group toolbar">
+	  <button class="btn btn-outline btn-primary fa-plus" openDialog='加入组织'  url='/org/group/groupUserEdit.html?groupId={groupId}'>加入用户</button>
+    </div>
+	<table ab-grid data-id-field="id" data-url="/org/groupUser/groupUserList?groupId={groupId}"> 
+		<thead>
+          <tr>
+              <th data-checkbox="true">ID</th>
+              <th data-field="fullName">姓名</th>
+              <th data-field="account">账号</th>
+              <th data-field="relName">岗位名称</th> 
+              <th data-field="isMaster" data-formatter="labelFormatter" data-value-style="1-是-primary,0-否-warning,">是否主组织</th>
+              <th data-field="email">邮箱</th>
+              <th data-field="sex">性别</th>
+              <th data-field="status" data-formatter="labelFormatter" data-value-style="1-正常-primary,0-禁用-warning,">状态</th>
+              <th data-field="createTime" data-formatter="dateTimeFormatter" >创建时间</th>
+              <th data-field="script" data-formatter="innerHtmlFormatter" data-title="管理">
+				<span if="{isMaster}===1" class='btn btn-outline btn-primary fa-thumbs-o-down' sendAction='取消主组织' qtip='取消主组织'  url='/org/groupUser/setMaster?id={groupUserId}'></span>
+				<span if="{isMaster}===0" class='btn btn-outline btn-primary fa  fa-thumbs-o-up' sendAction='设为主组织' qtip='设为主组织'  url='/org/groupUser/setMaster?id={groupUserId}'></span>
+				<span class='btn btn-outline btn-primary fa fa-trash'  url='/org/groupUser/remove?id={groupUserId}' sendAction='删除' qtip='删除'></span>
+			 </th>
+          </tr>
+          </thead>
+     </table>
+</body>
+</html>

@@ -1,0 +1,110 @@
+
+<html ng-app="app">
+<head>
+<title>流程定义</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/codeMirror.css" rel="stylesheet">
+
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../build/common/codeMirror.js"></script>
+<script type="text/javascript">
+	
+	var app = angular.module('app', [ 'baseDirective', 'ui.codemirror']);
+	app.controller("ctrl", [ '$scope', 'baseService', function(scope, baseService) {
+		var nodeId = $.getParam("defId");
+		var defId = $.getParam("defId");
+		var varTree;
+		
+		scope.selectScript = function(){
+			CustUtil.openCustDialog("scriptSelector",function(data,innerWindow){
+				scope.insetCode(data[0].script);
+				$.Dialog.close(innerWindow);
+			});
+		}
+		
+		scope.getBoStr = function(node){
+			var parentNode = node.getParentNode();
+			if( !parentNode)return;
+			
+			// 主表字段
+			if(node.nodeType == 'column' && parentNode.parentId=="0"){
+				return parentNode.alias+".get('"+node.key+"')";
+			}
+			// 子表
+			if(node.nodeType == 'table' && parentNode.parentId=="0"){
+				return "/* "+parentNode.alias+".getChildren('"+node.key+"')  获取子表： List<IBusinessData> */";
+			}
+			// 子表的字段
+			if(node.nodeType == 'column' && parentNode.getParentNode().parentId=="0"){
+				return "/* "+parentNode.getParentNode().alias+".getChildren('"+parentNode.key+"')  获取子表数据： List<IBusinessData> 子表字段：”"+node.key+"“ 请根据实际情况获取子表数据*/";
+			}
+			
+		}
+		scope.setVariable = function (event, treeId, node) {
+			var keyStr = node.name;
+			// 流程变量
+			if (node.nodeType == 'var'){
+				keyStr = "variableScope.getVariable('"+node.name+"')";
+			}// 业务对象取值
+			else {
+				 keyStr = scope.getBoStr(node);
+			}
+			
+			if(!keyStr)return;
+			
+			varTree.hideMenu();
+			scope.insetCode(keyStr);
+		}
+		
+		scope.insetCode = function(str) {
+			scope.CodeMirrorBroadcast= "script";
+			scope.$broadcast(scope.CodeMirrorBroadcast, function(CodeMirror) {
+				CodeMirror.replaceSelection(str);
+			});
+		};
+		
+		scope.initTree = function(){
+			varTree = new ZtreeCreator('varTree', __ctx+"/bpm/processDef/variablesTree").setDataKey({
+				name : 'name'
+			}).setCallback({
+				onClick : scope.setVariable
+			}).makeCombTree("tempTree").initZtree({ defId : defId, nodeId : nodeId, includeBpmConstants : true}, 2);
+			
+			$(".varTree").bind("click", varTree.showMenu);
+		}
+		scope.initTree();
+		scope.script = passData.script;
+		scope.notice = passData.notice;
+		scope.desc = passData.desc;
+		
+		if(scope.desc=="脚本"){
+			scope.desc="";
+		}
+	} ]);
+	 
+	function getData(){
+		return AngularUtil.getScope().script;
+	}
+	function getDesc(){
+		return $("#desc").val() || "脚本";
+	}
+</script>
+</head>
+<body ng-controller="ctrl">
+<div class="panel panel-default">
+  <div class="panel-heading form-inline">
+	<input class="form-control pull-right" id="desc" ng-model="desc" style="width: 350px"  placeholder="请对脚本进行描述" ng-if="desc != undefind" >
+  	<a class="btn btn-primary" ng-click="selectScript()">常用脚本</a>
+	<a class="varTree btn btn-primary">流程变量</a>
+  	<div id="tempTree"></div>
+  </div>
+  <div class="panel-body">
+   	<textarea ng-model="script" ui-codemirror broadcast="script" >${fn:escapeXml(script.script)}</textarea>
+  </div>
+  <div class="panel-footer">此脚本为Groove脚本!<br>
+ 	 {{notice}}
+  </div>
+</div>
+</body>
+</html>

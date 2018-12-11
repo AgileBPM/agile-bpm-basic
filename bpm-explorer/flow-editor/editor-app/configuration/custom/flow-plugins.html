@@ -1,0 +1,57 @@
+<div class="form-inline" ng-controller="FlowPluginsController" style="height:97%">
+	<div class="panel  panel-default inline {{plugin.row}}" ng-repeat="plugin in pluginList" ng-if="plugin.supprotType.indexOf(selectedItem.nodeType)!=-1">
+		  <div class="toolbar-head">{{plugin.name}}</div>
+		  <div class="panel-body">
+		  	<div dynamic-directive="bpm-{{plugin.key}}:''">
+		  		{{node.name}}{{plugin.key}}
+		  	</div>
+		  </div>
+	</div>
+</div>
+<style>
+
+ .toolbar-head{
+	border : 1px solid #ddd;
+	padding: 10px 15px;
+	font-size: 12px;
+	font-weight: bold;
+	color: #0E2D5F;
+	height: 36px;
+	line-height: 16px;
+	background-color: #f5f5f5;
+} 
+.code{
+	white-space: pre-wrap!improtant;
+	color: #c7254e;
+	background-color: #f9f2f4;
+	white-space: nowrap;
+}
+ .panel.inline{
+ 	display: inline-block;
+ 	height: 100%
+ }
+ .panel.inline .panel-body{
+ height: 100%
+ }
+
+
+fieldset.scheduler-border {
+    border: 1px groove #ddd !important;
+    padding: 0 0.4em 1.4em 0.4em !important; 
+    /* margin: 0 0 1.5em 0 !important; */
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+}
+legend{ 
+	font-size:18px!important;
+	padding: initial;
+	margin: 10px;
+}
+fieldset{
+	margin:5px!important;
+}
+legend.scheduler-border {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    text-align: left !important;
+}
+</style>

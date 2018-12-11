@@ -1,0 +1,119 @@
+<html ng-app="app">
+<head>
+<title>节点跳转规则</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/codeMirror.css" rel="stylesheet">
+
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../build/common/codeMirror.js"></script>
+
+<script type="text/javascript">
+	var app = angular.module('app', [ 'baseDirective','ui.codemirror']);
+	app.controller("ctrl", [ '$scope', 'baseService', function(scope, baseService) {
+		var varTree;
+		scope.selectScript = function(){
+			CustUtil.openCustDialog("scriptSelector",function(data,innerWindow){
+				scope.insetCode(data[0].script);
+				$.Dialog.close(innerWindow);
+			});
+		}
+		
+		scope.getBoStr = function(node){
+			var parentNode = node.getParentNode();
+			if( !parentNode)return;
+			
+			// 主表字段
+			if(node.nodeType == 'column' && parentNode.parentId=="0"){
+				return parentNode.alias+".get('"+node.key+"')";
+			}
+			// 子表
+			if(node.nodeType == 'table' && parentNode.parentId=="0"){
+				return "/* "+parentNode.alias+".getChildren('"+node.key+"')  获取子表： List<IBusinessData> */";
+			}
+			// 子表的字段
+			if(node.nodeType == 'column' && parentNode.getParentNode().parentId=="0"){
+				return "/* "+parentNode.getParentNode().alias+".getChildren('"+parentNode.key+"')  获取子表数据： List<IBusinessData> 子表字段：”"+node.key+"“ 请根据实际情况获取子表数据*/";
+			}
+			
+		}
+		scope.setVariable = function (event, treeId, node) {
+			var keyStr = node.name;
+			// 流程变量
+			if (node.nodeType == 'var'){
+				keyStr = "variableScope.getVariable('"+node.name+"')";
+			}// 业务对象取值
+			else {
+				 keyStr = scope.getBoStr(node);
+			}
+			
+			if(!keyStr)return;
+			
+			varTree.hideMenu();
+			scope.insetCode(keyStr);
+		}
+		
+		scope.insetCode = function(str) {
+			scope.CodeMirrorBroadcast= "script";
+			scope.$broadcast(scope.CodeMirrorBroadcast, function(CodeMirror) {
+				CodeMirror.replaceSelection(str);
+			});
+		};
+		
+		scope.initTree = function(){
+			varTree = new ZtreeCreator('tempTree', __ctx+"/bpm/processDef/variablesTree")
+				.setDataKey({name : 'name'})
+				.setCallback({onClick : scope.setVariable })
+				.makeCombTree("varTree",300)
+				.initZtree({ defId : $.getParam("defId"), nodeId : $.getParam("nodeId")}, 2);
+			
+		}
+		scope.initTree();
+		scope.rule = passData.rule;
+		scope.nodeMap = passData.nodeMap;
+	} ]);
+	 
+	function getData(){
+		if (!AngularUtil.getScope().form.$valid){
+			$.Dialog.warning("表单校验未通过！");
+			return false;
+		}
+		
+		var rule = AngularUtil.getScope().rule;
+		rule.targetNodeDesc = $("option[value='"+rule.targetNode+"']").text();
+		return rule;
+	}
+</script>
+</head>
+<body ng-controller="ctrl">
+<form name="form">
+		<table class="form-table">
+			<tr>
+				<th>跳转规则描述: <span class="required">*</span></th>
+				<td><input type="text" ng-model="rule.name" class="form-control" ab-validate="{required:true,maxlength:120}"/></td>
+			</tr>
+			<tr>
+				<th>跳转至节点名称:</th>
+				<td>
+					<select ng-model="rule.targetNode" ab-validate="{required:true}" class="form-control" id="select">
+						<option value="">请选择</option>
+						<option ng-repeat="(nodeId,node) in nodeMap" value="{{nodeId}}"  ng-selected="nodeId===rule.targetNode">{{node.nodeName}}</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>跳转规则脚本:</th>
+				<td>
+					<div>
+						<a class="btn btn-primary btn-xs" ng-click="selectScript()">常用脚本</a>
+					    <a id="varTree" class="btn btn-primary btn-xs">流程变量</a>
+						<span class="text-warning">脚本需要 return true or false</span>
+						<div id="tempTree"></div>
+					</div>
+   					<textarea ng-model="rule.script" ui-codemirror="" height="210px" broadcast="script" ab-validate="{required:true}"></textarea>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

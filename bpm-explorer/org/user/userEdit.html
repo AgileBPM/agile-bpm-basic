@@ -1,0 +1,173 @@
+<html ng-app="app">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+	<script type="text/javascript">
+	var id = $.getParam("id");
+	var groupId = $.getParam("groupId");
+	
+	var app = angular.module('app', ['baseDirective']);
+	app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
+		$scope.isSaveEd = id;
+		if(id){
+			$("#account").attr("readonly","readonly");
+		}
+		
+		if($scope.isSaveEd){
+			$("#userPostList").attr("src","userPostList.html?userId="+id);
+			$("#userRoleList").attr("src","userRoleList.html?userId="+id);
+		}
+		
+		/**
+		 * 数据初始化。
+		 */
+		$scope.init=function(){
+			if(!$scope.data){
+				$scope.data={status:1};
+			}
+		};
+		
+		$scope.$on("beforeSaveEvent",function(event,data){
+			$scope.data.groupId=groupId;
+		});
+		
+	 
+		$scope.$on("afterSaveEvent",function(event,result){
+			HT.window.refreshParentGrid();
+			if(result.r){
+			  window.location="/org/user/userEdit.html?id="+result.data
+			}else{
+			  $.Dialog.close(window);
+			}
+		});
+		
+	}]);
+	</script>
+</head>
+<body ng-controller="ctrl" class="panel success">
+	<!-- 顶部按钮 -->
+	<div class="panel-heading">
+		<a class="btn btn-primary fa-save" ng-model="data" ab-save="/org/user/save"> 保存 </a>
+		<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回 </a>
+	</div>
+	
+	  <ul class="nav nav-tabs" role="tablist">
+	    <li role="presentation" class="active"><a href="#user" aria-controls="home" role="tab" data-toggle="tab">基础信息</a></li>
+	    <li ng-if="isSaveEd" role="presentation"><a href="#org" aria-controls="messages" role="tab" data-toggle="tab">组织岗位设置</a></li>
+	    <li ng-if="isSaveEd" role="presentation"><a href="#role" aria-controls="settings" role="tab" data-toggle="tab">角色设置</a></li>
+	  </ul>
+	
+	<div  class="tab-content">
+		<div id="user" class="tab-pane active">
+			<form name="form" method="post" ab-load="/org/user/get?id={id}" ng-model="data">
+				<table class="form-table" cellspacing="0">
+					<tr>
+						<th>
+							<span>姓名:</span>
+							<span class="required">*</span>
+						</th>
+						<td>
+							<input class="form-control" type="text" ng-model="data.fullname" ab-validate="{required:true,maxlength:765}" />
+						</td>
+
+					</tr>
+					<tr>
+						<th>
+							<span>账号:</span>
+							<span class="required">*</span>
+						</th>
+						<td>
+							<input class="form-control" type="text" ng-model="data.account" id="account" ab-validate="{required:true,maxlength:20}" />
+						</td>
+					</tr>
+
+					<tr ng-if="data.id==null">
+						<th>
+							<span>密码:</span>
+							<span class="required">*</span>
+						</th>
+						<td>
+							<input class="form-control" type="password" ng-model="data.password" ab-validate="{required:true,maxlength:192}" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span>邮箱:</span>
+						</th>
+						<td>
+							<input class="form-control" type="text" ng-model="data.email" ab-validate="{required:false,maxlength:192,email:true}" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span>手机号码:</span>
+						</th>
+						<td>
+							<input class="form-control" type="text" ng-model="data.mobile" ab-validate="{maxlength:96,phonenumber:true}" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span>微信号:</span>
+						</th>
+						<td>
+							<input class="form-control" type="text" ng-model="data.weixin" ab-validate="{maxlength:192}" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span>地址:</span>
+						</th>
+						<td>
+							<input class="form-control" type="text" ng-model="data.address" ab-validate="{required:false}" />
+						</td>
+					</tr>
+
+					<tr>
+						<th>
+							<span>性别：</span>
+						</th>
+						<td>
+							<select class="form-control" ng-model="data.sex">
+								<option value="未知">未知</option>
+								<option value="男">男</option>
+								<option value="女">女</option>
+							</select>
+						</td>
+					</tr>
+
+					<tr>
+						<th>
+							<span>状态:</span>
+							<span class="required">*</span>
+						</th>
+						<td>
+							<select class="form-control" ng-model="data.status" ab-validate="{required:true}">
+								<option value="0">禁用</option>
+								<option value="1">正常</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<span>创建时间:</span>
+						</th>
+						<td>{{data.createTime | date :'yyyy-MM-dd'}}</td>
+					</tr>
+
+
+				</table>
+			</form>
+
+		</div>
+		<div ng-show="isSaveEd" id="org"  class="tab-pane">
+			<iframe id="userPostList" src="" frameborder="no" height="70%" width="100%" ></iframe>
+		</div>
+		<div ng-show="isSaveEd" id="role" class="tab-pane">
+			<iframe id="userRoleList" src="" frameborder="no" height="70%"  width="100%" ></iframe>
+		</div>
+	</div>
+</body>
+</html>

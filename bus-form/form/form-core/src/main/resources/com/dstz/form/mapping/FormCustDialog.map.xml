@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.form.dao.FormCustDialogDao">
+    <resultMap id="FormCustDialog" type="com.dstz.form.model.FormCustDialog">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="key" column="key_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="desc" column="desc_" jdbcType="VARCHAR"/>
+        <result property="style" column="style_" jdbcType="VARCHAR"/>
+        <result property="dsKey" column="ds_key_" jdbcType="VARCHAR"/>
+        <result property="dsName" column="ds_name_" jdbcType="VARCHAR"/>
+        <result property="objType" column="obj_type_" jdbcType="VARCHAR"/>
+        <result property="objName" column="obj_name_" jdbcType="VARCHAR"/>
+        <result property="page" column="page_" jdbcType="NUMERIC"/>
+        <result property="pageSize" column="page_size_" jdbcType="NUMERIC"/>
+        <result property="width" column="width_" jdbcType="NUMERIC"/>
+        <result property="height" column="height_" jdbcType="NUMERIC"/>
+        <result property="system" column="system_" jdbcType="NUMERIC"/>
+        <result property="multiple" column="multiple_" jdbcType="NUMERIC"/>
+        <result property="dataSource" column="data_source_" jdbcType="VARCHAR"/>
+        <result property="treeConfigJson" column="tree_config_json_" jdbcType="VARCHAR"/>
+        <result property="displayFieldsJson" column="display_fields_json_" jdbcType="CLOB"/>
+        <result property="conditionFieldsJson" column="condition_fields_json_" jdbcType="CLOB"/>
+        <result property="returnFieldsJson" column="return_fields_json_" jdbcType="CLOB"/>
+        <result property="sortFieldsJson" column="sort_fields_json_" jdbcType="CLOB"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.form.model.FormCustDialog">
+		INSERT INTO form_cust_dialog
+		(id_,key_,name_,desc_,style_,ds_key_,ds_name_,obj_type_,obj_name_,page_,page_size_,width_,height_,system_,multiple_,data_source_,tree_config_json_,display_fields_json_,condition_fields_json_,return_fields_json_,sort_fields_json_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{style,jdbcType=VARCHAR}, #{dsKey,jdbcType=VARCHAR},#{dsName,jdbcType=VARCHAR}, #{objType,jdbcType=VARCHAR}, #{objName,jdbcType=VARCHAR}, #{page,jdbcType=NUMERIC}, #{pageSize,jdbcType=NUMERIC}, #{width,jdbcType=NUMERIC}, #{height,jdbcType=NUMERIC}, #{system,jdbcType=NUMERIC}, #{multiple,jdbcType=NUMERIC},#{dataSource,jdbcType=VARCHAR}, #{treeConfigJson,jdbcType=VARCHAR}, #{displayFieldsJson,jdbcType=CLOB}, #{conditionFieldsJson,jdbcType=CLOB}, #{returnFieldsJson,jdbcType=CLOB}, #{sortFieldsJson,jdbcType=CLOB})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="FormCustDialog">
+		SELECT * FROM form_cust_dialog 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="FormCustDialog">
+        SELECT * FROM form_cust_dialog
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.form.model.FormCustDialog">
+		UPDATE form_cust_dialog SET
+		key_=#{key,jdbcType=VARCHAR},
+		name_=#{name,jdbcType=VARCHAR},
+		desc_=#{desc,jdbcType=VARCHAR},
+		style_=#{style,jdbcType=VARCHAR},
+		ds_key_=#{dsKey,jdbcType=VARCHAR},
+		ds_name_=#{dsName,jdbcType=VARCHAR},
+		obj_type_=#{objType,jdbcType=VARCHAR},
+		obj_name_=#{objName,jdbcType=VARCHAR},
+		page_=#{page,jdbcType=NUMERIC},
+		page_size_=#{pageSize,jdbcType=NUMERIC},
+		width_=#{width,jdbcType=NUMERIC},
+		height_=#{height,jdbcType=NUMERIC},
+		system_=#{system,jdbcType=NUMERIC},
+		multiple_=#{multiple,jdbcType=NUMERIC},
+		data_source_=#{dataSource,jdbcType=NUMERIC},
+		tree_config_json_=#{treeConfigJson,jdbcType=VARCHAR},
+		display_fields_json_=#{displayFieldsJson,jdbcType=CLOB},
+		condition_fields_json_=#{conditionFieldsJson,jdbcType=CLOB},
+		return_fields_json_=#{returnFieldsJson,jdbcType=CLOB},
+		sort_fields_json_=#{sortFieldsJson,jdbcType=CLOB}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM form_cust_dialog 
+		WHERE
+		id_=#{id}
+	</delete>
+
+
+</mapper>

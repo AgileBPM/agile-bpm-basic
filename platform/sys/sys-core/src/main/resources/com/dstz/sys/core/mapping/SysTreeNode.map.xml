@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.SysTreeNodeDao">
+    <resultMap id="SysTreeNode" type="com.dstz.sys.core.model.SysTreeNode">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="key" column="key_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="desc" column="desc_" jdbcType="VARCHAR"/>
+        <result property="treeId" column="tree_id_" jdbcType="VARCHAR"/>
+        <result property="parentId" column="parent_id_" jdbcType="VARCHAR"/>
+        <result property="path" column="path_" jdbcType="VARCHAR"/>
+        <result property="sn" column="sn_" jdbcType="NUMERIC"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.SysTreeNode">
+		INSERT INTO sys_tree_node
+		(id_,key_,name_,desc_,tree_id_,parent_id_,path_,sn_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{treeId,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, #{sn,jdbcType=NUMERIC})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="SysTreeNode">
+		SELECT * FROM sys_tree_node 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="SysTreeNode">
+        SELECT * FROM sys_tree_node
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.sys.core.model.SysTreeNode">
+		UPDATE sys_tree_node SET
+		key_=#{key,jdbcType=VARCHAR},
+		name_=#{name,jdbcType=VARCHAR},
+		desc_=#{desc,jdbcType=VARCHAR},
+		tree_id_=#{treeId,jdbcType=VARCHAR},
+		parent_id_=#{parentId,jdbcType=VARCHAR},
+		path_=#{path,jdbcType=VARCHAR},
+		sn_=#{sn,jdbcType=NUMERIC}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM sys_tree_node 
+		WHERE
+		id_=#{id}
+	</delete>
+
+    <delete id="removeByTreeId" parameterType="java.lang.String">
+		DELETE FROM sys_tree_node 
+		WHERE
+		tree_id_=#{treeId}
+	</delete>
+	
+	<delete id="removeByPath" parameterType="java.lang.String">
+		DELETE FROM sys_tree_node 
+		WHERE
+		path_ like #{path}
+	</delete>
+
+
+</mapper>

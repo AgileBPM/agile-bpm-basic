@@ -1,0 +1,80 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<link href="../../assets/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+	<link href="../../assets/css/list.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	<script type="text/javascript" src="../../assets/js/plugins/bootstrap-table/bootstrap-table.js"></script>
+	<script type="text/javascript" src="../../assets/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>           
+	
+	<script type="text/javascript" src="../../assets/js/platform/form/custDialog/listDialogController.js"></script>
+	
+	
+<script type="text/javascript">
+	function getData() {
+		var list = [];
+		var scope = AngularUtil.getScope();
+		if (scope.customDialog.selectNum == 1) {//单选
+			scope.selectedList=[];
+			scope.selectedList.push(scope.activeRow);
+		}
+		$(scope.selectedList).each(function() {
+			var temp = this;//因为temp中会包含显示字段的信息，所以要根据resultfield来只获取返回字段的信息
+			var json = {};
+			$(scope.customDialog.resultfield).each(function() {
+				json[this.comment] = temp[this.field];
+			});
+			list.push(json);
+		});
+		return list;
+	}
+</script>
+</head>
+<body ng-controller="ListDialogCtrl" class="panel-body" ng-init="init()" >
+	<!-- 顶部查询操作 -->
+	<div class="panel panel-default search-panel" ng-show="hasCondition(customDialog.conditionfield)">
+		<div class="panel-heading">
+			查询条件
+			<a 　href="javascript:void(0)" class="pull-right">
+				<i class="fa  fa-angle-double-up" toggle-collapse="#searchForm"></i>
+			</a>
+		</div>
+		<div class="panel-body">
+			<form id="searchForm" class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-4" ng-repeat="item in customDialog.conditionfield | filter:{defaultType:'1'}">
+						<label class="control-label col-sm-4" for="name_^VLK">{{item.comment}}</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" ng-model="item.value"></label>
+						</div>
+					</div>
+					<div class="col-sm-4" style="text-align:center; margin-top: 5px" >
+						<button type="button"  class="btn btn-primary fa-search" ng-click="search()">查询</button>
+						<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left" ng-click="reset()">重置</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="{{(customDialog&&customDialog.selectNum!=1)?'col-sm-10':''}}" style="padding-left: 0px;padding-right: 0px">
+		<table ab-grid class="table table-condensed"></table></div>
+	<div ng-if="customDialog.selectNum!=1" class="col-sm-2" style="padding-left: 5px;padding-right: 0px">
+		<table style="float: right;" class="table table-bordered table-hover" cellspacing="0">
+			<tr>
+				<th>{{customDialog.displayfield[0].comment}}</th>
+				<th>
+					操作
+					<a href="javascript:javaScript:void(0)" ng-click="clear()" class="btn-outline btn-primary fa  fa-trash btn-sm fa-trash"></a>
+				</th>
+			</tr>
+			<tr ng-repeat="item in selectedList track by $index">
+				<td>{{item[customDialog.displayfield[0].field]}}</td>
+				<td>
+					<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.del($index,selectedList)" class="btn btn-sm btn-default fa-delete"></a>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

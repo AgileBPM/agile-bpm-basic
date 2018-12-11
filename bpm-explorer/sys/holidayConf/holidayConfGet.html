@@ -1,0 +1,58 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@include file="/commons/include/html_doctype.html" %>
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+		<script type="text/javascript">
+			var app = angular.module('app', ['baseDirective']);
+			app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
+				
+			}]);
+		</script>
+	</head>
+	<body class="panel" ng-controller="ctrl">
+		<!-- 顶部按钮 -->
+		<div class="toolbar-panel">
+			<div class="buttons">	      
+				<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回</a>	
+			</div>
+		</div>
+		<form name="form"  ab-load="/calendar/holidayConf/getJson?id={id}"    ng-model="data">
+		<table class="table-form"   cellspacing="0">
+					<tr>								
+						<th>名字:</th>
+						<td> {{data.name }}</td>
+					</tr>
+					<tr>								
+						<th>系统:</th>
+						<td> {{data.system }}</td>
+					</tr>
+					<tr>								
+						<th>年份:</th>
+						<td> {{data.year}}</td>
+					</tr>
+					<tr>								
+						<th>开始日期:</th>
+						<td> {{data.startDay | date :'yyyy-MM-dd'}}</td>
+					</tr>
+					<tr>								
+						<th>结束日期:</th>
+						<td> {{data.endDay | date :'yyyy-MM-dd'}}</td>
+					</tr>
+					<tr>								
+						<th>分类:</th>
+						<td> {{data.type }}</td>
+					</tr>
+					<tr>								
+						<th>描述:</th>
+						<td> {{data.remark }}</td>
+					</tr>
+		</table>
+		
+		
+		</form>
+	</body>
+</html>

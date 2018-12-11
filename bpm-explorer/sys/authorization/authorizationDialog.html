@@ -1,0 +1,142 @@
+<!doctype html>
+<html ng-app="app">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>授权</title>
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	
+	<head>
+		<script type="text/javascript">
+		var rightsTarget = $.getParam("rightsTarget");
+		var rightsObject = $.getParam("rightsObject");
+		
+		var app = angular.module('app', ['baseDirective']);
+		app.controller("ctrl", [ '$scope', 'baseService','ArrayToolService', function($scope, baseService,ArrayTool) {
+			$scope.ArrayTool=ArrayTool;
+			$scope.rightsList = [];
+			
+			//初始化自定义对话框
+			$scope.$on("afterLoadEvent",function(event,data){
+				// 若含所有人、则为所有人
+				if(data && data.length>0){
+					for(var i=0,rights;rights = data[i++];){
+						if(rights.rightsType == "all"){
+							$scope.isAll = true;
+							$scope.rightsList = [];
+						}
+					}
+				}
+		    });
+			
+			$scope.save = function(){
+				//删除掉all
+				if($scope.isAll){
+					$scope.rightsList = [{ rightsTarget : rightsTarget, rightsObject : rightsObject, rightsType : "all", rightsIdentityName : "所有人" ,rightsIdentity : "user",}];
+				}else{
+					for(var i=0,rights;rights = $scope.rightsList[i++];){
+						if(rights.rightsType == "all"){
+							ArrayTool.remove(rights,$scope.rightsList);
+						}
+					}
+				}
+				
+				var param = {rightsTarget:rightsTarget,rightsObject:rightsObject,authorizationJson:angular.toJson($scope.rightsList)};
+				var defer = baseService.postForm(__ctx+"/sys/authorization/saveAuthorization",param);
+				$.getResultMsg(defer,function(msg){ });
+			}
+			 
+			
+			$scope.selectIdentitys = function(rightsType,rightsSelector,nameKey,idKey) {
+				if(!nameKey)nameKey = "name";
+				if(!idKey)idKey = "id";
+				
+				//准备回显数据
+				var arr = [];
+				for(var i=0,rights;rights = $scope.rightsList[i++];){
+					if(rights.rightsType == rightsType){
+						var object = {};
+						object[nameKey] = rights.rightsIdentityName;
+						object[idKey] = rights.rightsIdentity;
+						arr.push(object);
+					}
+				}
+				
+				CustUtil.openCustDialog(rightsSelector,function(data,innerWindow){
+					$scope.$apply(function(){
+						//删除掉当前类型的
+						var newList = [];
+						for(var i=0,rights;rights = $scope.rightsList[i++];){
+							if(rights.rightsType != rightsType){
+								newList.push(rights);
+							}
+						}
+						$scope.rightsList = newList;
+						
+						//将重新选择的放入到List中
+						for(var i = 0; i < data.length; i++) {
+							var rights = {
+								rightsType :rightsType,
+								rightsTarget: rightsTarget,
+								rightsIdentityName : data[i][nameKey],
+								rightsIdentity : data[i][idKey]
+								};
+							$scope.rightsList.push(rights);
+						}
+						});
+				   $.Dialog.close(top);
+				},arr)
+			}
+			
+		}]);
+		</script>
+	</head>
+	<body ng-controller="ctrl">
+			<!-- 顶部按钮 -->
+			<div class="ibox-title">
+				<a class="btn btn-primary fa-save"  href="javascript:void(0)" ng-click="save()">保存</a>
+				<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a> 
+			</div>
+			<form name="form" method="post" ab-load="/sys/authorization/getAuthorizations?rightsTarget={rightsTarget}&rightsObject={rightsObject}"  ng-model="rightsList">
+				<table class="form-table"  cellspacing="0" >
+				        <tr>								
+							<th>所有人:</th>
+							<td>
+								<input id="all" type="checkbox" ng-model="isAll"   ht-validate="{required:false}" />
+							</td>								
+						</tr>
+						
+						<tr id="userTr" ng-if="!isAll">								
+							<th>用户:</th>
+							<td>
+								<span ng-repeat="rights in rightsList |filter:{rightsType:'user'}" class="label label-danger"> {{rights.rightsIdentityName}}</span>
+								<span class="btn  btn-sm btn-primary fa  ng-scope" ng-click="selectIdentitys('user','userSelector')">选择</span>
+							</td>								
+						</tr>
+
+						<tr id="roleTr" ng-if="!isAll">								
+							<th>角色:</th>
+							<td>
+								<span ng-repeat="rights in rightsList |filter:{rightsType:'role'}" class="label label-danger"> {{rights.rightsIdentityName}}</span>
+								<span class="btn  btn-sm btn-primary fa  ng-scope" ng-click="selectIdentitys('role','roleSelector')">选择</span>
+							</td>								
+						</tr>
+
+						<tr id="postTr" ng-if="!isAll">								
+							<th>岗位:</th>
+							<td>
+								<span ng-repeat="rights in rightsList |filter:{rightsType:'post'}" class="label label-danger"> {{rights.rightsIdentityName}}</span>
+								<span class="btn  btn-sm btn-primary fa  ng-scope" ng-click="selectIdentitys('post','postSelector')">选择</span>							</td>								
+						</tr>
+
+						<tr id="orgTr" ng-if="!isAll">								
+							<th>组织:</th>
+							<td>
+								<span ng-repeat="rights in rightsList |filter:{rightsType:'org'}" class="label label-danger"> {{rights.rightsIdentityName}}</span>
+								<span class="btn  btn-sm btn-primary fa  ng-scope" ng-click="selectIdentitys('org','orgSelector')">选择</span>
+							</td>								
+						</tr>
+				</table>			
+			</form>
+		
+	</body>
+</html>

@@ -1,0 +1,176 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/bus/businessTable/businessExtTableEditController.js"></script>
+<script type="text/javascript">
+	$(function() {
+		var scope = AngularUtil.getScope();
+		$.fn.addRule("keyCheck", {
+			rule : function(v, param, elm) {
+				var b = true;
+				$($("[ng-model='column.key']")).not(elm).each(function() {
+					var val = $(this).val();
+					if (val.toLowerCase() == v.toLowerCase()) {
+						b = false;
+					}
+				});
+				return b;
+			},
+			msg : "该别名已被使用"
+		});
+	});
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<div class="ibox-title">
+		<a class="btn btn-primary fa-save" href="javascript:void(0)" ng-model="data" ab-save="/bus/businessTable/save">保存</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+	</div>
+	<form name="form" ab-load="/bus/businessTable/getObject?id={id}&fill=1" ng-model="data" fastjson>
+		<table class="form-table">
+			<tr>
+				<th>分类</th>
+				<td>
+					<span ab-combox="data.groupId" value-name="data.groupName" tree-key="ywbfl" ng-model="data.groupName" ab-validate="{required:true}"></span>
+				</td>
+				<th>数据源</th>
+				<td>
+					<select class="form-control" ng-disabled="data.id" ng-model="data.dsKey" ng-options="m.key as m.name for m in AllSysDataSources">
+					</select>
+				</td>
+				<th ng-if="!data.id">查询</th>
+				<td ng-if="!data.id" class="form-inline">
+					<input type="text" ng-model="temp.tableName" class="form-control" />
+					<a href="javascript:void(0)" class="btn btn-primary fa-search" ng-click="searchTableName()">查询</a>
+				</td>
+				<th ng-if="data.id">操作</th>
+				<td ng-if="data.id">
+					<a class="btn btn-primary refresh" href="javascript:void(0)" ng-click="selectTable(true)">同步外部表</a>
+					同步后需要保存才生效
+				</td>
+			</tr>
+			<tr>
+				<th>数据库表名</th>
+				<td>
+					<select class="form-control" ng-if="!data.id&&tableNames" ng-model="data.name" ng-options="k as (k+'('+v+')') for (k,v) in tableNames" ng-change="selectTable()">
+						<option value="">请选择</option>
+					</select>
+					<input ng-if="data.id" ng-disabled="true" ng-model="data.name" class="form-control" />
+				</td>
+				<th>描述</th>
+				<td>
+					<input ng-model="data.comment" class="form-control" />
+				</td>
+				<th>实体名</th>
+				<td>
+					<input ng-disabled="data.id" ng-model="data.key" ab-validate="{required:true,varirule:true}" class="form-control" />
+				</td>
+			</tr>
+		</table>
+
+		<!-- 字段 -->
+		<table class="form-table" cellspacing="0">
+			<tr>
+				<th style="width: 8%">注释</th>
+				<th style="width: 8%">属性名</th>
+				<th style="width: 8%">数据库字段名</th>
+				<th style="width: 5%">必填</th>
+				<th style="width: 8%">数据类型</th>
+				<th style="width: 5%">属性长度</th>
+				<th style="width: 5%">默认值</th>
+				<th style="width: 10%">字段控件</th>
+				<th style="width: 15%">控件配置</th>
+				<th style="width: 10%">字段校验</th>
+				<th style="width: 5%">操作</th>
+			</tr>
+			<tr ng-repeat="column in data.columns">
+				<!-- 注释 -->
+				<td>
+					<input type="text" class="form-control" ng-model="column.comment" ab-validate="{required:true}" />
+				</td>
+				<!-- 别名 -->
+				<td>
+					<input type="text" class="form-control" ng-model="column.key" ab-pinyin="column.comment" ab-validate="{required:true,keyCheck:true,varirule:true}" />
+				</td>
+				<!-- 名称 -->
+				<td>
+					<input ng-disabled="true" type="text" class="form-control" ng-model="column.name" ab-pinyin="column.comment" ab-validate="{required:true,nameCheck:true,varirule:true}" />
+				</td>
+				<!-- 必填 -->
+				<td>
+					<span ng-disabled="true" ab-boolean text="必填" ng-model="column.required"></span>
+				</td>
+				<!-- 数据类型 -->
+				<td>
+					<select ng-disabled="true" class="form-control" ng-model="column.type" ng-change="changeColunmType(column)" ng-options="v.key as v.desc for (k,v) in ColumnType">
+					</select>
+				</td>
+				<!-- 属性长度 -->
+				<td>
+					<input ng-disabled="true" type="text" class="form-control" ng-if="column.type=='varchar'  || column.type=='number'" ng-model="column.length" ab-validate="{required:true,number:true}" />
+					<span ng-if="column.type=='number'">.</span>
+					<input ng-disabled="true" type="text" class="form-control" style="width: 50px" ng-if="column.type=='number'" ng-model="column.decimal" ab-validate="{required:true,number:true}" />
+				</td>
+				<!-- 默认值 -->
+				<td>
+					<input ng-if="!column.primary" type="text" class="form-control" ng-if="column.type!='clob'" ng-model="column.defaultValue" />
+				</td>
+				<!-- 字段控件 -->
+				<td>
+					<select ng-if="!column.primary" class="form-control" ng-model="column.ctrl.type" ng-change="initCtrlConfig(column.ctrl)" ng-options="m.key as m.desc for m in getCtrlTypeList(column)">
+					</select>
+				</td>
+				<!-- 控件配置 -->
+				<td>
+					<div ng-if="!column.primary">
+						<!-- {{column.ctrl.config |json}} -->
+						<!-- 多行行文本框 -->
+						<div ng-if="column.ctrl.type=='multitext'" class="form-inline">
+							<label>
+								<span ab-boolean="1/0" text="编辑器/TextArea" ng-model="column.ctrl.config.isEditor" />
+							</label>
+							宽:
+							<input type="text" class="form-control" ng-model="column.ctrl.config.ewidth" style="width: 50px" ab-validate="{required:true,number:true}" />
+							高:
+							<input type="text" class="form-control" ng-model="column.ctrl.config.eheight" style="width: 50px" ab-validate="{required:true,number:true}" />
+						</div>
+						<!-- 下拉框 -->
+						<div ng-if="column.ctrl.type=='select'||column.ctrl.type=='multiselect'||column.ctrl.type=='checkbox'||column.ctrl.type=='radio'">
+							<a class="btn btn-outline btn-primary fa-edit" ng-click="openColCtrlCfgDialog(column)" href="javascript:void(0)">设置 </a>
+						</div>
+						<!-- 数据字典 -->
+						<div ng-if="column.ctrl.type=='dic'" style="width: 180px">
+							<span ab-combox="" value-key="column.ctrl.config.key" value-name="column.ctrl.config.keyName" url="/sys/dataDict/getDictTree"></span>
+						</div>
+						<!-- 流水号 -->
+						<div ng-if="column.ctrl.type=='identity'" style="width: 180px">
+							<span class="btn btn-primary" ng-if="column.ctrl.config.name">{{column.ctrl.config.name}}</span>
+							<a class="btn btn-outline btn-primary fa-edit" value-name="column.ctrl.config.name" value-alias="column.ctrl.config.alias" ab-cust-dialog="IdentitySeletor" href="javascript:void(0)">选择 </a>
+						</div>
+						<!-- 日期 -->
+						<div ng-if="column.ctrl.type=='date'" class="form-inline">
+							格式化:
+							<input ng-model="column.ctrl.config.format" class="form-control" />
+						</div>
+					</div>
+				</td>
+				<!-- 字段校验 -->
+				<td>
+					<select ng-if="!column.primary" class="form-control" ng-model="column.ctrl.newRule" ng-options="m as m.title for m in FormRules" ng-change="addRule(column.ctrl)">
+					</select>
+					<table ng-if="!column.primary" style="width: 100%">
+						<tr ng-repeat="rule in column.ctrl.validRule">
+							<td>{{rule.title}}</td>
+							<td>
+								<a class="fa fa-times-circle-o actionBtn" href="javascript:void(0)" ng-click="ArrayTool.del($index,column.ctrl.validRule)"></a>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

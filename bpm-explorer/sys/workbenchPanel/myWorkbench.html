@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html ng-app="workbenchApp">
+<head>
+<title>首页</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+  <script type="text/javascript" src="../../assets/js/plugins/softable/Sortable.min.js"></script>
+  <link rel="stylesheet" href="../../assets/js/plugins/jqueryui/css/base/jquery-ui-1.10.4.custom.min.css">
+  <script src="../../assets/js/plugins/jqueryui/js/jquery-ui-1.10.4.custom.js"></script>
+  
+  <script src="../../assets/js/platform/sys/workbench/panelService.js"></script>
+  <script src="../../assets/js/platform/sys/workbench/workbenchController.js"></script>
+  <!-- dev模式 -->
+  <script src="../../assets/js/plugins/echarts/echarts.common.min.js"></script>
+  
+  <link rel="stylesheet" href="../../assets/css/platform/sys/workbench.css">
+  <script type="text/javascript">
+  	var layoutKey = $.getParam("layoutKey");
+  </script>
+  
+</head>
+<body class="gray-bg" ng-controller="indexController">
+	<div ng-if="resized || panelList.length==0" style="height: 34px" >
+		<div style="margin-left: 14px;">
+			<button type="button" class="btn btn-sm btn-info fa-save" ng-click="saveMyworkbench()">保存</button>
+			<button type="button" class="btn btn-sm btn-info fa-rotate-left" ng-click="restore()">还原本次修改</button>
+			<button type="button" class="btn btn-sm btn-info fa-rotate-left" ng-click="restoreDefault()">使用默认宽高</button>
+			<button type="button" class="btn btn-sm btn-info fa-rotate-left" ng-click="useDefaultLayout()">还原至默认布局</button>
+			<button type="button" class="btn btn-sm btn-info fa-add" ng-click="addPanel()">添加窗口面板</button>
+			<a href="javaScript:void(0)" style="text-decoration: none; color: red;" title="您可以通过拖动窗口头来自定义顺序。拖拽窗口右、下边框来调整窗口大小，窗口大小会影响布局，请合理调整需要的窗口大小" class="fa fa-exclamation-circle ab-help" ab-tip> </a>
+		</div>
+	</div>
+	<div id="sortable" class="" >
+		<div ng-repeat="panel in panelList track by panel.id" class="sortablebody {{$index}} draggable" data-id="{{panel.id}}"
+			ng-style="{'height':panel.custHeight+'px','width':panel.custWidth+'%'}">
+			<div dynamic-directive="workbench-{{panel.type}}"></div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<html>
+<head>
+	<title>用户表</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	  <script src="http://apps.bdimg.com/libs/html5shiv/3.7/html5shiv.min.js"></script>
+	  <script src="http://apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<script type="text/javascript" src="../../build/common/gridList-ori.js"></script>
+</head>
+<body class="panel-body">
+	<!-- 搜索头部信息 -->
+	<div class="panel panel-default search-panel">
+		<div class="panel-heading">
+			查询条件
+			<a 　href="javascript:void(0)" class="pull-right">
+				<i class="fa  fa-angle-double-up" toggle-collapse="#searchForm"></i>
+			</a>
+		</div>
+		<div class="panel-body">
+			<form id="searchForm" class="form-horizontal">
+				<div class="form-group">
+					<label class="control-label col-sm-1" for="fullname_^VLK">姓名</label>
+					<div class="col-sm-2">
+						<input type="text" class="form-control" id="fullname_^VLK">
+					</div>
+					<label class="control-label col-sm-1" for="account_^VLK">账号</label>
+					<div class="col-sm-2">
+						<input type="text" class="form-control" id="account_^VLK">
+					</div>
+					<label class="control-label col-sm-1" for="status_^VLK">状态</label>
+					<div class="col-sm-2">
+						<select class="form-control" id="status_^VLK">
+							<option value="">全部</option>
+							<option value="0">禁用</option>
+							<option value="1">正常</option>
+						</select>
+					</div>
+					<div class="col-sm-3" style="text-align: left;">
+						<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+						<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- 数据列表管理按钮 eg:新增，删除，编辑等功能按钮 -->
+	<div class="btn-group toolbar">
+		<button class="btn btn-outline btn-primary fa-plus" openDialog="新增脚本" url="./userEdit">新增</button>
+	</div>
+	<!-- 数据列表 ab-grid -->
+	<table ab-grid data-id-field="id" data-url="/org/user/listJson">
+		<thead>
+			<tr>
+				<th data-checkbox="true">ID</th>
+				<th data-field="fullname">姓名</th>
+				<th data-field="account">账号</th>
+				<th data-field="email">邮箱</th>
+				<th data-field="mobile">手机号码</th>
+				<th data-field="sex">性别</th>
+				<th data-field="status" data-formatter="labelFormatter" data-val-text="{'0':'禁用','1':'启用'}"
+					 data-val-style="{'0':'danger','1':'success'}">状态</th>
+				<th data-field="createTime" data-formatter="dateTimeFormatter">创建时间</th>
+				<th data-field="script" data-formatter="innerHtmlFormatter" data-title="管理">
+					<span class='btn btn-outline btn-primary fa-edit' openDialog='编辑' qtip='编辑' url='userEdit.html?id={id}'></span>
+					<span class='btn btn-outline btn-primary fa-detail' openDialog='明细' qtip='明细'  url='userGet.html?id={id}'></span>
+					<span class='btn btn-outline btn-primary fa  fa-trash' sendAction='删除' qtip='删除'  url='/org/user/remove?id={id}'></span>
+				</th>
+			</tr>
+		</thead>
+	</table>
+</body>
+</html>
+<script>
+var noSwtich = true;
+</script>

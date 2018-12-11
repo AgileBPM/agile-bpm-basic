@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="redisMessageQueueProducer" class="com.dstz.sys.simplemq.producer.RedisMessageQueueProducer"/>
+    <bean id="redisMessageQueueConsumer" class="com.dstz.sys.simplemq.consumer.RedisMessageQueueConsumer">
+        <property name="handleMessageCoreThreadSize" value="1"/>
+        <property name="handleMessageMaxThreadSize" value="2"/>
+        <property name="handleMessageKeepAliveTime" value="30"/>
+    </bean>
+</beans>

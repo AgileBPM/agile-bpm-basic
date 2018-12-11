@@ -1,0 +1,49 @@
+<!doctype html>
+<html ng-app="app">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>'
+	
+<script type="text/javascript">
+	var app = angular.module("app", ['baseDirective']);
+	app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', function($scope, baseService, ArrayToolService) {
+		$scope.init = function() {
+			$scope.param = window.passData;
+		};
+	} ]);
+
+	function getResult() {
+		var mapParam = {};
+		var urlParam = "";
+		$("[name]").each(function() {
+			var val = $(this).val();
+			var name = $(this).attr("name");
+			if (!val) {
+				return;
+			}
+
+			if (urlParam) {
+				urlParam += "&";
+			}
+			urlParam += name + "=" + val;
+			mapParam[$(this).attr("name")] = val;
+		});
+		return {
+			url : urlParam,
+			map : mapParam
+		};
+	}
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<table class="form-table">
+		<tr ng-repeat="(key,val) in param">
+			<th>{{val}}</th>
+			<td>
+				<input class="form-control" type="text" name="{{key}}">
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

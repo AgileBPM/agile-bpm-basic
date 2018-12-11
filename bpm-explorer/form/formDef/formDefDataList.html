@@ -1,0 +1,52 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/gridList.css" rel="stylesheet">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../build/common/gridList.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/form/formDef/formDefDataListController.js"></script>
+<script type="text/javascript">
+	//编辑页
+	function edit(id) {
+		var url = "formDefPreview.html?key=" + $.getParameter("key");
+		if (id) {
+			url += "&id=" + id;
+		}
+		var conf = {
+			height : 0,
+			title : "预览",
+			url : url
+		};
+		$.Dialog.open(conf);
+	};
+
+	//删除
+	function remove(id) {
+		$.Dialog.confirm("对话框", '确认删除该数据吗？', function(r) {
+			if (!r) {
+				return;
+			}
+			var formKey = $.getParameter("key")
+			var url = __ctx + "/form/formDefData/removeData/"+formKey+"/"+id;
+			jQuery.post(url, {}, function(rlt) {
+				$.getResult(rlt, function() {
+					$("[ab-grid]").bootstrapTable("refresh");
+				}, null, "toast", null);
+			}, "json");
+		});
+	}
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()" ab-load="/bus/businessObject/getObject?key={boKey}&fill=true" fastjson ng-model="data">
+	<!-- 顶部查询操作 -->
+	<div class="ibox-title">
+		<a href="javascript:void(0)" class="btn btn-primary fa-plus" onclick="edit()">新增</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+	</div>
+	<!-- 列表 -->
+	<div>
+		<table ab-grid></table>
+	</div>
+</body>
+</html>

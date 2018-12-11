@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.dstz.agilebpm</groupId>
+        <artifactId>bus-form</artifactId>
+        <version>1.2.6</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>form</artifactId>
+    <packaging>pom</packaging>
+    <name>form</name>
+    <description>表单</description>
+
+    <modules>
+        <module>form-api</module>
+        <module>form-core</module>
+        <module>form-rest</module>
+    </modules>
+</project>

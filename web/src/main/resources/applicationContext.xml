@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	    xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd"
+       default-autowire="byType">
+	<!--  多环境配置 -->
+    <import resource="conf/app-mulProfile.xml"/>
+    <!--  rest服务 -->
+    <import resource="conf/app-mvc.xml"/>
+    <!--  事务配置 -->
+    <import resource="conf/app-tx.xml"/>
+
+    <!-- 最基础的默认鉴权实现 -->
+    <import resource="conf/app-security.xml"/>
+    
+     <context:annotation-config/>
+    <context:component-scan base-package="com.dstz.sys"/>
+    <context:component-scan base-package="com.dstz.base"/>
+    <context:component-scan base-package="com.dstz.org"/>
+    <context:component-scan base-package="com.dstz.bus"/>
+    <context:component-scan base-package="com.dstz.form"/>
+    
+    <context:component-scan base-package="com.dstz.demo"/>
+
+	<!-- redis groovy mq 整合 -->
+    <import resource="conf/sys-core.xml"/>
+    
+	<!-- 整合activiti -->
+    <import resource="conf/bpm-core.xml"/>
+
+
+</beans> 

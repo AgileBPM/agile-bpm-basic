@@ -1,0 +1,77 @@
+<!doctype html>
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		<script type="text/javascript">
+			 var id = $.getParam("id");
+			 var groupId=$.getParam("groupId");
+	
+			 var app = angular.module('app', ['baseDirective']);
+			 app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
+			 	$scope.data={}
+	
+			 	$scope.$on("beforeSaveEvent",function(event,data){
+			 		
+			 	});
+			 	$scope.$on("afterSaveEvent",function(event,data){
+			 		parent.reloadGrid();
+			 		if(data.r){
+			 		  window.location=window.location;
+			 		}else{
+			 			$.Dialog.close();
+			 		}
+			 	});
+			 	
+			 	$scope.getJobName = function(){
+			 		CustUtil.openCustDialog("jobSelector",function(arrData,innerWindow){
+			 			
+			 			$scope.$apply(function(){
+				 			$scope.data.jobName = arrData[0].name;
+				 			$scope.data.relDefId = arrData[0].id;
+				 			
+				 			$scope.userList = arrData;
+			 			})
+			 			 $.Dialog.close(innerWindow);
+			 		},$scope.userList||[],{selectNum:1})
+			 	}
+			 	
+			 	if(!id){
+			 		$scope.data.orgId = groupId;
+			 	}
+			 	
+			 }]);
+		</script>
+	</head>
+	<body ng-controller="ctrl">
+			<div class="ibox-title">
+				<a class="btn btn-primary btn-sm fa-save" ng-model="data" ab-save="/org/groupRelation/save"><span>保存</span></a>
+				<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a> 
+			</div>
+			<form name="form" method="post" ab-load="/org/groupRelation/get?id={id}"  ng-model="data">
+				<table class="form-table">
+						<tr id="job-tr">								
+							<th><span>职务:</span></th>
+							<td class="form-inline">
+								<input class="form-control"  type="text" ng-model="data.jobName" disabled="disabled"  ab-validate="{required:true,maxlength:192}"  />
+								<span class=" btn btn-primary" ng-click="getJobName()">选择</span>
+							</td>								
+						</tr>
+						<tr>								
+							<th><span>岗位名称:</span></th>
+							<td>
+								<input class="form-control" type="text" ng-model="data.relName" ab-validate="{required:true,maxlength:192}"  />
+							</td>							
+						</tr>
+						<tr>								
+							<th><span>岗位编码:</span></th>
+							<td>
+								<input ng-disable="data.id" id="relCode" class="form-control" type="text" ng-model="data.relCode"   ab-validate="{required:true,maxlength:192}"/>
+							</td>								
+						</tr>
+				</table>
+			</form>
+		
+	</body>
+</html>

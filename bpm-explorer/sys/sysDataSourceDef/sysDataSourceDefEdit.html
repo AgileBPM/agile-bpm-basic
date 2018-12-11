@@ -1,0 +1,70 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/sys/sysDataSourceDef/sysDataSourceDefEditController.js"></script>
+<script type="text/javascript">
+	
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<div class="ibox-title">
+		<a class="btn btn-primary fa-save" href="javascript:void(0)" ng-model="data" ab-save="/sys/sysDataSourceDef/save" use-default-after-save-event="true">保存</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+	</div>
+	<form name="form" ab-load="/sys/sysDataSourceDef/getObject?id={id}" ng-model="data">
+		<table class="form-table">
+			<tr>
+				<th>模板名字</th>
+				<td>
+					<input ng-model="data.name" ab-validate="{required:true}" class="form-control" />
+				</td>
+			</tr>
+			<tr>
+				<th>类路径</th>
+				<td>
+					<div>
+						<input ng-model="data.classPath" ab-validate="{required:true}" class="form-control" />
+					</div>
+					<a ng-show="data.classPath" class="btn btn-primary fa-fax" ng-click="initAttributes()"> 获取属性 </a>
+				</td>
+			</tr>
+		</table>
+		<table class="form-table" cellspacing="0">
+			<tr>
+				<th>名称</th>
+				<th>描叙</th>
+				<th>参数类型</th>
+				<th>是否必填</th>
+				<th>默认值</th>
+				<th>操作</th>
+			</tr>
+			<tr ng-repeat="attribute in data.attributes">
+				<td>
+					<input type="text" ng-disabled="true" ng-model="attribute.name" class="form-control" />
+				</td>
+				<td>
+					<input type="text" ng-model="attribute.comment" class="form-control" />
+				</td>
+				<td>
+					{{attribute.type}}
+				</td>
+				<td>
+					<span ab-boolean text="必填" ng-model="attribute.required" />
+				</td>
+				<td>
+					<input type="text" ng-model="attribute.defaultValue" class="form-control" />
+				</td>
+				<td>
+					<a href="javaScript:void(0)" class="btn btn-sm btn-primary fa-times" ng-click="ArrayTool.del($index,data.attributes)">删除</a>
+					<a href="javaScript:void(0)" class="btn btn-sm btn-primary fa-arrow-up" ng-click="ArrayTool.up($index,data.attributes)">上移</a>
+					<a href="javaScript:void(0)" class="btn btn-sm btn-primary fa-arrow-down" ng-click="ArrayTool.down($index,data.attributes)">下移</a>
+					<a href="javaScript:void(0)" class="btn btn-sm btn-primary fa-angle-double-up" ng-click="ArrayTool.top($index,data.attributes)">置顶</a>
+					<a href="javaScript:void(0)" class="btn btn-sm btn-primary fa-angle-double-down" ng-click="ArrayTool.bottom($index,data.attributes)">置底</a>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

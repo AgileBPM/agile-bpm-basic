@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.bus.dao.BusinessTableDao">
+    <resultMap id="BusinessTable" type="com.dstz.bus.model.BusinessTable">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="key" column="key_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="comment" column="comment_" jdbcType="VARCHAR"/>
+        <result property="dsKey" column="ds_key_" jdbcType="VARCHAR"/>
+        <result property="dsName" column="ds_name_" jdbcType="VARCHAR"/>
+        <result property="groupId" column="group_id_" jdbcType="VARCHAR"/>
+        <result property="groupName" column="group_name_" jdbcType="VARCHAR"/>
+        <result property="external" column="external_" jdbcType="NUMERIC"/>
+        <result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.bus.model.BusinessTable">
+		INSERT INTO bus_table
+		(id_,key_,name_,comment_,ds_key_,ds_name_,group_id_,group_name_,external_,create_time_,create_by_,update_time_,update_by_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR}, #{dsKey,jdbcType=VARCHAR}, #{dsName,jdbcType=VARCHAR}, #{groupId,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR}, #{external,jdbcType=NUMERIC}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="BusinessTable">
+		SELECT * FROM bus_table 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="BusinessTable">
+        SELECT * FROM bus_table
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.bus.model.BusinessTable">
+		UPDATE bus_table SET
+		key_=#{key,jdbcType=VARCHAR},
+		name_=#{name,jdbcType=VARCHAR},
+		comment_=#{comment,jdbcType=VARCHAR},
+		ds_key_=#{dsKey,jdbcType=VARCHAR},
+		ds_name_=#{dsName,jdbcType=VARCHAR},
+		group_id_=#{groupId,jdbcType=VARCHAR},
+		external_=#{external,jdbcType=NUMERIC},
+		group_name_=#{groupName,jdbcType=VARCHAR},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		update_by_=#{updateBy,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM bus_table 
+		WHERE
+		id_=#{id}
+	</delete>
+
+
+</mapper>

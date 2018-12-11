@@ -1,0 +1,140 @@
+<html ng-app="app">
+<head>
+<title>节点初始化</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/codeMirror.css" rel="stylesheet">
+
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../build/common/codeMirror.js"></script>
+
+<script type="text/javascript">
+
+	var app = angular.module('app', [ 'baseDirective', 'ui.codemirror']);
+	app.controller("ctrl", [ '$scope', 'baseService',  function(scope, baseService) {
+	var varTree;
+	scope.selectScript = function(broadcast){
+		scope.CodeMirrorBroadcast = broadcast;
+		
+		CustUtil.openCustDialog("scriptSelector",function(data,innerWindow){
+			scope.insetCode(data[0].script);
+			$.Dialog.close(innerWindow);
+		});
+	}
+	
+	scope.getBoStr = function(node){
+		var parentNode = node.getParentNode();
+		if( !parentNode)return;
+		
+		// 主表字段
+		if(node.nodeType == 'column' && parentNode.parentId=="0"){
+			return parentNode.alias+".put('"+node.key+"','')";
+		}
+		// 子表
+		if(node.nodeType == 'table' && parentNode.parentId=="0"){
+			return "/* "+parentNode.alias+".getChildren('"+node.key+"')  获取子表： List<IBusinessData> */";
+		}
+		// 子表的字段
+		if(node.nodeType == 'column' && parentNode.getParentNode().parentId=="0"){
+			return "/* "+parentNode.getParentNode().alias+".getChildren('"+parentNode.key+"')  获取子表数据： List<IBusinessData> 子表字段：”"+node.key+"“ 请根据实际情况获取子表数据*/";
+		}
+		
+	}
+	scope.setVariable = function (event, treeId, node) {
+		var keyStr = node.name;
+		// 流程变量
+		if (node.nodeType == 'var'){
+			//keyStr = "variableScope." + node.name;
+		}// 业务对象取值
+		else {
+			 keyStr = scope.getBoStr(node);
+		}
+		
+		if(!keyStr)return;
+		
+		varTree.hideMenu();
+		scope.insetCode(keyStr);
+	}
+	
+	scope.insetCode = function(str) {
+		scope.$broadcast(scope.CodeMirrorBroadcast, function(CodeMirror) {
+			CodeMirror.replaceSelection(str);
+		});
+	};
+	
+	scope.initTree = function(){
+		varTree = new ZtreeCreator('tempTree', __ctx+"/bpm/processDef/variablesTree")
+		.setDataKey({ name : 'name' })
+		.setCallback({ onClick : scope.setVariable })
+		.makeCombTree("varTree",300)
+		.initZtree({defId:$.getParam("defId"),nodeId:$.getParam("nodeId")}, 2);
+		
+		$(".varTree").bind("click", function(){
+			var broadcast = $(this).attr("broadcast")
+			scope.CodeMirrorBroadcast = broadcast;
+			varTree.showMenu($(this));
+		});
+
+	}
+	scope.initTree();
+	scope.nodeInit = passData.nodeInit;
+	scope.nodeList = passData.nodeList;
+	scope.nodeId = passData.nodeId;
+	if(passData.nodeId) scope.disable = true;
+} ]);
+	 
+	function getData(){
+		if (!AngularUtil.getScope().form.$valid){
+			$.Dialog.warning("表单校验未通过！");
+			return false;
+		}
+		
+		var nodeInit = AngularUtil.getScope().nodeInit;
+		return nodeInit;
+	}
+</script>
+</head>
+<body ng-controller="ctrl">
+<form name="form">
+		<table class="form-table">
+			<tr>
+				<th>初始化节点:</th>
+				<td>
+					<select ng-model="nodeInit.nodeId" ng-disable="disable" class="form-control" ab-validate="{required:true}"
+					ng-options="node.nodeId as node.nodeName for node in nodeList" >
+					<option value="">请选择</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>脚本描述: <span class="required">*</span></th>
+				<td><input type="text" ng-model="nodeInit.desc" class="form-control" ab-validate="{required:true,maxlength:120}"/></td>
+			</tr>
+			
+			<tr>
+				<th>展示前脚本</th>
+				<td style=" max-width: 500px;">
+					<div>
+					    <a id="varTree" class="btn btn-primary btn-xs varTree" broadcast="beforeShow">表单字段选择</a>
+						<a class="btn btn-primary btn-xs" ng-click="selectScript('beforeShow')">常用脚本</a>
+						<span class="text-warning">流程节点表单打开时每次执行,可用于数据初始化</span>
+						<div id="tempTree"></div>
+					</div>
+   					<textarea ng-model="nodeInit.beforeShow" ui-codemirror="" height="100px"  broadcast="beforeShow"  ></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th>保存后脚本</th>
+				<td style=" max-width: 500px;">
+					<div>
+					    <a class="btn btn-primary btn-xs varTree" broadcast="whenSave">表单字段选择</a>
+						<a class="btn btn-primary btn-xs" ng-click="selectScript('whenSave')">常用脚本</a>
+						<span class="text-warning">表单保存时执行，可用于流水号赋值，等数据加工</span>
+					</div>
+   					<textarea ng-model="nodeInit.whenSave" ui-codemirror=""  height="150px" broadcast="whenSave"></textarea>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

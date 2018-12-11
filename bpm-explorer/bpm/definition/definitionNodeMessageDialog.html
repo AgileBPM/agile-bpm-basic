@@ -1,0 +1,200 @@
+<html ng-app="app">
+<head>
+<title>节点消息</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/codeMirror.css" rel="stylesheet">
+
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../build/common/codeMirror.js"></script>
+<script type="text/javascript" src="../../build/common/uedtor.js"></script>
+
+<script type="text/javascript">
+
+	var app = angular.module('app', [ 'baseDirective', 'ui.codemirror']);
+	app.controller("ctrl", [ '$scope', 'baseService','ArrayToolService',  function(scope, baseService,ArrayToolService) {
+		scope.ArrayTool = ArrayToolService;
+	var varTree;
+	var defId = $.getParam("defId");
+	scope.insetCode = function(str) {
+		scope.CodeMirrorBroadcast= "condition";
+		scope.$broadcast(scope.CodeMirrorBroadcast, function(CodeMirror) {
+			CodeMirror.replaceSelection(str);
+		});
+	};
+
+	scope.selectScript = function(){
+		CustUtil.openCustDialog("scriptSelector",function(data,innerWindow){
+			scope.insetCode(data[0].script);
+			$.Dialog.close(innerWindow);
+		});
+	}
+	scope.getBoStr = function(node){
+		var parentNode = node.getParentNode();
+		if( !parentNode)return;
+		
+		// 主表字段
+		if(node.nodeType == 'column' && parentNode.parentId=="0"){
+			return parentNode.alias+".get('"+node.key+"')";
+		}
+		// 子表
+		if(node.nodeType == 'table' && parentNode.parentId=="0"){
+			return "/* "+parentNode.alias+".getChildren('"+node.key+"')  获取子表： List<IBusinessData> */";
+		}
+		// 子表的字段
+		if(node.nodeType == 'column' && parentNode.getParentNode().parentId=="0"){
+			return "/* "+parentNode.getParentNode().alias+".getChildren('"+parentNode.key+"')  获取子表数据： List<IBusinessData> 子表字段：”"+node.key+"“ 请根据实际情况获取子表数据*/";
+		}
+		
+	}
+	scope.setVariable = function (event, treeId, node) {
+		var keyStr = node.name;
+		// 流程变量
+		if (node.nodeType == 'var'){
+			keyStr = "variableScope.getVariable('"+node.name+"')";
+		}// 业务对象取值
+		else {
+			 keyStr = scope.getBoStr(node);
+		}
+		
+		if(!keyStr)return;
+		
+		varTree.hideMenu();
+		scope.insetCode(keyStr);
+	}
+	scope.initTree = function(){
+		varTree = new ZtreeCreator('tempTree', __ctx+"/bpm/processDef/variablesTree").setDataKey({
+			name : 'name'
+		}).setCallback({
+			onClick : scope.setVariable
+		}).makeCombTree("varTree",300).initZtree({defId:defId}, 2);
+		 
+	}
+	
+	scope.addNodeUserCondition = function(i){
+		
+		var userCondition = {calcs:[],rule:""};
+		if (i != undefined) {
+			userCondition = angular.copy(scope.nodeMessage.userRules[i]);
+		}
+		
+		var url = '/bpm/nodeDef/userConditionDialog.html?defId=' + defId ;
+		
+		var dialogConf = {
+				passData :userCondition ,width : 1000, height : 600,topOpen:true,btnAlign: 'c',title:"人员条件配置",
+				url:url,
+				ok: function(index,innerWindow){
+					var data = innerWindow.getData();
+					if (!data) return;
+					
+					scope.$apply(function() {
+						if (i != undefined) {
+							scope.nodeMessage.userRules[i] = data;
+						} else {
+							scope.nodeMessage.userRules.push(data);
+						}
+					});
+					top.layer.close(index);
+				}
+		};
+		
+		jQuery.Dialog.open(dialogConf);
+	}
+	
+	scope.initTree();
+	if(!window.passData) window.passData={};
+	scope.nodeMessage = window.passData.nodeMessage;
+	if(!scope.nodeMessage || !scope.nodeMessage.desc){
+		scope.nodeMessage = {event:'create',userRules:[]};
+	}
+	scope.nodeList = window.passData.nodeList;
+} ]);
+	 
+	function getData(){
+		if (!AngularUtil.getScope().form.$valid){
+			$.Dialog.warning("表单校验未通过！");
+			return false;
+		}
+		
+		var nodeMessage = AngularUtil.getScope().nodeMessage;
+		return nodeMessage;
+	}
+</script>
+</head>
+<body ng-controller="ctrl">
+<form name="form">
+		<table class="form-table">
+			<tr>
+				<th>消息描述: <span class="required">*</span></th>
+				<td><input type="text" ng-model="nodeMessage.desc" class="form-control" ab-validate="{required:true,maxlength:220}"/></td>
+			</tr>
+			<tr>
+				<th>执行节点:</th>
+				<td>
+					<select ng-model="nodeMessage.nodeId" ng-disable="disable" class="form-control"  
+					ng-options="node.nodeId as node.nodeName for node in nodeList" >
+						<option value="">所有节点</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>执行时机:</th>
+				<td>
+					<select ng-model="nodeMessage.event" ng-disable="disable" class="form-control" ab-validate="{required:true}" >
+						<option value="postTaskCreate">任务创建时</option>
+						<option value="taskComplete">任务完成时</option>
+						<option value="startEvent">流程启动时</option>
+						<option value="endEvent">流程结束时</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>条件脚本:</th>
+				<td>
+					<div>
+						<a class="btn btn-primary btn-xs" ng-click="selectScript()">常用脚本</a>
+					    <a class="btn btn-primary btn-xs" id="varTree" >流程变量</a>
+						<span class="text-warning">特殊条件配置groovy脚本，可以使用流程变量表单变量。return false 则取消发送</span>
+						<div id="tempTree"></div>
+					</div>
+   					<textarea ng-model="nodeMessage.condition" ui-codemirror="" height="60px" broadcast="condition"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th>通知人:</th>
+				<td>
+					<ul class="list-group" style="width: 500px">
+					  <li class="list-group-item" ng-repeat="userRule in nodeMessage.userRules">		     		
+					  		<span>{{userRule.description}}</span>
+				     		<div class="pull-right">
+								<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.up($index,nodeMessage.userRules)" class="fa fa-arrow-up  btn btn-sm btn-default"></a>
+								<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.down($index,nodeMessage.userRules)" class="fa fa-arrow-down btn btn-sm btn-default"></a>
+				     			<a ng-click="addNodeUserCondition($index)" class="fa fa-edit btn btn-primary btn-sm"></a>
+								<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.del($index,nodeMessage.userRules)" class="fa fa-trash btn btn-sm btn-danger"></a>
+				     		</div>
+					</li>
+					</ul>
+					<span ng-if="nodeMessage.userRules.length==0" class="label label-default" ab-tip title="当流程创建时，可以直接通知流程节点候选人提醒处理任务" >当前节点任务候选人</span>
+					<button class="btn btn-primary btn-sm fa fa-user-o" ng-click="addNodeUserCondition()">选择</button>
+				</td>
+			</tr>
+			<tr>
+				<th>消息类型: <span class="required">*</span></th>
+				<td> 
+					<label><input type="checkbox" ab-checkbox ng-model="nodeMessage.msgType" value="inner" ab-validate="{required:true}"/>钉钉消息</label>
+					 <label><input type="checkbox" ab-checkbox ng-model="nodeMessage.msgType" value="email" ab-validate="{required:true}"/>邮件消息</label>
+					 <label><input type="checkbox" ab-checkbox ng-model="nodeMessage.msgType" value="sms" ab-validate="{required:true}"/>短信消息</label>
+				</td>
+			</tr>
+			<tr>
+				<th>富文本模板: <span class="required">*</span></th>
+				<td><textarea type="text" ab-editor ng-model="nodeMessage.htmlTemplate" style="width: 600px;height: 300px" /></textarea></td>
+			</tr>
+			<tr>
+				<th>普通文本模板: <span class="required">*</span></th>
+				<td> <textarea rows="3"  class="form-control" ng-model="nodeMessage.textTemplate" style="width: 600px;"></textarea></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

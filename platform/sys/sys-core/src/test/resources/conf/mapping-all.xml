@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings>
+    <mappingLocation code="base" value="classpath*:com/dstz/**/mapping/*.xml"/>
+    <mappingLocation code="common" value="classpath:conf/commonmapping.xml"/>
+</mappings>

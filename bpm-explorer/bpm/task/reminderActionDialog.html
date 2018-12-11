@@ -1,0 +1,54 @@
+<!doctype html>
+<html ng-app="baseDirective">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		<script type="text/javascript">
+			var ComplateController = ['$scope','baseService',function(scope,baseService){
+				scope.flowParam = window.passData;
+				scope.flowParam.opinion = "您好，请您尽快处理任务：subject ！"
+				scope.flowParam.extendConf = {"isUrgent":"false","msgType":"email"};
+			}];
+			
+			function isValidate(){
+				var flowParam = AngularUtil.getScope().flowParam;
+				if (!flowParam.opinion) {
+					$.Toast.warning("请填催办提醒内容！");
+					return false;
+				}
+				return true;
+			}
+		</script>
+	</head>
+	<body class="panel success" ng-controller="ComplateController">
+			<table class="form-table">
+				<tr>								
+					<th><span>催办提醒:</span><span class="required">*</span></th>
+					<td>
+						 <textarea rows="2" cols="20" class="form-control" ng-model="flowParam.opinion"></textarea>
+					</td>								
+				</tr>
+				<tr>								
+				<th>消息类型: <span class="required">*</span></th>
+				<td> 
+					<label><input type="checkbox" ab-checkbox ng-model="flowParam.extendConf.msgType" value="inner" ab-validate="{required:true}"/>钉钉消息</label>
+					 <label><input type="checkbox" ab-checkbox ng-model="flowParam.extendConf.msgType" value="email" ab-validate="{required:true}"/>邮件消息</label>
+					 <label><input type="checkbox" ab-checkbox ng-model="flowParam.extendConf.msgType" value="sms" ab-validate="{required:true}"/>短信消息</label>
+				</td>
+			</tr>							
+				</tr>
+				<tr>								
+					<th><span>是否加急任务:</span><span class="required">*</span></th>
+					<td>
+						<div  class="radio">
+							 <label>  <input type="radio" value="true" ng-model="flowParam.extendConf.isUrgent" name="sss">是</label>
+							     
+							 <label>  <input type="radio" value="false" ng-model="flowParam.extendConf.isUrgent" name="sss">否</label>
+						 </div>
+					</td>								
+				</tr>
+				<tr><td colspan="2" class="text-muted">会对当前实例所有候选人推送催办消息，若选择了加急、则任务会靠前展示</td></tr>
+			</table>
+	</body>
+</html>

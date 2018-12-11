@@ -1,0 +1,122 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/codeMirror.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../build/common/codeMirror.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/bus/businessObject/editAndDialogCommon.js"></script>
+
+<script type="text/javascript">
+	var app = angular.module('app', [ 'baseDirective', 'ui.codemirror' ]);
+	app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', function($scope, baseService, ArrayToolService) {
+		$scope.ArrayTool = ArrayToolService;
+
+		$scope.init = function() {
+			ToolsController.getInterFaceImpls("com.dstz.sys.api.permission.IPermissionCalculator").then(function(data) {
+
+				$scope.$apply(function() {
+					$scope.dialogPermissions = [];//对话框的权限列表
+					angular.forEach(data, function(item) {
+						if (item.type != "everyone" && item.type != "none" && item.type != "script") {
+							$scope.dialogPermissions.push(item);
+						}
+					});
+				});
+			});
+
+			$scope.data = {};//页面配置的数据
+			angular.forEach(window.passData, function(item, index) {
+				if (item.type != "everyone" && item.type != "none") {//过滤掉该页面配置不了的权限
+					$scope.data[item.type] = item;
+				}
+			});
+
+			//初始化一下脚本对话框
+			if (!$scope.data.script) {
+				$scope.data.script = {
+					desc : "脚本",
+					type : "script"
+				};
+			}
+		};
+
+		//点击配置
+		$scope.click = function(permission) {
+			if (permission.type === "user" || permission.type === "org" || permission.type === "role" || permission.type === "post") {
+				$scope.custDialog(permission, permission.type + "Selector");
+			} else {
+				alert("该权限类型暂不支持，有问题请联系管理员");
+			}
+		};
+
+		//重置某种类型的权限
+		$scope.reset = function(permission) {
+			delete $scope.data[permission.type];
+		};
+
+		//权限配置用自定义对话框的弹框js
+		$scope.custDialog = function(permission, dialogKey) {
+			CustUtil.openCustDialog(dialogKey, function(data, innerWindow) {
+				var json = {};
+				json.type = permission.type;
+				var ids = [];
+				var names = [];
+				angular.forEach(data, function(item) {
+					ids.push(item.id);
+					names.push(item.name);
+				});
+				json.id = ids.join(",");
+				json.desc = "（" + permission.title + "）" + "[" + names.join(",") + "]";
+				$scope.$apply(function() {
+					$scope.data[json.type] = json;
+				});
+				$.Dialog.close();
+			});
+		};
+
+	} ]);
+
+	//父页面打开按【确定】按钮时的回调函数
+	function getData() {
+		var result = [];
+		angular.forEach(AngularUtil.getScope().data, function(val, key) {
+			if (key !== "script" || val.id) {//脚本为空 则不需要加进去
+				result.push(val);
+			}
+		});
+
+		return result;
+	}
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<form name="form">
+		<table class="form-table">
+			<tr>
+				<th>类型</th>
+				<th>内容</th>
+				<th>操作</th>
+			</tr>
+			<!-- 对话框权限列表 -->
+			<tr ng-repeat="permission in dialogPermissions">
+				<th>{{permission.title}}</th>
+				<td>{{data[permission.type].desc}}</td>
+				<td>
+					<a style="float: right;" class="btn btn-sm btn-default btn-mini fa-edit" ng-click="click(permission)" />
+					<a style="float: right;" class="btn btn-sm btn-default btn-mini fa-times" ng-click="reset(permission)" />
+				</td>
+			</tr>
+			<tr>
+				<th>
+					脚本
+					<a href="javaScript:void(0)" style="text-decoration: none; color: red;" title="java脚本执行返回boolean值；例如：return true;" class="fa fa-exclamation-circle ab-help" ab-tip> </a>
+				</th>
+				<td colspan="2">
+					<textarea ng-model="data.script.id" ui-codemirror="" height="150px"></textarea>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

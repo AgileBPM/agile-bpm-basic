@@ -1,0 +1,50 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>用户的角色列表</title>
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+	<script>
+	var userId=$.getParam("userId");
+	</script>
+</head>
+<body class="panel-body">
+	 <div class="btn-group toolbar">
+	  <button class="btn btn-outline btn-primary fa-plus" onclick="selectRole()">添加角色</button>
+    </div>
+    <table ab-grid data-id-field="id" data-url="/org/userRole/listJson?userId={userId}">
+          <thead>
+          <tr>
+              <th data-checkbox="true">ID</th>
+              <th data-field="roleName">角色名称</th>
+               <th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+				<a class='btn btn-outline btn-primary fa  fa-trash' sendAction='删除' qtip='删除' url='/org/userRole/remove?id={id}'></a>
+             </th>
+          </tr>
+          </thead>
+     </table>
+</body>
+</html>
+<script>
+
+	function selectRole() {
+		CustUtil.openCustDialog("roleSelector",function(arrData,innerWindow){
+ 			var groupIds=[];
+ 			for(var i=0,group;group=arrData[i++];){
+ 				groupIds.push(group.id);
+ 			}
+ 			
+ 			var params = {userId:userId,groupIds:groupIds.join(",")};
+ 			$.post(__ctx + "/org/userRole/saveUserRole",params,function(data){
+				 if(data.isOk){
+					 reloadGrid();
+					$.Dialog.success("添加成功！");
+	 		    	$.Dialog.close(innerWindow);
+				 }else{
+					 $.Dialog.error("操作失败"+data.msg);
+				 }
+	 	    },"json");
+ 		})
+	}
+	 
+</script>

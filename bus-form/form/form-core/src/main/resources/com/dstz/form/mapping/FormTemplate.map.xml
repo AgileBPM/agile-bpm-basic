@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.form.dao.FormTemplateDao">
+    <resultMap id="FormTemplate" type="com.dstz.form.model.FormTemplate">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="type" column="type_" jdbcType="VARCHAR"/>
+        <result property="formType" column="form_type_" jdbcType="VARCHAR"/>
+        <result property="html" column="html_" jdbcType="CLOB"/>
+        <result property="desc" column="desc_" jdbcType="VARCHAR"/>
+        <result property="editable" column="editable_" jdbcType="NUMERIC"/>
+        <result property="key" column="key_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.form.model.FormTemplate">
+		INSERT INTO form_template
+		(id_,name_,type_,form_type_,html_,desc_,editable_,key_)
+		VALUES
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{formType,jdbcType=VARCHAR}, #{html,jdbcType=CLOB}, #{desc,jdbcType=VARCHAR}, #{editable,jdbcType=NUMERIC}, #{key,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="FormTemplate">
+		SELECT * FROM form_template 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="FormTemplate">
+        SELECT * FROM form_template
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.form.model.FormTemplate">
+		UPDATE form_template SET
+		name_=#{name,jdbcType=VARCHAR},
+		type_=#{type,jdbcType=VARCHAR},
+		form_type_=#{form_type_,jdbcType=VARCHAR},
+		html_=#{html,jdbcType=CLOB},
+		desc_=#{desc,jdbcType=VARCHAR},
+		editable_=#{editable,jdbcType=NUMERIC},
+		key_=#{key,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM form_template 
+		WHERE
+		id_=#{id}
+	</delete>
+
+
+</mapper>

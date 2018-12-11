@@ -1,0 +1,240 @@
+<html>
+<head>
+<title>子系统资源</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+	
+	<script type="text/javascript" src="../../assets/js/plugins/easyui-layout/jquery.layout.js"></script>
+	<script type="text/javascript" src="../../build/common/easyLayout.js"></script>
+	
+</head>
+<body>
+	<div class="easy-layout" fit="true" scroll="no">
+		<div  data-options="region:'west',title:'资源管理',split:true,border:true" style="width:200px;">
+			<select class="form-control" id="systemId">
+			</select>
+	        <div id="sysztreeObject" class="ztree"></div>
+		</div>
+		<div data-options="region:'center',border:false" style="text-align: center;">
+			<iframe id="listFrame" src="" frameborder="no" width="100%" height="100%"></iframe>
+		</div>
+	</div>
+	<div class="hidden">
+			<div id="hasChildMenu" class="easyui-menu" data-options="onClick:menuHandler" style="width: 120px;">
+				 <div data-options="name:'add'" class="menu-item">添加资源</div>
+				 <div data-options="name:'edit'"  class="menu-item">编辑资源</div> 
+				 <div data-options="name:'remove'"  class="menu-item">删除资源</div> 
+				 <div data-options="name:'move'"  class="menu-item">移动资源</div> 
+				 <div data-options="name:'fresh'"  class="menu-item">刷新</div>
+			</div>
+			
+			<div id="noChildMenu" class="easyui-menu" data-options="onClick:menuHandler" style="width: 120px;">
+				 <div data-options="name:'edit'"  class="menu-item">编辑资源</div> 
+				 <div data-options="name:'remove'"  class="menu-item">删除资源</div> 
+				 <div data-options="name:'move'"  class="menu-item">移动资源</div> 
+				 <div data-options="name:'fresh'"  class="menu-item">刷新</div>
+			</div>
+		</div>
+</body>
+</html>
+<script>
+var ztreeObject ;
+function loadTree() {
+	var url = __ctx + "/sys/sysResource/getTreeData";
+	var params = {systemId:"1"};
+	
+	var ztreeCreator = new ZtreeCreator('sysztreeObject',url)
+		.setCallback({onClick:zTreeOnLeftClick,onRightClick:zTreeOnRightClick})
+		.initZtree(params,function(treeObj){ztreeObject=treeObj});
+};
+
+//左击
+function zTreeOnLeftClick(event, treeId, treeNode) {
+	curSelectNode = treeNode;
+	var parentId = treeNode.id;
+	var url = "./sysResourceGet.html?id=" + curSelectNode.id;
+	if(curSelectNode.id=="0"){
+		return false;
+	}
+	$("#listFrame").attr("src", url);
+};
+/**
+ * 树右击事件
+ */
+function zTreeOnRightClick(e, treeId, treeNode) {
+	if (treeNode) {
+		ztreeObject.selectNode(treeNode);
+		curSelectNode=treeNode;
+		var hasChild = treeNode.hasChildren;
+		var h = $(window).height();
+		var w = $(window).width();
+		var menuWidth = 120;
+		var menuHeight = 75;
+		var menu = hasChild?$('#hasChildMenu'):$('#noChildMenu');
+
+		var x = e.pageX, y = e.pageY;
+		if (e.pageY + menuHeight > h) {
+			y = e.pageY - menuHeight;
+		}
+		if (e.pageX + menuWidth > w) {
+			x = e.pageX - menuWidth;
+		}
+		menu.menu('show', {
+			left : x,
+			top : y
+		});
+	}
+};
+
+//菜单对应项
+function menuHandler(item) {
+	if ('add' == item.name) {
+		editNode(0);
+	} else if ('remove' == item.name) {
+		delNode();
+	} else if ('move' == item.name) {
+		moveNode();
+	} else if ('edit' == item.name) {
+		editNode(1);
+	} else if ('fresh' == item.name) {
+		refreshNode();
+	}
+};
+
+function refreshNode() {
+	loadTree();
+};
+
+// 移动节点
+function moveNode() {
+	var selectNode = getSelectNode();
+	var nodeId = selectNode.id;
+	if (nodeId == "0") {
+		$.topCall.warn('该节点为根节点，不可移动');
+		return;
+	} 
+	
+	var conf = {param:{"SYSTEM_ID_":$("#systemId").val()}};
+
+	CustomDialog.openCustomDialog('resourceSelector',function(data,dialog){
+	    var parentId = data[0].ID_;
+			
+			var callback = function(rtn){
+				if (!rtn) return;
+				
+				var url = __ctx + "/sys/sysResource/moveResource";
+				var params = {
+					id : nodeId,
+					parentId : parentId
+				};
+				$.post(url, params, function(responseText) {
+					var result = JSON.parse(responseText);
+					if (result.isOk) {//成功
+					} else {
+						$.topCall.error(result.getMessage());
+					}
+					refreshNode();
+				});
+			};
+			$.topCall.confirm('温馨提示', '确定移动？', callback);
+
+	    dialog.dialog('close');//关闭弹出框
+
+	},conf);
+}
+//添加节点
+function editNode(type) {
+	var selectNode = curSelectNode;
+	var nodeId = selectNode.id;
+	if (type == 1 && nodeId == "0") {
+		$.topCall.warn('该节点为根节点，不可编辑');
+		return;
+	} 
+	var id=selectNode.id;
+	var systemId = selectNode.systemId;
+	var url = "./sysResourceEdit.html" ;
+	url += (type==1)? "?id=" + id : "?parentId=" + id;
+	url += "&systemId=" + systemId;
+	$("#listFrame").attr("src", url);
+
+};
+
+/**
+ * 添加节点。
+ */
+function appendNode(node){
+	var nodeId = curSelectNode.id;
+	if ( nodeId == "0"){
+		ztreeObject.addNodes(null, node);
+	}
+	else{
+		ztreeObject.addNodes(curSelectNode, node);
+	}
+}
+
+function updateNode(name){
+	curSelectNode.name=name;
+	ztreeObject.updateNode(curSelectNode);
+}
+
+
+//删除
+function delNode() {
+	var selectNode =curSelectNode;
+	var nodeId = selectNode.id;
+	if (nodeId == "0") {
+		$.topCall.warn('该节点为根节点，不可删除');
+		return;
+	} 
+ 
+
+	$.Dialog.confirm('提示信息', '确定删除？', function(){
+		var url = __ctx + "/sys/sysResource/remove";
+		var params = {
+			id : nodeId
+		};
+		$.post(url, params, function(responseText) {
+			var result = JSON.parse(responseText);
+			if (result.isOk) {//成功
+				ztreeObject.removeNode(selectNode);
+				$("#listFrame").attr("src", "about:blank");
+			} else {
+				$.topCall.error(result.msg);
+			}
+		//	refreshNode();
+		});
+	});
+};
+//选择资源节点。
+function getSelectNode() {
+	ztreeObject = $.fn.zTree.getZTreeObj("sysztreeObject");
+	var nodes = ztreeObject.getSelectedNodes();
+	var node = nodes[0];
+	return node;
+};
+
+function laodSystem(){
+	var url = __ctx + "/sys/subsystem/getUserSystem";
+	
+	$.post(url, {}, function(result) {
+		var result = eval("("+result+")");
+		if (result.isOk) {//成功
+			for(var i =0,system;system= result.data[i++];){
+				$("#systemId").append("<option value="+system.id+" selected="+(system.isDefault==1?'true':'false')+">"+system.name+"</option>");
+			}
+		} else {
+			$.Dialog.alert(result.msg,2);
+		}
+	});
+	
+}
+
+</script>
+<script>
+	$(function() {
+		laodSystem();
+		loadTree();
+	});
+
+</script>

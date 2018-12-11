@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.ScheduleBizDao">
+	<resultMap id="ScheduleBiz" type="com.dstz.sys.core.model.ScheduleBiz">
+		<id property="id" column="id_" jdbcType="VARCHAR"/>
+		<result property="scheduleId" column="schedule_id_" jdbcType="VARCHAR"/>
+		<result property="bizId" column="biz_id_" jdbcType="VARCHAR"/>
+		<result property="source" column="source_" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="create" parameterType="com.dstz.sys.core.model.ScheduleBiz">
+		INSERT INTO c_schedule_biz
+		(id_,schedule_id_,biz_id_,source_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{scheduleId,jdbcType=VARCHAR}, #{bizId,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="get"   parameterType="java.lang.String" resultMap="ScheduleBiz">
+		SELECT * FROM c_schedule_biz 
+		WHERE 
+		id_=#{id}
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultMap="ScheduleBiz">
+		SELECT * FROM c_schedule_biz
+		<where>
+			<if test="whereSql!=null">
+				${whereSql}
+			</if>
+		</where>
+		<if test="orderBySql!=null">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="orderBySql==null">
+			ORDER BY id_ DESC
+		</if>
+	</select>
+	
+	<update id="update" parameterType="com.dstz.sys.core.model.ScheduleBiz">
+		UPDATE c_schedule_biz SET
+		schedule_id_=#{scheduleId,jdbcType=VARCHAR},
+		biz_id_=#{bizId,jdbcType=VARCHAR},
+		source_=#{source,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+	
+	<delete id="remove" parameterType="java.lang.String">
+		DELETE FROM c_schedule_biz 
+		WHERE
+		id_=#{id}
+	</delete>
+
+	
+</mapper>

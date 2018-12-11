@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.DataDictDao">
+	<resultMap id="DataDict" type="com.dstz.sys.core.model.DataDict">
+		<id property="id" column="id_" jdbcType="VARCHAR"/>
+		<result property="parentId" column="parent_id_" jdbcType="VARCHAR"/>
+		<result property="key" column="key_" jdbcType="VARCHAR"/>
+		<result property="name" column="name_" jdbcType="VARCHAR"/>
+		<result property="dictKey" column="dict_key_" jdbcType="VARCHAR"/>
+		<result property="typeId" column="type_id_" jdbcType="VARCHAR"/>
+		<result property="sn" column="sn_" jdbcType="NUMERIC"/>
+		<result property="dictType" column="dict_type_" jdbcType="VARCHAR"/>
+		<result property="deleteFlag" column="delete_flag_" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<insert id="create" parameterType="com.dstz.sys.core.model.DataDict">
+		INSERT INTO sys_data_dict
+		(id_,parent_id_,key_,name_,dict_key_,type_id_,sn_,dict_type_,delete_flag_,create_time_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{dictKey,jdbcType=VARCHAR}, #{typeId,jdbcType=VARCHAR}, #{sn,jdbcType=NUMERIC}, #{dictType,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<select id="get"   parameterType="java.lang.String" resultMap="DataDict">
+		SELECT * FROM sys_data_dict 
+		WHERE 
+		id_=#{id}
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultMap="DataDict">
+		SELECT * FROM sys_data_dict
+		<where>
+			<if test="whereSql!=null">
+				${whereSql}
+			</if>
+		</where>
+		<if test="orderBySql!=null">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="orderBySql==null">
+			ORDER BY id_ DESC
+		</if>
+	</select>
+	
+	<update id="update" parameterType="com.dstz.sys.core.model.DataDict">
+		UPDATE sys_data_dict SET
+		parent_id_=#{parentId,jdbcType=VARCHAR},
+		key_=#{key,jdbcType=VARCHAR},
+		name_=#{name,jdbcType=VARCHAR},
+		dict_key_=#{dictKey,jdbcType=VARCHAR},
+		type_id_=#{typeId,jdbcType=VARCHAR},
+		sn_=#{sn,jdbcType=NUMERIC},
+		dict_type_=#{dictType,jdbcType=VARCHAR},
+		delete_flag_=#{deleteFlag,jdbcType=VARCHAR},
+		create_time_=#{createTime,jdbcType=TIMESTAMP}
+		WHERE
+		id_=#{id}
+	</update>
+	
+	<delete id="remove" parameterType="java.lang.String">
+		DELETE FROM sys_data_dict 
+		WHERE
+		id_=#{id}
+	</delete>
+	
+	<select id="getDictNodeList"   parameterType="java.util.Map" resultMap="DataDict">
+		SELECT * FROM sys_data_dict  WHERE  dict_key_= #{dictKey} 
+		<if test="!hasRoot">and dict_type_ = 'node'</if>
+	</select>
+	
+	<select id="isExistDict"   parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT count(*) FROM sys_data_dict  WHERE  key_= #{key} and dict_type_ = 'dict'
+		<if test="id!=null"> and id_ != #{id}</if>
+	</select>
+	
+	<select id="isExistNode"   parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT count(*) FROM sys_data_dict  WHERE  dict_key_= #{dictKey} and key_ = #{key} and dict_type_ = 'node'
+		<if test="id!=null"> and id_ != #{id}</if>
+	</select>
+	
+</mapper>

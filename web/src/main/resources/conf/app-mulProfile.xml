@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-autowire="byType">
+
+    <!--
+        【多环境配置】
+           修改Tomcat运行环境即可（-Dspring.profiles.active=test）。默认为dev,
+       JAVA_OPTS=" -Xms1024m -Xmx1024m  -XX:PermSize=512m -XX:MaxPermSize=512m -Dspring.profiles.active=test"
+
+          若使用jenkins打包直接修改web也可以,将dev改成相应的环境
+      <context-param>
+          <param-name>spring.profiles.default</param-name>
+          <param-value>dev</param-value>
+       </context-param>
+
+       若有其他不同环境不同实现类的情况都可以使用该形式
+     -->
+
+    <beans profile="DEV">
+        <bean class="com.dstz.base.core.spring.CustPropertyPlaceholderConfigurer" id="custPlaceHolder">
+            <property name="ignoreUnresolvablePlaceholders" value="true"/>
+            <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+            <property name="searchSystemEnvironment" value="true"/>
+            <property name="locations">
+                <list>
+                    <value>classpath:/properties/app-dev.properties</value>
+                </list>
+            </property>
+        </bean>
+
+    </beans>
+
+    <beans profile="SIT">
+        <bean class="com.dstz.base.core.spring.CustPropertyPlaceholderConfigurer" id="custPlaceHolder">
+            <property name="ignoreUnresolvablePlaceholders" value="true"/>
+            <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+            <property name="searchSystemEnvironment" value="true"/>
+            <property name="locations">
+                <list>
+                    <value>classpath:/properties/app-sit.properties</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <beans profile="UAT">
+        <bean class="com.dstz.base.core.spring.CustPropertyPlaceholderConfigurer" id="custPlaceHolder">
+            <property name="ignoreUnresolvablePlaceholders" value="true"/>
+            <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+            <property name="searchSystemEnvironment" value="true"/>
+            <property name="locations">
+                <list>
+                    <value>classpath:/properties/app-uat.properties</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <beans profile="PROD">
+        <bean class="com.dstz.base.core.spring.CustPropertyPlaceholderConfigurer" id="custPlaceHolder">
+            <property name="ignoreUnresolvablePlaceholders" value="true"/>
+            <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+            <property name="searchSystemEnvironment" value="true"/>
+            <property name="locations">
+                <list>
+                    <value>classpath:app-prod.properties</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+</beans> 

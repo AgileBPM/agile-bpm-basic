@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<person>
+    <name>张三</name>
+    <sex>男</sex>
+    <born>1987-06-29 13:00:00</born>
+    <personDetail>
+        <nationality>中国</nationality>
+    </personDetail>
+    <familyDetail>
+        <marydetailaddress>广东</marydetailaddress>
+        <marydetailaddress>广西</marydetailaddress>
+        <marydetaility>中国</marydetaility>
+        <marydetailname>张三</marydetailname>
+    </familyDetail>
+    <familyDetail>
+        <marydetailaddress>芝加哥</marydetailaddress>
+        <marydetailaddress>华盛顿</marydetailaddress>
+        <marydetaility>美国</marydetaility>
+        <marydetailname>王五</marydetailname>
+    </familyDetail>
+</person> 

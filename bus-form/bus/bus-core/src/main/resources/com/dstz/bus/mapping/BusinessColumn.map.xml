@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.bus.dao.BusinessColumnDao">
+    <resultMap id="BusinessColumn" type="com.dstz.bus.model.BusinessColumn">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="key" column="key_" jdbcType="VARCHAR"/>
+        <result property="tableId" column="table_id_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="type" column="type_" jdbcType="VARCHAR"/>
+        <result property="length" column="length_" jdbcType="NUMERIC"/>
+        <result property="decimal" column="decimal_" jdbcType="NUMERIC"/>
+        <result property="required" column="required_" jdbcType="NUMERIC"/>
+        <result property="primary" column="primary_" jdbcType="NUMERIC"/>
+        <result property="defaultValue" column="default_value_" jdbcType="VARCHAR"/>
+        <result property="comment" column="comment_" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.bus.model.BusinessColumn">
+		INSERT INTO bus_column
+		(id_,key_,table_id_,name_,type_,length_,decimal_,required_,primary_,default_value_,comment_,create_time_,create_by_,update_time_,update_by_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR},#{tableId,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{length,jdbcType=NUMERIC}, #{decimal,jdbcType=NUMERIC}, #{required,jdbcType=NUMERIC}, #{primary,jdbcType=NUMERIC}, #{defaultValue,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="BusinessColumn">
+		SELECT * FROM bus_column 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="BusinessColumn">
+        SELECT * FROM bus_column
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.bus.model.BusinessColumn">
+		UPDATE bus_column SET
+		name_=#{name,jdbcType=VARCHAR},
+		table_id_=#{tableId,jdbcType=VARCHAR},
+		type_=#{type,jdbcType=VARCHAR},
+		key_=#{key,jdbcType=VARCHAR},
+		length_=#{length,jdbcType=NUMERIC},
+		decimal_=#{decimal,jdbcType=NUMERIC},
+		required_=#{required,jdbcType=NUMERIC},
+		primary_=#{primary,jdbcType=NUMERIC},
+		default_value_=#{defaultValue,jdbcType=VARCHAR},
+		comment_=#{comment,jdbcType=VARCHAR},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		update_by_=#{updateBy,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM bus_column 
+		WHERE
+		id_=#{id}
+	</delete>
+
+    <delete id="removeByTableId" parameterType="java.lang.String">
+		DELETE FROM bus_column 
+		WHERE
+		table_id_=#{tableId}
+	</delete>
+
+    <select id="getByTableId" parameterType="java.lang.String" resultMap="BusinessColumn">
+		SELECT * FROM bus_column 
+		WHERE 
+		table_id_=#{tableId}
+	</select>
+
+</mapper>

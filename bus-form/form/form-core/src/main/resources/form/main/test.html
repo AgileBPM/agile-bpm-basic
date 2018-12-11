@@ -1,0 +1,173 @@
+<table class="form-table">
+	<tbody>
+		<tr class="firstRow">
+			<th style="word-break: break-all;">订单编号</th>
+			<td>
+				<input type="text" class=" form-control" ng-model="data.applyOrderInfo.applyNo" ab-basic-permission="permission.applyOrderInfo.applyOrder.applyNo" desc="订单编号" ab-validate="{&quot;required&quot;:true}" />
+			</td>
+		</tr>
+		<tr>
+			<th>渠道经理</th>
+			<td>
+				<a href="javascript:void(0)" class=" btn btn-primary fa-upload" ab-upload="" ng-model="data.applyOrderInfo.qdjl" ab-basic-permission="permission.applyOrderInfo.applyOrder.qdjl" desc="渠道经理" ab-validate="{}"></a>
+			</td>
+		</tr>
+		<tr>
+			<th>物料类型</th>
+			<td>
+				<input type="text" class=" form-control" ng-model="data.applyOrderInfo.wllx" ab-basic-permission="permission.applyOrderInfo.applyOrder.wllx" desc="物料类型" ab-validate="{}" />
+			</td>
+		</tr>
+		<tr>
+			<th>物料名字</th>
+			<td>
+				<input type="text" class=" form-control" ng-model="data.applyOrderInfo.wlmz" ab-basic-permission="permission.applyOrderInfo.applyOrder.wlmz" desc="物料名字" ab-validate="{}" />
+			</td>
+		</tr>
+	</tbody>
+</table>
+<div id="applyOrderInfo-customerRel">
+	<div class="ibox-title">
+		<span class="title">客户关系</span>
+		<a href="javascript:void(0)" class="btn btn-primary btn-sm fa fa-plus" ng-model="data.applyOrderInfo.customerRelList" ab-sub-add="initData.applyOrderInfo.customerRel" ab-basic-permission="">添加</a>
+		<a class="btn btn-primary fa-search" href="javascript:void(0)" ab-cust-dialog="IdentitySeletor" ng-model="data.applyOrderInfo.customerRelList" value-name="custNo">流水号选择</a>
+	</div>
+	<div class="ibox-content" ng-repeat="customerRel in data.applyOrderInfo.customerRelList track by $index">
+		<a class="btn btn-danger btn-xs fa fa-delete pull-right" ng-click="ArrayTool.del($index,data.applyOrderInfo.customerRelList)"> 移除</a>
+		<table class="form-table">
+			<tbody>
+				<tr class="firstRow">
+					<th>订单编号</th>
+					<td>
+						<input type="text" class=" form-control" ng-model="customerRel.applyNo" ab-basic-permission="permission.applyOrderInfo.customerRel.applyNo" desc="订单编号" ab-validate="{&quot;required&quot;:true}" />
+					</td>
+				</tr>
+				<tr>
+					<th>关系类型</th>
+					<td>
+						<select class=" form-control" ng-model="customerRel.relType" ab-checked-permission="permission.applyOrderInfo.customerRel.relType" ab-validate="{&quot;required&quot;:true}" desc="关系类型">
+							<option value="seller">卖家</option>
+							<option value="buyer">买家</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th>客户编号</th>
+					<td>
+						<input type="text" class=" form-control" ng-model="customerRel.custNo" ab-basic-permission="permission.applyOrderInfo.customerRel.custNo" desc="客户编号" ab-validate="{&quot;required&quot;:true}" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div id="applyOrderInfo-customer">
+			<div class="block-title">
+				<span class="title">客户信息 </span>
+			</div>
+			<table class="form-table">
+				<tbody>
+					<tr class="firstRow">
+						<th>编号</th>
+						<td>
+							<input type="text" class=" form-control" ng-model="customerRel.customer.custNo" ab-basic-permission="permission.applyOrderInfo.customer.custNo" desc="编号" ab-validate="{&quot;required&quot;:true}" />
+						</td>
+					</tr>
+					<tr>
+						<th>姓名</th>
+						<td>
+							<input type="text" class=" form-control" ng-model="customerRel.customer.name" ab-basic-permission="permission.applyOrderInfo.customer.name" desc="姓名" ab-validate="{}" />
+						</td>
+					</tr>
+					<tr>
+						<th>年龄</th>
+						<td>
+							<input type="text" class=" form-control" ng-model="customerRel.customer.age" ab-basic-permission="permission.applyOrderInfo.customer.age" desc="年龄" ab-validate="{}" />
+						</td>
+					</tr>
+					<tr>
+						<th>教育程度</th>
+						<td>
+							<input type="text" class=" form-control" ng-model="customerRel.customer.jycd" ab-basic-permission="permission.applyOrderInfo.customer.jycd" desc="教育程度" ab-validate="{}" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div id="applyOrderInfo-orderBatch">
+	<div class="ibox-title">
+		<span class="title">订单批次</span>
+		<a href="javascript:void(0)" class="btn btn-primary btn-sm fa fa-plus" ng-model="data.applyOrderInfo.orderBatchList" ab-sub-add="initData.applyOrderInfo.orderBatch" ab-basic-permission="">添加</a>
+	</div>
+	<div class="ibox-content" ng-repeat="orderBatch in data.applyOrderInfo.orderBatchList track by $index">
+		<div class="pull-left">
+			<a href="javascript:void(0)" class="btn btn-link btn-sm fa fa-detail" ng-model="orderBatch" ab-sub-detail="applyOrderInfo-item" ab-show-permission="">物料</a>
+		</div>
+		<a class="btn btn-danger btn-xs fa fa-delete pull-right" ng-click="ArrayTool.del($index,data.applyOrderInfo.orderBatchList)"> 移除</a>
+		<table class="form-table">
+			<tbody>
+				<tr class="firstRow">
+					<th>流水号</th>
+					<td>
+						<input type="text" class=" form-control" ng-model="orderBatch.no" ab-basic-permission="permission.applyOrderInfo.orderBatch.no" desc="流水号" ab-validate="{}" />
+					</td>
+				</tr>
+				<tr>
+					<th>创建时间</th>
+					<td>
+						<input class=" form-control" ng-model="orderBatch.createTIme" ab-validate="{}" desc="创建时间" ab-basic-permission="permission.applyOrderInfo.orderBatch.createTIme" ab-date="yyyy-MM-dd HH:mm:ss" />
+					</td>
+				</tr>
+				<tr>
+					<th>总金额</th>
+					<td>
+						<input type="text" class=" form-control" ng-model="orderBatch.amount" ab-basic-permission="permission.applyOrderInfo.orderBatch.amount" desc="总金额" ab-validate="{}" />
+					</td>
+				</tr>
+				<tr>
+					<th>备注</th>
+					<td>
+						<input type="text" class=" form-control" ng-model="orderBatch.remark" ab-basic-permission="permission.applyOrderInfo.orderBatch.remark" desc="备注" ab-validate="{}" />
+					</td>
+				</tr>
+				<tr>
+					<th>订单编号</th>
+					<td>
+						<input type="text" class=" form-control" ng-model="orderBatch.applyNo" ab-basic-permission="permission.applyOrderInfo.orderBatch.applyNo" desc="订单编号" ab-validate="{&quot;required&quot;:true}" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div id="applyOrderInfo-item" hide="">
+	<div class="ibox-title">
+		<span class="title">物料</span>
+		<a href="javascript:void(0)" class="btn btn-primary btn-sm fa fa-plus" ng-model="orderBatch.itemList" ab-sub-add="initData.applyOrderInfo.item" ab-basic-permission="">添加</a>
+	</div>
+	<div class="ibox-content" ng-repeat="item in orderBatch.itemList track by $index">
+		<a class="btn btn-danger btn-xs fa fa-delete pull-right" ng-click="ArrayTool.del($index,orderBatch.itemList)"> 移除</a>
+		<table class="form-table">
+			<tbody>
+				<tr class="firstRow">
+					<th>产品名字</th>
+					<td>
+						<input type="text" class=" form-control" ng-model="item.cpmz" ab-basic-permission="permission.applyOrderInfo.item.cpmz" desc="产品名字" ab-validate="{}" />
+					</td>
+				</tr>
+				<tr>
+					<th>种类</th>
+					<td>
+						<input type="text" class=" form-control" ng-model="item.zl" ab-basic-permission="permission.applyOrderInfo.item.zl" desc="种类" ab-validate="{}" />
+					</td>
+				</tr>
+				<tr>
+					<th>单价</th>
+					<td>
+						<input type="text" class=" form-control" ng-model="item.dj" ab-basic-permission="permission.applyOrderInfo.item.dj" desc="单价" ab-validate="{}" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		
+		<script type="text/javascript">
+
+		var app = angular.module('app', ['baseDirective']);
+		app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
+			 
+		}]);
+		
+		</script>
+	</head>
+	<body ng-controller="ctrl" class="panel success">
+			<!-- 顶部按钮 -->
+			<div class="panel-heading">
+				<a class="btn  btn-primary fa-save" ng-model="data" ab-save="/sys/sysLogErr/save" use-default-after-save-event="true"><span>保存</span></a>
+				<a class="btn  btn-primary fa-back" onClick="javascript:$.Dialog.close(window);"><span>返回</span></a>
+			</div>
+			<form name="form" method="post" ab-load="/sys/sysLogErr/get?id={id}"  ng-model="data">
+				<table class="form-table">
+							<tr>								
+								<th>登录账号:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.account"   disabled="disabled"  />
+								</td>								
+							</tr>
+							<tr>								
+								<th>IP地址:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.ipAddress"   disabled="disabled"  />
+								</td>								
+							</tr>
+							<tr>								
+								<th>状态</th>
+								<td class="form-inline">
+									<select class="form-control" ng-model="data.status">
+			                    	 	<option value="unchecked">未检查</option>
+			                    	 	<option value="checked">已检查</option>
+			                    	 	<option value="fixed">已解决</option>
+			                    	 </select>
+								</td>								
+							</tr>
+							<tr>								
+								<th>请求地址:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.url"   disabled="disabled"  />
+								</td>
+							</tr>
+							<tr>								
+								<th>异常描述:</th>
+								<td>
+									<textarea class="form-control" rows="3" cols="80" ng-model="data.content" ></textarea>
+								</td>								
+							</tr>
+							<tr>								
+								<th>请求参数:</th>
+								<td>
+									<textarea class="form-control" rows="3" cols="80" ng-model="data.requestParam" readonly="readonly"></textarea>
+								</td>								
+							</tr>
+							<tr>								
+								<th>堆栈异常:</th>
+								<td>
+									<textarea class="form-control" rows="50" ng-model="data.stackTrace" readonly="readonly"></textarea>
+								</td>								
+							</tr>
+				</table>
+			</form>
+	</body>
+</html>

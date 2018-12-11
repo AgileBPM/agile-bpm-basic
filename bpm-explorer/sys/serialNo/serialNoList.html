@@ -1,0 +1,71 @@
+<html>
+<head>
+<title>流水号</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body>
+	<div class="panel-body">
+		<div class="panel panel-default search-panel">
+			<div class="panel-heading">
+				查询条件
+				<a href="javascript:void(0)" class="pull-right">
+					<i class="fa  fa-angle-double-up" toggle-collapse="#formSearch"></i>
+				</a>
+			</div>
+			<div class="panel-body">
+				<form id="searchForm" class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-sm-1" for="name_^VLK">名称</label>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="NAME_^VLK">
+						</div>
+						<label class="control-label col-sm-1" for="alias_^VLK">别名</label>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="alias_^VLK">
+						</div>
+						<div class="col-sm-4" style="text-align: left;">
+							<button type="button"   class="btn btn-primary fa-search">查询</button>
+							<button type="button" class="btn btn-primary fa-rotate-left">重置</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="btn-group toolbar">
+		  <button class="btn btn-outline btn-primary fa-plus" openDialog="新增" url="serialNoEdit">新增 </button>
+      	</div>
+      	<table ab-grid data-id-field="id" data-url="/sys/serialNo/listJson">
+	          <thead>
+	          <tr>
+	              <th data-checkbox="true">ID</th>
+	              <th data-field="name">名称</th>
+	              <th data-field="alias" >别名</th>
+	              <th data-field="regulation" >规则</th>
+	              <th data-field="genType" data-formatter="labelFormatter" data-value-style="1-每天生成-primary,0-递增-success," >生成类型</th>
+	              <th data-field="regulation" data-formatter="ruleKey">规则</th>
+	              <th data-field="noLength" >长度</th>
+	              <th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+	             	<a class="fa-edit btn btn-outline btn-primary btn-sm" openDialog="编辑" qtip="编辑" url="serialNoEdit.html?id={id}"></a>
+					<a class="fa-eye btn btn-outline btn-primary btn-sm" qtip="预览" onclick="preview('{alias}')"></a>
+					<a class="fa-trash btn btn-outline btn-primary btn-sm" sendAction="删除" qtip="删除" url="/sys/serialNo/remove?id={id}"></a>
+	             </th>
+	          </tr>
+	          </thead>
+      	</table>
+	</div>
+	<script type="text/javascript">
+		function preview(alias){
+			$.post(__ctx+"/sys/serialNo/preview?alias="+alias,{},function(data){
+				var data = JSON.parse(data);
+				var str = "流水号预览结果";
+				for(var i=0,no;no=data[i++];){
+					str = str + "<br>" + no.curIdenValue;
+				}
+				$.Dialog.alert(str,1);
+			})
+		}
+	</script>
+</body>
+</html>

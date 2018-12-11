@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.form.dao.FormCombinateDialogDao">
+    <resultMap id="FormCombinateDialog" type="com.dstz.form.model.FormCombinateDialog">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="alias" column="alias_" jdbcType="VARCHAR"/>
+        <result property="width" column="width_" jdbcType="NUMERIC"/>
+        <result property="height" column="height_" jdbcType="NUMERIC"/>
+        <result property="treeDialogId" column="tree_dialog_id_" jdbcType="VARCHAR"/>
+        <result property="treeDialogName" column="tree_dialog_name_" jdbcType="VARCHAR"/>
+        <result property="listDialogId" column="list_dialog_id_" jdbcType="VARCHAR"/>
+        <result property="listDialogName" column="list_dialog_name_" jdbcType="VARCHAR"/>
+        <result property="field" column="field_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.form.model.FormCombinateDialog">
+		INSERT INTO form_combinate_dialog
+		(id_,name_,alias_,width_,height_,tree_dialog_id_,tree_dialog_name_,list_dialog_id_,list_dialog_name_,field_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR}, #{width,jdbcType=NUMERIC}, #{height,jdbcType=NUMERIC}, #{treeDialogId,jdbcType=VARCHAR}, #{treeDialogName,jdbcType=VARCHAR}, #{listDialogId,jdbcType=VARCHAR}, #{listDialogName,jdbcType=VARCHAR}, #{field,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="FormCombinateDialog">
+		SELECT * FROM form_combinate_dialog 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="FormCombinateDialog">
+        SELECT * FROM form_combinate_dialog
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.form.model.FormCombinateDialog">
+		UPDATE form_combinate_dialog SET
+		name_=#{name,jdbcType=VARCHAR},
+		alias_=#{alias,jdbcType=VARCHAR},
+		width_=#{width,jdbcType=NUMERIC},
+		height_=#{height,jdbcType=NUMERIC},
+		tree_dialog_id_=#{treeDialogId,jdbcType=VARCHAR},
+		tree_dialog_name_=#{treeDialogName,jdbcType=VARCHAR},
+		list_dialog_id_=#{listDialogId,jdbcType=VARCHAR},
+		list_dialog_name_=#{listDialogName,jdbcType=VARCHAR},
+		field_=#{field,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM form_combinate_dialog 
+		WHERE
+		id_=#{id}
+	</delete>
+
+
+</mapper>

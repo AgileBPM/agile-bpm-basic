@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html ng-app="workbenchApp">
+<head>
+<title>首页</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+  <script type="text/javascript" src="../../assets/js/plugins/softable/Sortable.min.js"></script>
+  <link rel="stylesheet" href="../../assets/js/plugins/jqueryui/css/base/jquery-ui-1.10.4.custom.min.css">
+  <script src="../../assets/js/plugins/jqueryui/js/jquery-ui-1.10.4.custom.js"></script>
+  
+  <script src="../../assets/js/platform/sys/workbench/panelService.js"></script>
+  <script src="../../assets/js/platform/sys/workbench/previewController.js"></script>
+    <!-- dev模式 -->
+  <script src="../../assets/js/plugins/echarts/echarts.js"></script>
+  <link rel="stylesheet" href="../../assets/css/platform/sys/workbench.css">
+
+</head>
+<body class="gray-bg" ng-controller="indexController" >
+	<div class="bg-danger" ng-if="resized || panelList.length==0" style="height: 34px">
+		<div style="margin-left: 14px;">
+			<button type="button" class="btn btn-sm btn-info fa-rotate-left" ng-click="restoreDefault()">使用默认宽高</button>
+		</div>
+	</div>
+	<div id="sortable" class="wrapper wrapper-content" >
+		<div ng-repeat="panel in panelList track by panel.id" class="sortablebody {{$index}} draggable ibox" data-id="{{panel.id}}" style="height:{{panel.custHeight}}px;width:{{panel.custWidth}}%">
+			<div dynamic-directive="workbench-{{panel.type}}"></div>
+		</div>
+	</div>
+</body>
+</html>

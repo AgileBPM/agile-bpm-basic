@@ -1,0 +1,78 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../build/common/easyLayout.js"></script>
+<script type="text/javascript" src="../../build/common/uedtor.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/form/formDef/custDialog-mobile.js"></script>
+<script type="text/javascript">
+	window.formType = "mobile";
+</script>
+<script type="text/javascript" src="../../assets/js/platform/form/formDef/formDefEditController.js"></script>
+<style type="text/css">
+	.edui-editor-iframeholder{
+		width: 360px;
+	}
+</style>
+</head>
+<body class="easy-layout" ng-controller="ctrl" ng-init="init()">
+	<div data-options="region:'west',split:true,border:true,title:'业务对象'" style="width: 200px;">
+		<div id="boTree" class="ztree"></div>
+	</div>
+
+	<div data-options="region:'center',border:false">
+		<div class="ibox-title">
+			<a class="btn btn-primary fa-save" href="javascript:void(0)" ng-model="data" ab-save="/form/formDef/save">保存</a>
+			<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javaScript:window.close()">取消</a>
+			<a ng-show="data.boKey" href="javascript:void(0)" class="btn btn-primary fa-cubes" ng-click="selectTemplate('mobile')">生成表单</a>
+			<span ng-if="data.isDeveloper">
+				<a class="btn btn-primary fa-hand-o-up" ng-click="getBackupHtml()">
+					<span>
+						同步表单备份
+						<a href="javaScript:void(0)" style="text-decoration: none; color: red;" title="该行为只是获取开发者配置的备份表单信息，需要点击‘保存’也会生效" class="fa fa-exclamation-circle ab-help" ab-tip> </a>
+					</span>
+				</a>
+			</span>
+		</div>
+		<form name="form" ab-load="/form/formDef/getObject?id={id}" ng-model="data">
+			<table class="form-table">
+				<tr>
+					<th>分类</th>
+					<td>
+						<span ab-combox="data.groupId" value-name="data.groupName" tree-key="bdfl" ng-model="data.groupId" ab-validate="{required:true}"></span>
+					</td>
+					<th>名字</th>
+					<td>
+						<input type="text" ng-model="data.name" class="form-control" ab-validate="{required:true}" />
+					</td>
+					<th>别名</th>
+					<td>
+						<input type="text" ab-pinyin="data.name" ng-model="data.key" class="form-control" ab-validate="{required:true}" />
+					</td>
+				</tr>
+				<tr>
+					<th>描述</th>
+					<td>
+						<textarea ng-model="data.desc" class="form-control"></textarea>
+					</td>
+					<th>业务对象别名</th>
+					<td class="form-inline">
+						<input type="text" ng-model="data.boKey" class="form-control" ab-validate="{required:true}" />
+						　　<a class="btn btn-sm btn-primary fa-search" href="javascript:void(0)" ab-cust-dialog="busObjectSelect" value-key="data.boKey" value-name="data.boName" dialog-setting="{multiple:false}">选择</a>
+					</td>
+					<th>业务对象名称</th>
+					<td>
+						<input disabled type="text" ng-model="data.boName" class="form-control" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="6"> 
+						<textarea ab-editor config="editorConfig" ng-model="data.html"></textarea>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+</html>

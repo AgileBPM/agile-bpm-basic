@@ -1,0 +1,118 @@
+<div ng-controller="StencilController" class="easy-layout" style="width: 100%; height: 100%">
+	<div data-options="region:'north'" style="height: 62px">
+		<div class="editor-toolbar subheader">
+			<div class="btn-group">
+				<div class="btn-toolbar pull-left" ng-controller="ToolbarController" ng-cloak>
+					<button id="{{item.id}}" title="{{item.title | translate}}" ng-repeat="item in items" ng-switch on="item.type" class="btn btn-inverse" ng-class="{'separator': item.type == 'separator'}" ng-disabled="item.type == 'separator' || item.enabled == false" ng-click="toolbarButtonClicked($index)">
+						<i ng-switch-when="button" ng-class="item.cssClass" class="toolbar-button" data-toggle="tooltip" title="{{item.title | translate}}"></i>
+						<div ng-switch-when="separator" ng-class="item.cssClass"></div>
+					</button>
+					<button id="" title="" ng-switch="" on="item.type" class="btn btn-inverse ng-scope separator" class="separator" disabled="disabled">
+						<div class="ng-scope toolbar-separator"></div>
+					</button>
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-shrink-E')">
+						<i class="glyphicon glyphicon-chevron-left" data-toggle="tooltip" title="向左扩展画幕"></i>
+					</button>
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-grow-E')">
+						<i class="glyphicon glyphicon-chevron-right" data-toggle="tooltip" title="向右扩展画幕"></i>
+					</button>
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-shrink-N')">
+						<i class="glyphicon glyphicon-chevron-up" data-toggle="tooltip" title="向上扩展画幕"></i>
+					</button>
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-grow-N')">
+						<i class="glyphicon glyphicon-chevron-down" data-toggle="tooltip" title="向下扩展画幕"></i>
+					</button>
+				</div>
+			</div>
+			<div class="btn-group pull-right" ng-show="!secondaryItems.length">
+				<div class="btn-toolbar pull-right" ng-controller="ToolbarController">
+					<button title="{{item.title | translate}}" ng-repeat="item in secondaryItems" ng-switch on="item.type" class="btn btn-inverse" ng-class="{'separator': item.type == 'separator'}" ng-disabled="item.type == 'separator'" ng-click="toolbarSecondaryButtonClicked($index)" id="{{item.id}}">
+						<i ng-switch-when="button" ng-class="item.cssClass" class="toolbar-button" data-toggle="tooltip" title="{{item.title | translate}}"></i>
+						<div ng-switch-when="separator" ng-class="item.cssClass"></div>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div data-options="region:'center',iconCls:'icon-ok',border:false">
+		<div class="easy-layout" style="width: 100%; height: 100%">
+			<div data-options="region:'center',title:'流程图设计',iconCls:'icon-ok'" id="flowDesigner">
+				<div class="canvas-wrapper" id="canvasSection" ng-model="droppedElement" ng-model="droppedElement" data-drop="true" data-jqyoui-options jqyoui-droppable="{onDrop:'dropCallback',onOver: 'overCallback', onOut: 'outCallback'}">
+					<div class="canvas-message" id="model-modified-date"></div>
+					<div class="Oryx_button" id="delete-button" title="{{'BUTTON.ACTION.DELETE.TOOLTIP' | translate}}" ng-click="deleteShape()" style="display: none">
+						<img src="editor-app/images/delete.png" />
+					</div>
+					<div class="Oryx_button" id="morph-button" title="{{'BUTTON.ACTION.MORPH.TOOLTIP' | translate}}" ng-click="morphShape()" style="display: none">
+						<img src="editor-app/images/wrench.png" />
+					</div>
+					<div class="Oryx_button" ng-repeat="item in quickMenuItems" id="{{item.id}}" title="{{item.description}}" ng-click="quickAddItem(item.id)" ng-model="draggedElement" data-drag="true" jqyoui-draggable="{onStart:'startDragCallbackQuickMenu', onDrag:'dragCallbackQuickMenu'}" data-jqyoui-options="{revert: 'invalid', helper: 'clone', opacity : 0.5}" style="display: none">
+						<img ng-src="editor-app/stencilsets/bpmn2.0/icons/{{item.icon}}" />
+					</div>
+				</div>
+			</div>
+			
+			<div data-options="region:'south',split:true,border:true,collapse:'south'" title="流程插件配置" style="height: 300px">
+				<ng-include src="'editor-app/configuration/custom/flow-config-extend.html'" style="height:100%"  ng-if="selectedItem.nodeType=='Global'"></ng-include>
+				<ng-include src="'editor-app/configuration/custom/flow-plugins.html'" style="height:100%"></ng-include>
+			</div>
+			
+			<div data-options="region:'west',split:true,border:true" title="流程节点" style="width:200px;">
+				<div class="stencils" id="paletteSection">
+					<div ng-if="stencilItemGroups.length > 1">
+						<div ng-repeat="group in stencilItemGroups">
+
+							<ul ng-if="group.visible && group.items" class="stencil-group" ng-class="{collapsed: !group.expanded, 'first': $first}">
+								<li ng-include="'editor-app/partials/stencil-item-template.html?version=4'"></li>
+							</ul>
+
+							<div ng-if="!group.items" ng-include="'editor-app/partials/root-stencil-item-template.html?version=4'"></div>
+
+						</div>
+					</div>
+					<div ng-if="stencilItemGroups.length == 1">
+						<ul class="stencil-group">
+							<li ng-repeat="item in stencilItemGroups[0].paletteItems" class="stencil-item" id="{{item.id}}" title="{{item.description}}" ng-model="draggedElement" data-drag="true" jqyoui-draggable="{onStart:'startDragCallback', onDrag:'dragCallback'}" data-jqyoui-options="{revert: 'invalid', helper: 'clone', opacity : 0.5}">
+
+								<img ng-src="editor-app/stencilsets/bpmn2.0/icons/{{item.icon}}" width="16px;" height="16px;" />
+								{{item.name}}
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div data-options="region:'east'" title="属性配置" style="width: 436px;">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<label style="font-size: 23px;" class="control-label" ng-show="selectedItem.title != undefined && selectedItem.title != null && selectedItem.title.length > 0">节点：{{selectedItem.title}}</label>
+				<label style="font-size: 23px;" class="control-label" ng-show="!selectedItem || selectedItem.title == undefined || selectedItem.title == null || selectedItem.title.length == 0">流程：{{modelData.name}}</label>
+			</div>
+			<div class="panel-body" style="padding-top: 5px;">
+				<div class="form-horizontal" style="width: 95%">
+					<div class="form-group" ng-repeat="property in selectedItem.properties" ng-show="'oryx-documentation,oryx-process_id,oryx-name,oryx-overrideid,oryx-namepackage,oryx-name'.indexOf(property.key)!=-1" ng-click="propertyClicked($index)">
+						<label class="col-sm-3 control-label title">{{ property.title }}</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" ng-if="property.key!=='oryx-name'" ng-blur="updatePropertyInModel(property,null,selectedItem.nodeId)" ng-model="property.value" ng-disabled="!property.hasReadWriteMode">
+							<input type="text" class="form-control" ng-if="property.key==='oryx-name'" ng-change="updatePropertyInModel(property,null,selectedItem.nodeId)" ng-model="property.value" ng-disabled="!property.hasReadWriteMode">
+							
+					
+						</div>
+					</div>
+				</div>
+				<div ng-if="selectedItem.nodeType=='Global'">
+					<!-- 流程属性-->
+					<ng-include src="'editor-app/configuration/custom/flow-config.html'"></ng-include>
+				</div>
+				<div ng-if="isUserTaskNode()">
+					<ng-include src="'editor-app/configuration/custom/node-config.html'"></ng-include>
+					<!-- 流程属性-->
+				</div>
+				<div ng-if="selectedItem.nodeType=='InclusiveGateway' || selectedItem.nodeType=='ExclusiveGateway'">
+					<ng-include src="'editor-app/configuration/custom/inclusive-conditions.html'"></ng-include>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

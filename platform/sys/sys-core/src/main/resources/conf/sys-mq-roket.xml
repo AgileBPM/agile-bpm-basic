@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <!-- 生产者-->
+    <bean id="jmsProducer" class="com.aliyun.openservices.ons.api.bean.ProducerBean" init-method="start"
+          destroy-method="shutdown">
+        <property name="properties"> <!--生产者配置信息-->
+            <props>
+                <prop key="ProducerId">PID_BPM_JMS</prop> <!--请替换XXX-->
+                <prop key="AccessKey">LTAIy4GrPspjvp3F</prop>
+                <prop key="SecretKey">cgnyXvWo3B9ixCmU0p4d7rytxLrcBO</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <!-- 多CID订阅同一个Topic，可以创建多个ConsumerBean-->
+    <bean id="jsmConsumer" class="com.aliyun.openservices.ons.api.bean.ConsumerBean" init-method="start"
+          destroy-method="shutdown">
+        <property name="properties"> <!--消费者配置信息-->
+            <props>
+                <prop key="ConsumerId">CID_BPM_JMS</prop> <!--请替换XXX-->
+                <prop key="AccessKey">LTAIy4GrPspjvp3F</prop>
+                <prop key="SecretKey">cgnyXvWo3B9ixCmU0p4d7rytxLrcBO</prop>
+                <!--将消费者线程数固定为50个-->
+                <prop key="ConsumeThreadNums">2</prop>
+            </props>
+        </property>
+        <property name="subscriptionTable">
+            <map>
+                <entry value-ref="messageConsumer">
+                    <key>
+                        <bean class="com.aliyun.openservices.ons.api.bean.Subscription">
+                            <property name="topic" value="BPM_JMS"/>
+                            <property name="expression" value="*"/>
+                        </bean>
+                    </key>
+                </entry>
+                <!--更多的订阅添加entry节点即可，如下所示
+                <entry value-ref="msgListener">
+                    <key>
+                        <bean class="com.aliyun.openservices.ons.api.bean.Subscription">
+                            <property name="topic" value="TopicTestMQ-Other"/>
+                            <property name="expression" value="taga||tagb"/>
+                        </bean>
+                    </key>
+                </entry>
+                -->
+            </map>
+        </property>
+    </bean>
+
+    <!-- 消息消费者 -->
+    <bean name="messageConsumer" class="com.dstz.sys.jms.JmsConsumer">
+        <property name="jmsHandList" ref="jmsHandList"></property>
+    </bean>
+
+</beans>

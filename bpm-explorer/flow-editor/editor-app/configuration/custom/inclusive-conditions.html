@@ -1,0 +1,25 @@
+<!-- <div ng-controller="InclusiveConditionsController">
+	<div href="javascript:void(0)" class="panel panel-default" ng-repeat="outgoing in outgoingSequenceFlowList">
+	 	<div class="panel-heading">节点【{{outgoing.targetTitle}}】({{outgoing.id}})分支条件
+	 		<span class="btn btn-primary glyphicon glyphicon-edit pull-right" ng-click="changeCondition($index)"></span>
+	 	</div>
+		<div class="panel-body" style="min-height: 50px">
+			<code>
+				{{outgoing.flowconditionExpression}}
+				<span ng-if="!outgoing.flowconditionExpression">尚未配置分支条件！</span> 
+			</code>
+		</div>
+	</div>
+</div> -->
+<div class="panel panel-primary" ng-controller="InclusiveConditionsController" >
+	<div class="panel-heading">分支流转目标节点条件设置</div>
+	<div class="panel-body">
+		<fieldset class="scheduler-border" ng-repeat="outgoing in outgoingSequenceFlowList">
+			<legend style=" width: 90px;border-bottom:0;margin-bottom:10px;">
+				<span class="btn btn-primary btn-sm glyphicon glyphicon-edit" ng-click="changeCondition($index)">{{outgoing.targetTitle}}</span>
+			</legend>
+			<pre ng-if="outgoing.flowconditionExpression">{{outgoing.flowconditionExpression}}</pre>
+			<div ng-if="!outgoing.flowconditionExpression" class="alert alert-danger">尚未配置分支条件！</div> 
+		</fieldset>
+	</div>
+</div>

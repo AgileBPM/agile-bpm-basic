@@ -1,0 +1,53 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>流程实例</title>
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+     <div class="panel panel-default search-panel">
+         <div class="panel-heading" data-toggle="collapse" toggle="true" data-target="#formSearch" >查询条件</div>
+         <div class="panel-body">
+             <form id="searchForm" class="form-horizontal">
+                 <div class="form-group">
+                     <label class="control-label col-sm-1" for="def_name_^VLK">名字</label>
+                     <div class="col-sm-3">
+                         <input type="text" class="form-control" id="def_name_^VLK">
+                     </div>
+                     <label class="control-label col-sm-1" for="subject_^VLK">标题</label>
+                     <div class="col-sm-3">
+                         <input type="text" class="form-control" id="subject_^VLK">
+                     </div>
+                     <div class="col-sm-4" style="text-align:left;">
+                     		<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+                     </div>
+                 </div>
+             </form>
+         </div>
+     </div>       
+      <table ab-grid data-id-field="id" data-url="/bpm/my/approveList">
+          <thead>
+          <tr>
+              <th data-checkbox="true">ID</th>
+              <th data-field="subject">标题</th>
+              <th data-field="defName">流程</th>
+              <th data-field="nodeName">节点</th>
+              <th data-field="status" data-formatter="labelFormatter" 
+              			data-value-style="running-运行中-primary,Sdraft-草稿-warninginfo,end-终止-default,manualend-人工终止-danger,back-驳回-danger,revoke-撤销-danger,">流程状态</th>
+              <th data-field="creator">发起人</th>
+              <th data-field="approveTime" data-formatter=dateTimeFormatter data-sort-name="end_time_" data-sortable="true">办理时间</th>
+              <th data-field="durMs" data-formatter="$.timeLag">处理用时</th>
+              <th data-field="approveStatus" data-formatter="labelFormatter" 
+              			data-value-style="agree-同意-primary,oppose-反对-default,reject-驳回-danger,signOppose-会签反对-danger,signPass-会签通过-success,turn-转办-info,">处理结果</th>
+              <th data-formatter="innerHtmlFormatter" data-title="管理">
+					<a class="fa-detail btn btn-outline btn-primary btn-sm" openDialog='详情' qtip='详情' url='/bpm/instance/instanceDetail.html?id={id}&nodeId={nodeId}' ></a>
+			  </th>
+          </tr>
+          </thead>
+      </table>
+    </div>
+</body>
+</html>

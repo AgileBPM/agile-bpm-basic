@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+
+           http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+    <!--(嵌入配置)activeMq消息容器-->
+    <amq:broker useJmx="true" persistent="true" useShutdownHook="false">
+        <amq:managementContext>
+            <amq:managementContext createConnector="true" connectorPort="1099"/>
+        </amq:managementContext>
+        <amq:persistenceAdapter>
+            <amq:kahaDB directory="${jmsDir}">
+            </amq:kahaDB>
+        </amq:persistenceAdapter>
+        <amq:transportConnectors>
+            <amq:transportConnector uri="tcp://${jms.ip}:${jms.port}"/>
+        </amq:transportConnectors>
+    </amq:broker>
+
+    <bean id="simpleJmsConnectionFactory"
+          class="org.springframework.jms.connection.CachingConnectionFactory">
+        <!-- Session缓存数量 -->
+        <property name="sessionCacheSize" value="20"/>
+        <property name="targetConnectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <!-- MQ地址 -->
+                <property name="brokerURL" value="tcp://${jms.ip}:${jms.port}"/>
+                <!-- 是否异步发送 -->
+                <property name="useAsyncSend" value="true"/>
+            </bean>
+        </property>
+    </bean>
+
+
+    <bean id="jmsExceptionListener" class="com.dstz.sys.jms.JmsExceptionListener"></bean>
+
+
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="simpleJmsConnectionFactory"/>
+        <property name="defaultDestinationName" value="messageQueue"/>
+    </bean>
+
+    <!-- 消息对象队列  -->
+    <amq:queue id="messageQueue" name="messageQueue" physicalName="messageQueue"/>
+    <!-- 消息生产者  -->
+    <bean id="messageProducer" class="com.dstz.sys.jms.DefaultJmsProducer">
+        <property name="messageQueue" ref="messageQueue"></property>
+        <property name="jmsTemplate" ref="jmsTemplate"></property>
+    </bean>
+
+    <!-- 消息消费者 -->
+    <bean name="messageConsumer" class="com.dstz.sys.jms.JmsConsumer">
+        <property name="jmsHandList" ref="jmsHandList"></property>
+    </bean>
+
+
+    <!--消息监听容器 -->
+    <bean id="messageListenerContainer"
+          class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="simpleJmsConnectionFactory"/>
+        <property name="destination" ref="messageQueue"/>
+        <property name="messageListener" ref="messageMsgListener"/>
+    </bean>
+
+    <!-- 消息消费监听器   -->
+    <bean id="messageMsgListener" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <constructor-arg>
+            <ref bean="messageConsumer"/>
+        </constructor-arg>
+        <property name="defaultListenerMethod" value="execute"/>
+    </bean>
+
+</beans>	

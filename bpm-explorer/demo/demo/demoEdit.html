@@ -1,0 +1,68 @@
+<!doctype html>
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	</head>
+	<script type="text/javascript">
+		var app = angular.module('app', ['baseDirective']);
+		app.controller("ctrl", [ '$scope', 'baseService' ,function($scope, baseService) {
+			 
+		}]);
+		
+		/* 获取URL表单的 JSON 数据  必须以 getData为方法名*/
+		function getData(){
+			return AngularUtil.getScope().data;
+		}
+		/* 获取URL表单的校验情况，必须以isValid 为方法名 */
+		function isValid(){
+			//校验表单 ab-validate的 校验
+			if(!ngUtil.getScope().form.$valid){
+				$.Dialog.error("表单校验不通过！");
+				return false;
+			}
+
+			// 您可以自由的去做特殊业务逻辑的校验
+			if(!ngUtil.getScope().data.ah){
+				$.Dialog.error("爱好不可为空！");
+				return false;
+			}
+			return true;
+		}
+	</script>
+	<body class="panel success" ng-controller="ctrl">
+			<!--  ab-load 去controller 层获取业务数据  -->
+			<form name="form" method="post" ab-load="demo/demo/get?id={id}"  ng-model="data">
+				<table class="form-table">
+					<tr>								
+						<th><span>名称:</span><span class="required">*</span></th>
+						<td>
+							<input class="form-control" type="text" ng-model="data.mz"   ab-validate="{required:true,maxlength:192}"  />
+						</td>								
+					</tr>
+					<tr>								
+						<th><span>爱好:</span><span class="required">*</span></th>
+						<td>
+							<input class="form-control" id="alias" type="text" ng-model="data.ah"   />
+							您可以尝试不去录入此项，来感受URL表单校验的的逻辑
+						</td>								
+					</tr>
+					<tr>								
+						<th><span>部门:</span></th>
+						<td>
+							<input class="form-control" id="description"  type="text"   ng-model="data.bm" /> 
+						</td>								
+					</tr>
+					
+					<tr>								
+						<td colspan="2">
+							 请参考  demoEdit.html ,DemoManagerImpl <br>
+							 https://agile-bpm.gitee.io/docs/bpm/flowConf.html 关于URL 表单有相关描述
+						</td>								
+					</tr>
+				</table>
+			</form>
+		
+	</body>
+</html>

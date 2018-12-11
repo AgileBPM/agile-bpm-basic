@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.org.core.dao.GroupRelationDao">
+    <resultMap id="GroupRelation" type="com.dstz.org.core.model.GroupRelation">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="orgId" column="group_id_" jdbcType="VARCHAR"/>
+        <result property="relDefId" column="rel_def_id_" jdbcType="VARCHAR"/>
+        <result property="relName" column="rel_name_" jdbcType="VARCHAR"/>
+        <result property="relCode" column="rel_code_" jdbcType="VARCHAR"/>
+
+        <result property="orgName" column="org_name_" jdbcType="VARCHAR"/>
+        <result property="jobName" column="rel_def_name_" jdbcType="VARCHAR"/>
+        
+        <result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.org.core.model.GroupRelation">
+		INSERT INTO org_group_rel
+		(id_,group_id_,rel_def_id_,rel_name_,rel_code_,rel_def_name_,create_time_,create_by_,update_time_,update_by_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{orgId,jdbcType=VARCHAR}, #{relDefId,jdbcType=VARCHAR}, #{relName,jdbcType=VARCHAR}, #{relCode,jdbcType=VARCHAR},#{jobName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="GroupRelation">
+		SELECT * FROM org_group_rel 
+		WHERE 
+		id_=#{id}
+	</select>
+    <select id="getByCode" parameterType="java.lang.String" resultMap="GroupRelation">
+		SELECT * FROM org_group_rel 
+		WHERE 
+		rel_code_=#{code}
+	</select>
+    <select id="getBygroupIdRelDefId" parameterType="java.lang.String" resultMap="GroupRelation">
+		SELECT * FROM org_group_rel 
+		WHERE 
+		group_id_=#{orgId} and rel_def_id_=#{relDefId}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="GroupRelation">
+        SELECT * FROM org_group_rel
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <select id="getRelListByParam" parameterType="java.util.Map" resultMap="GroupRelation">
+        SELECT rel.*,orguser.user_id_ ,u.account_ FROM org_group_user orguser inner join org_group_rel rel ON
+        orguser.rel_id_=rel.id_ inner join org_user u on orguser.user_id_=u.id_
+        <if test="userId!=null">
+            and orguser.user_id_=#{userId}
+        </if>
+        <if test="account!=null">
+            and u.account_=#{account}
+        </if>
+    </select>
+
+    <!-- 查询岗位全信息，包含组织名称，职务名称 -->
+    <select id="queryInfoList" parameterType="java.util.Map" resultMap="GroupRelation">
+        select org.name_ "org_name_", GroupRelation.* from org_group_rel GroupRelation
+        inner JOIN org_group org on GroupRelation.group_id_=org.id_
+        <if test="orgId!=null">
+            and GroupRelation.group_id_=#{orgId}
+        </if>
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+    <update id="update" parameterType="com.dstz.org.core.model.GroupRelation">
+		UPDATE org_group_rel SET
+		group_id_=#{orgId,jdbcType=VARCHAR},
+		rel_def_id_=#{relDefId,jdbcType=VARCHAR},
+		rel_def_name_=#{jobName,jdbcType=VARCHAR},
+		rel_name_=#{relName,jdbcType=VARCHAR},
+		rel_code_=#{relCode,jdbcType=VARCHAR},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		update_by_=#{updateBy,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM org_group_rel 
+		WHERE
+		id_=#{id}
+	</delete>
+
+
+	 <select id="getListByGroupId" parameterType="java.util.Map" resultMap="GroupRelation">
+	        select org.name_ "org_name_", GroupRelation.* from org_group_rel GroupRelation
+	        inner JOIN org_group org on GroupRelation.group_id_=org.id_
+	        and GroupRelation.group_id_=#{orgId}
+	    </select>
+</mapper>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/codeMirror.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../build/common/codeMirror.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/form/formTemplate/formTemplateEditController.js"></script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<div class="ibox-title">
+		<a ng-hide="!data.editable" href="javascript:void(0)" class="btn btn-primary fa-save" ng-model="data" ab-save="/form/formTemplate/save">保存</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+	</div>
+	<form name="form" ab-load="/form/formTemplate/getObject?id={id}" ng-model="data">
+		<table class="form-table">
+			<tr>
+				<th>名字</th>
+				<td>
+					<input ng-disabled="!data.editable" type="text" ng-model="data.name" class="form-control" ab-validate="{required:true}" />
+				</td>
+
+				<th>别名</th>
+				<td>
+					<input ng-disabled="!data.editable" type="text" ab-pinyin="data.name" ng-model="data.key" class="form-control" ab-validate="{required:true}" />
+				</td>
+			</tr>
+			<tr>
+				<th>类型</th>
+				<td>
+					<select ng-disabled="!data.editable" class="form-control" ng-model="data.type" ng-options="v.key as v.desc for (k,v) in FormTemplateType">
+					</select>
+				</td>
+				<th>描述</th>
+				<td>
+					<textarea ng-disabled="!data.editable" ng-model="data.desc" class="form-control"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th>内容</th>
+				<td>
+					<textarea ng-disabled="!data.editable" ui-codemirror="" height="210px" broadcast="script" ng-model="data.html"></textarea>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

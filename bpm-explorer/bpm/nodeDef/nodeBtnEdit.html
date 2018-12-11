@@ -1,0 +1,85 @@
+<html ng-app="btnApp">
+	<head>
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		<script type="text/javascript" src="../../build/common/easyLayout.js"></script>
+		<script type="text/javascript" src="../../assets/js/platform/bpm/nodeDef/nodeDefBtnEdit.js"></script>
+	</head>
+	<body ng-controller="btnController" class="easy-layout">
+			<div data-options="region:'center',title:'按钮列表'" style="height: 100%">
+				<div class="border" style="	margin-top: 5px;margin-bottom: 5px;">
+					<div class="buttons"> 	
+						<a ng-click="addButton()" class="btn btn-primary fa fa-plus"><span>添加</span></a>
+						<a ng-click="initBtns()" class="btn btn-primary  fa-recycle"><span>初始化按钮</span></a>
+	        		</div>
+				</div>
+				<table class="table table-bordered table-hover">
+				  <thead>
+			        <tr><th style="width: 30px">序</th> <th>alias</th> <th>名字</th> <th>排序</th> <th>操作</th> </tr>
+			      </thead>
+			      <tbody>
+			        <tr ng-repeat="btn in buttonList">
+			          <th>{{$index+1}}</th>
+			          <td ng-click="changeEditing($index)">{{btn.alias}}</td>
+			          <td ng-click="changeEditing($index)">{{btn.name}}</td>
+					  <td class="form-inline">				        
+					 		<input  placeholder="to" class="form-control" ng-model="turnToIndex" ng-blur="ArrayTool.turnTo(this,buttonList)" style="width:39px" ab-validate="{number:true}"> 
+							<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.up($index,buttonList)" class="btn btn-sm btn-default fa-chevron-up"></a>
+							<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.down($index,buttonList)" class="btn btn-sm btn-default fa-chevron-down"></a>
+					  </td>
+			          <td>
+				          	<a ng-click="del($index)" class="btn btn-danger btn-sm fa-delete">删除</a>
+			          </td>
+			        </tr>
+			        </tbody>
+				</table>
+			</div>
+			<div data-options="region:'east',title:'按钮配置',split:true" style="width:350px;padding-top:0px !important;">
+			<form name="myForm">
+				<table class="form-table" cellspacing="0"  ng-if="btn">
+					<tr>
+						<th style="width: 25%;">按钮名称: </th>
+						<td>
+							<input  ng-model="btn.name" class="form-control" ab-validate="{required:true}" />
+						</td>
+					</tr>
+					<tr>
+						<th>动作: </th>
+						<td> <span ng-if="btn.status!=2">{{btn.alias}}</span>
+							<span ng-show="btn.status==2">
+								<input ng-model="btn.alias" class="form-control" ng-blur="changeAlias()" ab-validate="{required:true,varirule:true}"/>
+							</span>
+							<span ng-show="btn.status==2">
+								<select ng-model="btn.alias" class="form-control" ng-change="changeButtonType(btn)">
+									<option value="">--请选择--</option>
+									<option value="{{m.alias}}" ng-repeat="m in defaultNodeBtns" ng-if="!isInclude(m)">{{m.name}}</option>
+								</select>
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th>前置脚本:<span class="fa bigger-120 fa-info-circle" ab-tip title="javascript脚本,在提交前做些处理<br>，参数：scope<br>返回:true/false。<br>返回false时不做提交动作."></span> </th>
+						<td><textarea ng-model="btn.beforeScript" cols="30" rows="5" class="form-control" ></textarea> 
+						</td>
+					</tr>
+					<tr>
+						<th>后置脚本:<span class="fa bigger-120 fa-info-circle" ab-tip title="javascript脚本,在返回后前做些处理<br>参数:data(responseData)<br>返回:true/false<br>返回false时可以控制不关闭当前窗口。<br>非系统预定义按钮忽略后置脚本"></span> </th>
+						<td><textarea  ng-model="btn.afterScript" cols="30" rows="3" class="form-control"></textarea>
+						</td>
+					</tr>
+					<tr >
+						<th>groovy脚本:<span class="fa  fa-info-circle" ab-tip title="java脚本，控制按钮是否显示，返回 false不显示，返回 true显示。<br>上下文变量：<br>1.流程变量<br>2.BO数据<br>返回:true/false。"></span> </th>
+						<td><textarea  ng-model="btn.groovyScript" cols="30" rows="5" class="form-control"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<th>配置页:<span class="fa  fa-info-circle" ab-tip title="action信息完善页，配置改动作需要的更多信息，或者非请求类型action的结果展示"></span> </th>
+						<td><input  ng-model="btn.configPage" type="text" cols="30" rows="5" class="form-control"/>
+						</td>
+					</tr>
+					
+				</table>
+			</form>
+			</div>
+	</body>
+</html>

@@ -1,0 +1,49 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/sys/sysFile/uploadDialogController.js"></script>
+<!--引入webuploader-->
+<link rel="stylesheet" type="text/css" href="../../assets/js/plugins/webuploader/webuploader.css">
+<script type="text/javascript" src="../../assets/js/plugins/webuploader/webuploader.js"></script>
+<script type="text/javascript">
+	//返回数据
+	function getData() {
+		var scope = AngularUtil.getScope();
+		return scope.getData();
+	}
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<div class="ibox-title">
+		<a href="javascript:void(0)" class="btn btn-primary fa-download" ng-show="fileList.length>0" ng-click="zip()">打包下载</a>
+		<a href="javascript:$.Dialog.close(window);" class="btn btn-primary fa-reply">取消</a>
+	</div>
+	<form name="form">
+		<table class="form-table">
+			<tr>
+				<th>文件名</th>
+				<th>状态</th>
+				<th>预览</th>
+				<th>
+					<div id="picker">添加文件</div>
+				</th>
+			</tr>
+			<tr ng-repeat="file in fileList">
+				<th>{{file.name}}</th>
+				<td>{{file.statusText}}</td>
+				<td>
+					<img style="width: 100px; height: 100px" ng-if="file.src" ng-src="{{file.src}}" />
+					<span ng-if="!file.src">无法预览</span>
+				</td>
+				<td>
+					<a href="{{file.href}}" class="btn btn-outline btn-primary fa-download">下载</a>
+					<a href="javascript:void(0)" class="btn btn-outline btn-primary fa-eye" ng-click="open(file)">打开</a>
+					<a href="javascript:void(0)" class="btn btn-outline btn-primary fa-trash" ng-click="del(file)">删除</a>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

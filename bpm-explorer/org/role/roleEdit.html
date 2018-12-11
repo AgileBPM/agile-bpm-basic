@@ -1,0 +1,75 @@
+<!doctype html>
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	</head>
+	<script type="text/javascript">
+		var app = angular.module('app', ['baseDirective']);
+		app.controller("ctrl", [ '$scope', 'baseService' ,function($scope, baseService) {
+			$scope.$on("afterSaveEvent", function(event, data) {
+				if (!data.r) {
+					$.Dialog.close(window);
+				}else{
+					window.location.reload();
+				}
+			});
+		}]);
+		/* 测试流程 url表单 */
+		function getData(){
+			return AngularUtil.getScope().data;
+		}
+		
+		function isValid(){
+			if(!AngularUtil.getScope().data.alias){
+				$.Dialog.error("别名不可为空");
+				return false;
+			}
+			return true;
+		}
+	</script>
+	<body class="panel success" ng-controller="ctrl">
+		
+			<!-- 顶部按钮 -->
+			<div class="panel-heading">
+				<div class="panel-heading">
+					<a class="btn btn-primary fa-save" ng-model="data" ab-save="/org/role/save"><span>保存</span></a>
+					<a class="btn btn-primary fa-back" onClick="javascript:$.Dialog.close();"><span>返回</span></a>
+				</div>
+			</div>
+			<form name="form" method="post" ab-load="org/role/get?id={id}"  ng-model="data">
+				<table class="form-table">
+					<tr>								
+						<th><span>名称:</span><span class="required">*</span></th>
+						<td>
+							<input class="form-control" type="text" ng-model="data.name"   ab-validate="{required:true,maxlength:192}"  />
+						</td>								
+					</tr>
+					<tr>								
+						<th><span>编码:</span><span class="required">*</span></th>
+						<td>
+							<input class="form-control" id="alias" type="text" ng-model="data.alias"   ab-validate="{required:true,maxlength:192}" ab-pinyin="data.name" />
+						</td>								
+					</tr>
+					<tr>								
+						<th><span>状态:</span><span class="required">*</span></th>
+						<td>
+						<select class="form-control" ng-model="data.enabled" ab-validate="{required:true}"  >
+						  <option value="0">禁用</option>
+						   <option value="1">正常</option>
+						</select>
+							 
+						</td>								
+					</tr>
+					<tr>								
+						<th><span>描述:</span></th>
+						<td>
+							<textarea class="form-control" id="description"   ng-model="data.description"></textarea>
+						</td>								
+					</tr>
+				</table>
+			</form>
+		
+	</body>
+</html>

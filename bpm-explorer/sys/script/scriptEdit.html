@@ -1,0 +1,78 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<link href="../../build/common/codeMirror.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/codeMirror.js"></script>
+
+ <script type="text/javascript">
+	var app = angular.module('app', [ 'baseDirective','ui.codemirror']);
+	app.controller("ctrl", [ '$scope', 'baseService' , function(scope, baseService) {
+		scope.selectCategory = function(obj){
+			scope.data.category =scope.type; 
+		}
+		
+		scope.preViewScript = function(){
+			if(!scope.data.script){
+				$.Dialog.alert("请编写脚本内容！",7);
+				return ;
+			}
+			var param={script:scope.data.script,key:scope.data.name};
+			baseService.postForm(__ctx+"/sys/script/executeScript",param).then(function(data){
+				$.Dialog.alert(data.val,data.success?6:5); 
+			},function(error){alert(error);});
+		}
+		
+	} ]);
+</script>
+</head>
+<body ng-controller="ctrl">
+	<div class="panel success">
+		<div class="panel-heading"> 
+			<button class="btn btn-primary fa-save" ng-model="data" ab-save="/sys/script/save" use-default-after-save-event="true">
+				<span>保存</span>
+			</button>
+			<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">
+			返回
+			</a>
+            <a href="javascript:void(0)" ng-click="preViewScript()" class="btn btn-primary fa-cog ">
+                <span>脚本测试</span>
+            </a>
+		</div>
+	<form name="form" ab-load="/sys/script/get?id={id}" ng-model="data">
+		<table class="form-table" >
+			<tr>
+				<th>名称:</th>
+				<td>
+					<input type="text" ng-model="data.name" class="form-control" ab-validate="{required:true}"/>
+				</td>
+			</tr>
+			<tr>
+				<th>脚本:</th>
+				<td>
+					<div >
+						 <textarea ng-model="data.script" ui-codemirror broadcast="script" ab-validate="{required:true}"></textarea>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th>脚本分类:</th>
+				<td class="form-inline">
+					<input id="category" ng-model="data.category" class="form-control" />
+					 <select ng-change="selectCategory()" ng-model="type" class="form-control">
+						<option value="">全部</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>备注:</th>
+				<td>
+					<textarea ng-model="data.memo" rows="5" cols="80" class="form-control" ab-validate="{required:true}" ></textarea>
+				</td>
+			</tr>
+		</table>
+	</form>
+	</div>
+</body>
+</html>

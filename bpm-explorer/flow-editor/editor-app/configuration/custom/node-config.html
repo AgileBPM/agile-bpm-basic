@@ -1,0 +1,146 @@
+<div ng-controller="NodeConfController" class="panel-group" aria-multiselectable="true">
+	<!-- 节点表单  -->
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<div class="panel-title" data-toggle="collapse" data-target=".forms" aria-expanded="true" aria-controls="nodeForm">节点表单</div>
+		</div>
+		<div class="panel-body collapse forms">
+			<span class=" btn btn-info btn-sm" ng-click="editAllNodes('forms')">{{isEditAllNode_forms?'隐藏其他节点表单':'设置所有节点表单'}}</span>
+			<div ng-repeat="(nodeId,node) in nodeMap" ng-if="nodeFormFilter(node)">
+				<div title="{{nodeId}}" type="node" nodeId="{{nodeId}}" bpm-form="node.form" mobile-form="node.mobileForm"></div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 节点人员  -->
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<div class="panel-title" data-toggle="collapse" data-target=".nodeUser" aria-expanded="true" aria-controls="nodeUser">节点人员</div>
+		</div>
+		<div class="panel-body collapse nodeUser">
+			<span class="pull-right btn btn-info btn-sm" ng-click="editAllNodes('nodeUser')">{{isEditAllNode_nodeUser?'隐藏其他节点人员':'设置所有节点人员'}}</span>
+			<br />
+			<div ng-repeat="(nodeId,node) in nodeMap" ng-if="nodeUserFilter(node)" ng-if="node.nodeId == selectedItem.nodeId || isEditAllNode_nodeUser">
+				<div class="btn-group" role="group" aria-label="...">
+					<button type="button" class="btn glyphicon">{{node.nodeName}}({{node.nodeId}})</button>
+					<button type="button" class="pull-right btn btn-info glyphicon glyphicon-plus" ng-click="addNodeUserCondition(node)"></button>
+				</div>
+				<div class="alert alert-danger row show-grid" role="alert" ng-if="!node.plugins.userAssign.ruleList||node.plugins.userAssign.ruleList.length==0">尚未配置节点人员，请添加人员设置</div>
+				<div ng-repeat="nodeCondition in node.plugins.userAssign.ruleList" class="row show-grid well">
+					<div class="col-xs-8 pull-left" style="white-space: pre-wrap;">{{nodeCondition.description}}</div>
+					<div class="col-xs-4 pull-right">
+						<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.up($index,node.plugins.userAssign.ruleList)" class="btn btn-xs btn-default glyphicon glyphicon-chevron-up"></a>
+						<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.down($index,node.plugins.userAssign.ruleList)" class="btn btn-xs btn-default glyphicon glyphicon-chevron-down"></a>
+						<a ng-click="addNodeUserCondition(node,$index)" class="btn btn-danger btn-xs glyphicon glyphicon-edit"></a>
+						<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.del($index,node.plugins.userAssign.ruleList)" class="btn btn-xs btn-default glyphicon glyphicon-trash"></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 节点按钮  -->
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<div class="panel-title" data-toggle="collapse" data-target=".btns" aria-expanded="true" aria-controls="nodeUser">节点按钮</div>
+		</div>
+		<div class="panel-body collapse btns">
+			<span class="pull-right btn btn-info" ng-click="editAllNodes('btns')">{{isEditAllNode_btns?'隐藏其他节点按钮':'设置所有节点按钮'}}</span>
+			<div ng-repeat="(nodeId,node) in nodeMap" class="well" ng-if="nodeId == selectedItem.nodeId || isEditAllNode_btns">
+				<button type="button" class="btn glyphicon">{{node.nodeName}}({{node.nodeId}})</button>
+				<br>
+				<div class="alert alert-danger row show-grid" ng-if="!node.btnList || node.btnList.length ==0">按钮会在保存后生成</div>
+				<span ng-repeat="btn in node.btnList" class="btn btn-xs btn-success" style="margin: 3px">{{btn.name}}</span>
+				<span class="pull-right btn btn-danger fa fa-edit btn-sm" ng-hide="b" ng-click="editBtns(node)">编辑</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- 节点属性-->
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<div class="panel-title" data-toggle="collapse" data-target=".properties">节点属性</div>
+		</div>
+		<div class="panel-body collapse properties">
+			<span class="pull-right btn btn-info btn-sm" ng-click="editAllNodes('properties')">{{isEditAllNode_properties?'隐藏所有节点属性':'设置所有节点属性'}}</span>
+			<span ng-show="isEditAllNode_properties">
+				<div class="form-inline">
+					<div class="well">
+						<label class="control-label col-sm-3">批量勾选:</label>
+						<br>
+						<!-- <label><input type="checkbox"  value="common" ng-model="jumpType_common"/>正常跳转</label>
+					 <label><input type="checkbox"  value="free" ng-model="jumpType_free"/>自由跳转</label>
+					 <label><input type="checkbox"  value="select" ng-model="jumpType_select"/>选择路径跳转</label><br> -->
+						<label>
+							<input type="checkbox" ng-model="backMode_all" />
+							驳回后返回
+						</label>
+						<label>
+							<input type="checkbox" ng-model="skipExecutorEmpty_all" />
+							执行人为空时跳过
+						</label>
+					</div>
+				</div>
+			</span>
+			<div ng-repeat="(nodeId,node) in nodeMap" class="well" ng-if="nodeId == selectedItem.nodeId || isEditAllNode_properties" ng-hide="b">
+				<div class="form-inline">
+					<button type="button" class="btn glyphicon">{{node.nodeName}}({{node.nodeId}})</button>
+				</div>
+				<div class="form-inline">
+					<label class="control-label col-sm-4">驳回后执行人:</label>
+					<label>
+						<input type="radio" value="history" ng-model="node.propertie.backUserMode" ab-checked="backMode_all">
+						历史执行人
+					</label>
+					<label>
+						<input type="radio" value="normal" ng-model="node.propertie.backUserMode" ab-checked="backMode_all">
+						节点配置人
+					</label>
+				</div>
+				<div class="form-inline">
+					<label class="control-label col-sm-4">驳回后流转方式:</label>
+					<label>
+						<input type="radio" value="back" ng-model="node.propertie.backMode">
+						返回 驳回节点
+					</label>
+					<label>
+						<input type="radio" value="normal" ng-model="node.propertie.backMode">
+						按流程图运行
+					</label>
+				</div>
+
+				<div class="form-inline">
+					<label class="control-label col-sm-4">指定驳回节点:</label>
+					<select ng-model="node.propertie.backNode" class="form-control" style="width: 40%" placeholder="驳回节点" title="默认驳回至前一节点" ab-tip="{position: { my: 'top left', at: 'bottom center'}}">
+						<option value="">前一节点</option>
+						<option ng-repeat="(nodeId,n) in nodeMap" value="{{nodeId}}" ng-selected="nodeId === node.propertie.backNode">{{n.nodeName}}</option>
+					</select>
+				</div>
+
+				<div class="form-inline">
+					<label class="control-label col-sm-4">自由选择候选人:</label>
+					<label>
+						<input type="radio" value="no" ng-model="node.propertie.freeSelectUser">
+						不开启
+					</label>
+					<label>
+						<input type="radio" value="nodeUser" ng-model="node.propertie.freeSelectUser">
+						节点人员
+					</label>
+					<label>
+						<input type="radio" value="allUser" ng-model="node.propertie.freeSelectUser">
+						所有用户
+					</label>
+				</div>
+				<div class="form-inline">
+						<label class="control-label col-sm-3">其他属性设置:</label>  
+						<span  ab-boolean text="自由分支选择" ng-model="node.propertie.freeSelectNode" ab-tip title="可以自由选择分支的走向"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+

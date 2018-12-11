@@ -1,0 +1,124 @@
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		
+		<script type="text/javascript">
+			var app = angular.module('app', ['baseDirective']);
+			app.controller("ctrl", [ '$scope', 'baseService' ,function($scope, baseService) {
+				
+				var data={
+				}
+				
+				$scope.returnToList = function() {
+					parent.location.reload()
+				}
+				
+				$scope.addRow=function(classVar){
+					$scope.data[classVar +"List"].push(angular.copy(obj[classVar]))
+				}
+				$scope.test = function(){
+					
+					if($scope.data.type == "LR" || $scope.data.type == "LW") {
+						$scope.data.system = "public"
+					} else if($scope.data.type == "CR" || $scope.data.type == "CW") {
+						$scope.data.system = "agilebpm"
+					}
+					
+				}
+				
+				$scope.$on("beforeSaveEvent",function(event,data){
+					if($scope.data.system == "public" && ($scope.data.type.indexOf("C")>-1)) {
+						data.pass = false;
+						$.Dialog.error("分类与系统不一致");
+					}
+					if($scope.data.system == "agilebpm" && ($scope.data.type.indexOf("L")>-1)) {
+						data.pass = false;
+						$.Dialog.error("分类与系统不一致");
+					}
+					
+				});
+			}]);
+		</script>
+
+	</head>
+	<body ng-controller="ctrl">
+			<!-- 顶部按钮 -->
+			<div class="panel-heading">
+				<div class="buttons">	      
+					<a class="btn btn-primary fa-save" ng-model="data" ab-save="/calendar/holidayConf/save" use-default-after-save-event="true">保存</a>
+					<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回</a>	
+				</div>
+			</div>
+			<form name="form" method="post" ab-load="/calendar/holidayConf/get?id={id}"  ng-model="data">
+				<table class="form-table">
+							<tr>								
+								<th>名字:<span class="required">*</span></th>
+								<td>
+									<input id="input" class="form-control" type="text" ng-model="data.name"   ab-validate="{required:true,maxlength:765}"  />
+									<select class="form-control" type="text" ng-model="data.name"   ab-validate="{required:true,maxlength:765}" onchange="document.getElementById('input').value=this.value">
+									    <option value="元旦">元旦</option>
+									    <option value="春节">春节</option>
+									    <option value="清明节">清明节</option>
+									    <option value="劳动节">劳动节</option>
+									    <option value="端午节">端午节</option>
+									    <option value="中秋节	">中秋节</option>
+									    <option value="国庆节">国庆节</option>
+									</select>
+								</td>								
+							</tr>
+							<tr>								
+								<th>分类:<span class="required">*</span></th>
+								<td>
+									<!-- <input class="form-control" type="text" ng-model="data.type"   ab-validate="{required:true,maxlength:192}"  /> -->
+									<select class="form-control" type="text" ng-model="data.type" ng-change="test()"  ab-validate="{required:true,maxlength:192}">
+									    <option value="LR">法定节假日</option>
+									    <option value="LW">法定工作日</option>
+									    <option value="CR">公司节假日</option>
+									    <option value="CW">公司工作日</option>
+									</select>
+								</td>								
+							</tr>
+							<!-- 
+							<tr>								
+								<th>年份:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.year" ab-date="yyyy"  ab-validate="{required:false}"  />
+								</td>								
+							</tr> -->
+							<tr>								
+								<th>开始日期:<span class="required">*</span></th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.startDay" ab-date  ab-validate="{required:true}"  />
+								</td>								
+							</tr>
+							<tr>								
+								<th>结束日期:<span class="required">*</span></th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.endDay" ab-date  ab-validate="{required:true}"  />
+								</td>								
+							</tr>
+							<tr>								
+								<th>系统:</th>
+								<td>
+									<!-- <input class="form-control" type="text" ng-model="data.system"   ab-validate="{required:false,maxlength:192}"  /> -->
+									<select class="form-control" type="text" ng-model="data.system"   ab-validate="{required:false,maxlength:192}">
+									    <option value="public">公有</option>
+									    <option value="agilebpm">AgileBPM</option>
+									</select>
+								</td>								
+							</tr>
+							<tr>								
+								<th>描述:</th>
+								<td>
+									<textarea class="form-control" type="text" style="width:500px" ng-model="data.remark"   ab-validate="{required:false}"  ></textarea>
+								</td>								
+							</tr>
+				</table>
+				
+				
+			</form>
+		
+	</body>
+</html>

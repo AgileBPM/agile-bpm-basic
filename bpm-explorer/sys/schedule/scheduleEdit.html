@@ -1,0 +1,323 @@
+<!doctype html>
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+		<script type="text/javascript">
+			var app = angular.module('app', ['baseDirective']);
+			app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
+				var prevVal;
+				
+				/* for(int i = 0; i < $scope.data.scheduleParticipantList.length; i ++) {
+					initParticipants[i].name = $scope.data.scheduleParticipantList[i].participantor_name;
+					initParticipants[i].id = $scope.data.scheduleParticipantList[i].participantor;
+				} */
+				//------------用户选择框可选多人设置-----------------//
+			   
+				//-------------返回列表页------------------------//
+				$scope.returnToList = function() {
+					parent.location.reload()
+				}
+				//-------------选择参与者-----------------------//
+				$scope.openCustom = function() {
+					var initParticipants = new Array();
+					if(!$scope.data.scheduleParticipantList){
+						$scope.data.scheduleParticipantList = [];
+					}
+					for(var i = 0; i < $scope.data.scheduleParticipantList.length; i ++) {
+						var participant = new Object();
+						
+						participant.name = $scope.data.scheduleParticipantList[i].participantorName;
+						participant.id = $scope.data.scheduleParticipantList[i].participantor;
+						initParticipants.push(participant);
+					}
+					CustUtil.openCustDialog('userSelector',function(data,dialog){
+						var participants = "";
+						for(var i = 0; i < data.length; i++) {
+							participants += data[i].name;
+							var find = false;
+							for(var j = 0; j < $scope.data.scheduleParticipantList.length; j++) {
+								if($scope.data.scheduleParticipantList[j].participantor == data[i].id) {
+									find = true;
+									break;
+								}
+							}
+							if(!find) {
+								var a = new Object();
+								a.participantorName = data[i].name;
+								a.participantor = data[i].id;
+								$scope.data.scheduleParticipantList.push(a);
+							}
+							if(i < data.length - 1) {
+								participants+=',';
+							}
+						}
+						//如果新选择的参与者中没有原有的参与者，则将id标记为'delete',表示删除
+						for(var i = 0; i < $scope.data.scheduleParticipantList.length; i++) {
+							var find = false;
+							for(var j = 0; j < data.length; j++) {
+								if($scope.data.scheduleParticipantList[i].participantor == data[j].id) {
+									find = true;
+								}
+							}
+							if(!find) {
+								$scope.data.scheduleParticipantList[i].id = 'delete';
+							}
+						}
+						$scope.data.participantNames = participants;
+						$("#participant").val(participants);
+						$.Dialog.close(dialog);
+
+					},initParticipants);
+				}
+				//--------改变日程类型时的校验：有参与者情况下不能变更为个人-------//
+				$scope.changeDjuge = function() {
+					if($scope.data.type == "single" && $scope.data.scheduleParticipantList.length > 0) {
+						$.Dialog.error("请先删除参与者");
+						$scope.data.type = prevVal;
+					}
+				}
+				//-----------------创建、编辑日程-------------------------//
+				$scope.openDetail = function(id, action) {
+					//debugger
+					if($scope.data.type == "share" || $scope.data.type == "ilka") {
+						var title = action == "edit" ? "编辑日程" : action == "add" ? "添加日程" : "查看日程";
+						action =action == "edit" ? "Edit" : action == "add" ? "Create" : "Get";
+						var url="scheduleParticipant" + action +"?scheduleId=" + $scope.data.id;
+						if(!$.isEmpty(id)){
+							url+='?id=' + id;
+						}
+						HT.window.openEdit(url, title, action, 'grid', 500, 500, null, null, id, true);
+					} else {
+						$.Dialog.error("共享或共同任务才能添加参与者");
+					}
+				}
+				//----------------------删除参与者----------------------//
+				$scope.itemDelete = function(itemId) {
+					//debugger
+					$.ajax({
+			               url: __ctx+'/calendar/schedule/itemDelete',
+			               data: {
+			                   id: itemId,
+			               },
+			               success: function() {
+			            	   location.reload();
+			               }
+			           });
+				}
+				//-----------------------日程完成---------------------//
+				$scope.complete = function() {
+					$.ajax({
+			               url: __ctx+'/calendar/schedule/complete',
+			               data: {
+			                   id: "${param.id}",
+			               },
+			               success: function() {
+			            	   parent.location.reload();
+			               }
+			           });
+				}
+				//-----------------------日程删除---------------------//
+				$scope.remove = function() {
+					$.Dialog.confirm("删除日程","是否删除日程？",function(){
+        			   $.ajax({
+			               url: __ctx+'/calendar/schedule/remove',
+			               data: {
+			                   id: "${param.id}",
+			               },
+			               success: function() {
+			            	   parent.location.reload();
+			               }
+			           });
+					})
+				};
+				//-------------------保存前监听事件------------------//
+ 				$scope.$on("beforeSaveEvent",function(event,data){
+ 					//var reg = /^[0-9]+.?[0-9]*$/;
+					if(!(/(^[0-9]*[0-9]*$)/.test($scope.data.rateProgress))) {
+						data.pass = false;
+						$.Dialog.error("进度不是0-100之间的整数");
+					}
+			    });
+				//-------------------保存后监听事件------------------//
+				$scope.$on("afterSaveEvent",function(event,data){
+					if(data.r == false) {
+						parent.location.reload();
+					}
+					if(data.r == true) {
+						location.reload();
+					}
+			    });
+				//-----------------载入后监听事件------------------//
+				$scope.$on("afterLoadEvent",function(event,data){
+					prevVal = $scope.data.type;//--用来在类型变更判断失败时还原为先前类型--
+			    });
+			}]);
+		</script>
+	</head>
+	
+	<body ng-controller="ctrl">
+		
+			<!-- 顶部按钮 -->
+			<div class="toolbar-panel">
+				<div class="buttons">
+					<a class="btn btn-primary fa-save" ng-model="data" ab-save="/calendar/schedule/save" use-default-after-save-event="true"><span>保存</span></a>
+					<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回</a>	
+					<!-- <a class="btn btn-primary" ng-click="complete()"><span>完成</span></a> -->
+					<a class="btn btn-primary fa-remove" ng-click="remove()"><span>删除</span></a>
+				</div>
+			</div>
+			<form name="form" method="post" ab-load="/calendar/schedule/get?id={id}"  ng-model="data">
+				<table class="form-table"  cellspacing="0" >
+							<tr>								
+								<th>标题:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.title"   ab-validate="{required:true}"  />
+								</td>	
+							<tr>
+								<th>类型:</th>
+								<td>
+									<select class="form-control" type="text" ng-model="data.type" ng-change="changeDjuge()" ab-validate="{required:true,maxlength:192}">
+									    <option value=""></option>
+									    <option value="single">个人</option>
+									    <option value="share">共享</option>
+									    <option value="ilka">共同任务</option>
+									</select>
+								</td>	
+							</tr>
+							<tr ng-if="data.type == 'share' || data.type == 'ilka'">								
+								<!-- <th>任务连接:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.taskUrl"   ab-validate="{required:false,maxlength:765}"  />
+								</td> -->	
+								
+								<th>参与者:</th>
+								<td>
+									<input id="participant" class="form-control" type="text" ng-model="data.participantNames"   ab-validate="{required:false}" readonly="readonly" />
+									<span class="btn  btn-sm btn-primary fa  ng-scope" ng-click="openCustom()">选择</span>
+								</td>							
+							</tr>
+							<!-- <tr>								
+								<th>任务打开方式:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.openType"   ab-validate="{required:false,maxlength:192}"  />
+								</td>	
+								<th>所属人:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.owner"   ab-validate="{required:false,maxlength:192}"  />
+								</td>								
+							</tr> -->
+							<!-- <tr>								
+								<th>所属人姓名:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.ownerName"   ab-validate="{required:false,maxlength:192}"  />
+								</td>	
+							</tr> -->
+							<tr>								
+								<th>开始日期:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.startTime" ab-date="yyyy-MM-dd HH:mm:ss"  ab-validate="{required:true}"  />
+								</td>
+							</tr>
+							<tr>	
+								<th>结束日期:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.endTime" ab-date="yyyy-MM-dd HH:mm:ss"  ab-validate="{required:true}"  />
+								</td>							
+							</tr>
+							<tr>								
+								<th>实际开始日期:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.actualStartTime" ab-date="yyyy-MM-dd HH:mm:ss"  ab-validate="{required:false}"  />
+								</td>
+							</tr>
+							<tr>	
+								<th>完成时间:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.completeTime" ab-date="yyyy-MM-dd HH:mm:ss"  ab-validate="{required:false}"  />
+								</td>								
+							</tr>
+							<tr>								
+								<th>进度:</th>
+								<td>
+									<input class="form-control" type="number" min="0" max="100" ng-model="data.rateProgress"   ab-validate="{required:false,number:true,maxIntLen:10}"  />
+								</td>
+							</tr>
+							<!-- <tr>		
+								<th>提交人:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.submitter"   ab-validate="{required:false,maxlength:192}"  />
+								</td>							
+							</tr> -->
+							<!-- <tr>								
+								<th>提交人姓名:</th>
+								<td>
+									<input class="form-control" type="text" ng-model="data.submitNamer"   ab-validate="{required:false,maxlength:192}"  />
+								</td>	
+							</tr> -->
+							<tr>
+								<th>锁定 :</th>
+								<td>
+									<select class="form-control" type="text" ng-model="data.isLock"   ab-validate="{required:false,maxlength:30}"  />
+										<option value=""></option>
+									    <option value=1>是</option>
+									    <option value=0>否</option>
+									</select>
+								</td>							
+							</tr>
+							<tr>
+							    <th>描述:</th>
+								<td>
+									<textarea  type="text" class="form-control"  rows="2" ng-model="data.remark"   ab-validate="{required:false}" ></textarea>
+								</td>		
+							</tr>
+				</table>
+				
+				<br/>
+				<table class="table-grid" cellspacing="0" ng-if="(data.type == 'share' || data.type == 'ilka') && data.participantNames.length > 0">
+					<tr>
+						<td colspan="9">
+							<!-- <div class="buttons">
+								<a class="btn btn-primary fa-add" ng-click="openDetail('','edit')" >
+									<span>添加</span>
+								</a>
+							</div> -->
+						</td>
+					</tr>
+					<tr>
+								<th>参与者名字</th>
+								<th>完成比例</th>
+								<th>提交注释</th>
+								<th>实际开始时间</th>
+								<th>完成时间</th>
+						<th>操作</th>
+					</tr>
+					<tr ng-repeat="item in data.scheduleParticipantList track by $index">
+							<td>
+								<input class="form-control" type="text" ng-model="item.participantorName"  ab-validate="{required:false,maxlength:765}"  readonly="readonly"/>
+							</td>
+							 
+							<td>
+								<input class="form-control" type="text" ng-model="item.rateProgress"  ab-validate="{required:false,number:true,maxIntLen:10}"  readonly="readonly"/>
+							</td>
+							<td>
+								<input class="form-control" type="text" ng-model="item.submitComment"  ab-validate="{required:false}" readonly="readonly" />
+							</td>
+							<td>
+								<input class="form-control" type="text" ab-date="yyyy-MM-dd HH:mm:ss" ng-model="item.actualStartTime" />
+							</td>
+							<td>
+								<input class="form-control" type="text" ab-date="yyyy-MM-dd HH:mm:ss" ng-model="item.completeTime" />
+							</td>
+						<td>
+							<a href="#" ng-click="itemDelete(item.id)" class="btn btn-sm btn-default fa-times"></a>
+						</td>
+					</tr>
+				</table>
+				
+			</form>
+		
+	</body>
+</html>

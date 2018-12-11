@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.form.dao.FormBusSetDao">
+    <resultMap id="FormBusSet" type="com.dstz.form.model.FormBusSet">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="formKey" column="form_key_" jdbcType="VARCHAR"/>
+        <result property="jsPreScript" column="JS_PRE_SCRIPT" jdbcType="VARCHAR"/>
+        <result property="jsAfterScript" column="JS_AFTER_SCRIPT" jdbcType="VARCHAR"/>
+        <result property="showScript" column="SHOW_SCRIPT" jdbcType="VARCHAR"/>
+        <result property="preScript" column="PRE_SCRIPT" jdbcType="VARCHAR"/>
+        <result property="afterScript" column="AFTER_SCRIPT" jdbcType="VARCHAR"/>
+        <result property="isTreeList" column="isTreeList" jdbcType="NUMERIC"/>
+        <result property="treeConf" column="treeConf" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.form.model.FormBusSet">
+		INSERT INTO form_bus_set
+		(id_,form_key_,JS_PRE_SCRIPT,JS_AFTER_SCRIPT,SHOW_SCRIPT,PRE_SCRIPT,AFTER_SCRIPT,isTreeList,treeConf)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{formKey,jdbcType=VARCHAR}, #{jsPreScript,jdbcType=VARCHAR}, #{jsAfterScript,jdbcType=VARCHAR},#{showScript,jdbcType=VARCHAR}, #{preScript,jdbcType=VARCHAR}, #{afterScript,jdbcType=VARCHAR}, #{isTreeList,jdbcType=NUMERIC}, #{treeConf,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="FormBusSet">
+		SELECT * FROM form_bus_set 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="getByFormKey" parameterType="java.lang.String" resultMap="FormBusSet">
+		SELECT * FROM form_bus_set 
+		WHERE 
+		form_key_=#{formKey}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="FormBusSet">
+        SELECT * FROM form_bus_set
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.form.model.FormBusSet">
+		UPDATE form_bus_set SET
+		form_key_=#{formKey,jdbcType=VARCHAR},
+		JS_PRE_SCRIPT=#{jsPreScript,jdbcType=VARCHAR},
+		JS_AFTER_SCRIPT=#{jsAfterScript,jdbcType=VARCHAR},
+		SHOW_SCRIPT=#{showScript,jdbcType=VARCHAR},
+		PRE_SCRIPT=#{preScript,jdbcType=VARCHAR},
+		AFTER_SCRIPT=#{afterScript,jdbcType=VARCHAR},
+		isTreeList=#{isTreeList,jdbcType=NUMERIC},
+		treeConf=#{treeConf,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM form_bus_set 
+		WHERE
+		id_=#{id}
+	</delete>
+
+    <select id="isExist" resultType="java.lang.Integer">
+        select count(1) from form_bus_set where form_key_=#{formKey}
+        <if test="id!=null">
+            and id_!= #{id}
+        </if>
+
+    </select>
+
+    <delete id="removeByFormKey" parameterType="java.lang.String">
+		DELETE FROM form_bus_set  WHERE form_key_=#{formKey}
+	</delete>
+
+</mapper>

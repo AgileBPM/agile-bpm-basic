@@ -1,0 +1,65 @@
+<html>
+<head>
+<title>日程</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+</head>
+<body>
+	<div class="panel panel-default search-panel">
+			<div class="panel-heading">
+				查询条件
+				<a href="javascript:void(0)" class="pull-right">
+					<i class="fa  fa-angle-double-up" toggle-collapse="#formSearch"></i>
+				</a>
+			</div>
+			<div class="panel-body">
+				<form id="searchForm" class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-sm-1" for="title^VLK">标题</label>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="title^VLK">
+						</div>
+						<label class="control-label col-sm-1" for="type^VLK">类型</label>
+						<div class="col-sm-3">
+							<select class="inputText" type="text" id="type^VLK">
+								<option value=""></option>
+							    <option value="single">个人</option>
+							    <option value="share">共享</option>
+							    <option value="ilka">共同任务</option>
+							</select>
+						</div>
+						<div class="col-sm-4" style="text-align: left;">
+							<button type="button"   class="btn btn-primary fa-search">查询</button>
+							<button type="button" class="btn btn-primary fa-rotate-left">重置</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="btn-group toolbar">
+		  <button class="btn btn-outline btn-primary fa-plus" openDialog="新增" url="scheduleEdit.html">新增 </button>
+      	</div>
+      	
+      	<table ab-grid data-id-field="id" data-url="/calendar/schedule/listJson">
+	          <thead>
+	          <tr>
+	              <th data-checkbox="true">ID</th>
+	              <th data-field="title">标题</th>
+	              <th data-field="type" data-formatter="labelFormatter" data-value-style="single-个人-primary,share-共享-success,ilka-共同完成-success," >类型</th>
+	              <th data-field="ownerName" >所属人</th>
+	              <th data-field="participantNames" >参与者</th>
+	              <th data-field="openType" >任务打开方式</th>
+	              <th data-field="actualStartTime" data-formatter="dateTimeFormatter">实际开始日期</th>
+	              <th data-field="completeTime" >完成时间</th>
+	              <th data-field="submitNamer" >提交人</th>
+	              <th data-field="isLock" data-formatter="labelFormatter" data-value-style="1-是-primary,0-否-success," >锁定</th>
+	              <th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+	             	<a class="fa-edit btn btn-outline btn-primary btn-sm" openDialog="编辑" qtip="编辑" url="scheduleEdit.html?id={id}"></a>
+					<a class="fa-trash btn btn-outline btn-primary btn-sm" sendAction="删除" qtip="删除" url="/calendar/schedule/remove?id={id}"></a>
+	             </th>
+	          </tr>
+	          </thead>
+      	</table>
+</body>
+</html>

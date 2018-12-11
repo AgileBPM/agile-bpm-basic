@@ -1,0 +1,25 @@
+<html ng-app="bpm">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>任务处理</title>
+	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+	<script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
+	<script type="text/javascript" src="../../build/common/custForm.js"></script>
+	<style media="print">.print-hidden{display:none}</style>
+
+
+	<script type="text/javascript">
+		var TaskComplateController = ['$scope','baseService',function($scope,baseService){
+			$scope.bpmInitParam = {"taskId":$.getParam("taskId")};
+		}];
+	</script>
+</head>
+
+	<body ng-controller="TaskComplateController">
+		<div class="ibox-title print-hidden">
+			<div bpm-buttons></div>
+		</div>
+		<div bpm-init="bpmInitParam" ></div>
+	</body>
+</html>

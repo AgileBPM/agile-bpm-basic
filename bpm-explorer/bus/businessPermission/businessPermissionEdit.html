@@ -1,0 +1,90 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/bus/businessPermission/businessPermissionEditController.js"></script>
+<script type="text/javascript">
+	
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()">
+	<div class="ibox-title">
+		<a class="btn btn-primary fa-save" href="javascript:void(0)" ng-model="data" ab-save="/bus/businessPermission/save">保存</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+		<a class="btn btn-primary fa-refresh" href="javaScript:void(0)" ng-click="resetDataWithBo()"> 重置 </a>
+	</div>
+	<form name="form" ab-load="/bus/businessPermission/getObject?objType={objType}&objVal={objVal}" ng-model="data">
+		<table class="form-table">
+			<tr>
+				<th>权限对象类型</th>
+				<td>{{objName}}</td>
+				<th>权限对象值</th>
+				<td>{{data.objVal}}</td>
+			</tr>
+		</table>
+
+		<table class="form-table">
+			<tr>
+				<th style="width: 8%">对象</th>
+				<th ng-repeat="item in RightsTypeList">{{item.desc}}</th>
+			</tr>
+			<!-- 遍历boMap -->
+			<tr ng-repeat="(boKey,bo) in boMap">
+				<td colspan="{{RightsTypeList.length+1}}">
+					<table class="form-table">
+						<tr>
+							<th colspan="{{RightsTypeList.length+1}}" style="text-align: center; font-size: large;">{{bo.name}}({{bo.key}})</th>
+						</tr>
+
+						<tr>
+							<th>
+								<span style="color: red;">(业务对象)</span>
+								{{bo.name}}({{bo.key}})
+							</th>
+							<td ng-repeat="item in RightsTypeList">
+								{{getRightsDesc(data.busObjMap[boKey].rights[item.key])}}
+								<a style="float: right;" class="btn btn-sm btn-default btn-mini fa-edit" ng-click="openRightsDialog(data.busObjMap[boKey].rights,item.key)" />
+								<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-group" ng-click="setRights(data.busObjMap[boKey].rights,item.key,'everyone')"></a>
+								<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-remove" ng-click="setRights(data.busObjMap[boKey].rights,item.key,'none')"></a>
+							</td>
+						</tr>
+
+						<tr>
+							<td colspan="{{RightsTypeList.length+1}}">
+								<table class="form-table" ng-repeat="relation in bo.allRelations">
+									<tr>
+										<th>
+											<span style="color: red;">({{BusTableRelTypeKeyMap[relation.type].desc}})</span>
+											{{relation.tableComment}}({{relation.tableKey}})
+										</th>
+										<td ng-repeat="item in RightsTypeList">
+											{{getRightsDesc(data.busObjMap[boKey].tableMap[relation.tableKey].rights[item.key])}}
+											<a style="float: right;" class="btn btn-sm btn-default btn-mini fa-edit" ng-click="openRightsDialog(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key)" />
+											<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-group" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key,'everyone')"></a>
+											<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-remove" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key,'none')"></a>
+										</td>
+									</tr>
+									<!-- 字段 -->
+									<tr ng-repeat="column in relation.table.columnsWithoutPk">
+										<th>
+											<span style="color: red;">(字段)</span>
+											{{column.comment}}({{column.key}})
+										</th>
+										<td ng-repeat="item in RightsTypeList">
+											{{getRightsDesc(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights[item.key])}}
+											<a style="float: right;" class="btn btn-sm btn-default btn-mini fa-edit" ng-click="openRightsDialog(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key)" />
+											<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-group" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key,'everyone')"></a>
+											<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-remove" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key,'none')"></a>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

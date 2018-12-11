@@ -1,0 +1,54 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+
+<script type="text/javascript">
+var app = angular.module('app', ['baseDirective']);
+app.controller("newDefinition", [ '$scope', 'baseService', function($scope, baseService){
+	
+	$scope.save = function(){
+		if (!$scope.myForm.$valid) return;
+		var defer = baseService.post(__ctx+"/bpm/definition/save", $scope.def);
+		$.getResultData(defer,function(data){
+			$.Toast.success("添加成功!");
+			parent.reloadGrid();
+			var tab = {name:"设计流程图",url:"/flow-editor/modeler.html?modelId="+data,id:"设计流程图"};
+		//	$.Tab(tab,true);
+			var conf = {title:"设计流程图",topOpen:true,url:"/flow-editor/modeler.html?modelId="+data};
+			$.Dialog.open(conf);
+			$.Dialog.close(window);
+		});
+	}
+}]);
+
+</script>
+</head>
+<body ng-controller="newDefinition">
+	<div class="ibox-title">
+		<a class="btn btn-primary fa-save"  href="javascript:void(0)" id="aaa" ng-click="save()">创建</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a> 
+	</div>
+	<form name="myForm">
+		<table class="form-table">
+			<tr>
+				<th>流程分类</th>
+				<td><span ab-combox="def.typeId" tree-key="flow" ab-validate="{required:true}"></span>
+			</tr>
+			<tr>
+				<th>流程名字</th>
+				<td><input ng-model="def.name" ab-validate="{required:true}" class="form-control"/></td>
+			</tr>
+			<tr>
+				<th>流程KEY</th>
+				<td><input ng-model="def.key" ab-validate="{required:true}" class="form-control"/></td>
+			</tr>
+			<tr>
+				<th>说明</th>
+				<td><input ng-model="def.desc" ab-validate="{required:true}" class="form-control"/></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

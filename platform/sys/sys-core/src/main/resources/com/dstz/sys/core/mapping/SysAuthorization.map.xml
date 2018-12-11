@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.sys.core.dao.SysAuthorizationDao">
+    <resultMap id="SysAuthorization" type="com.dstz.sys.core.model.SysAuthorization">
+        <id property="rightsId" column="rights_id_" jdbcType="VARCHAR"/>
+        <result property="rightsObject" column="rights_object_" jdbcType="VARCHAR"/>
+        <result property="rightsTarget" column="rights_target_" jdbcType="VARCHAR"/>
+        <result property="rightsType" column="rights_type_" jdbcType="VARCHAR"/>
+        <result property="rightsIdentity" column="rights_identity_" jdbcType="VARCHAR"/>
+        <result property="rightsIdentityName" column="rights_identity_name_" jdbcType="VARCHAR"/>
+        <result property="rightsPermissionCode" column="rights_permission_code_" jdbcType="VARCHAR"/>
+        <result property="rightsCreateTime" column="rights_create_time_" jdbcType="TIMESTAMP"/>
+        <result property="rightsCreateBy" column="rights_create_by_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.sys.core.model.SysAuthorization">
+		INSERT INTO sys_authorization
+		(rights_id_,rights_object_,rights_target_,rights_type_,rights_identity_,rights_identity_name_,rights_permission_code_,rights_create_time_,rights_create_by_)
+		VALUES 
+		(#{rightsId,jdbcType=VARCHAR}, #{rightsObject,jdbcType=VARCHAR},#{rightsTarget,jdbcType=VARCHAR}, #{rightsType,jdbcType=VARCHAR}, #{rightsIdentity,jdbcType=VARCHAR}, #{rightsIdentityName,jdbcType=VARCHAR}, #{rightsPermissionCode,jdbcType=VARCHAR}, #{rightsCreateTime,jdbcType=TIMESTAMP}, #{rightsCreateBy,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="SysAuthorization">
+		SELECT * FROM sys_authorization 
+		WHERE 
+		rights_id_=#{rightsId}
+	</select>
+
+    <select id="getByTarget" parameterType="java.util.Map" resultMap="SysAuthorization">
+		SELECT * FROM sys_authorization 
+		WHERE 
+		rights_target_=#{rightsTarget} and rights_object_ = #{rightsObject}
+	</select>
+
+    <select id="query" parameterType="java.util.Map" resultMap="SysAuthorization">
+        SELECT * FROM sys_authorization
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY rights_id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.sys.core.model.SysAuthorization">
+		UPDATE sys_authorization SET
+		rights_target_=#{rightsTarget,jdbcType=VARCHAR},
+		rights_type_=#{rightsType,jdbcType=VARCHAR},
+		rights_identity_=#{rightsIdentity,jdbcType=VARCHAR},
+		rights_identity_name_=#{rightsIdentityName,jdbcType=VARCHAR},
+		rights_permission_code_=#{rightsPermissionCode,jdbcType=VARCHAR},
+		rights_create_time_=#{rightsCreateTime,jdbcType=TIMESTAMP},
+		rights_create_by_=#{rightsCreateBy,jdbcType=VARCHAR}
+		WHERE
+		rights_id_=#{rightsId}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM sys_authorization 
+		WHERE
+		rights_id_=#{rightsId}
+	</delete>
+
+    <delete id="deleteByTarget" parameterType="java.util.Map">
+		DELETE FROM sys_authorization 
+		WHERE 
+		rights_target_=#{rightsTarget} 
+		and rights_object_ = #{rightsObject}
+	</delete>
+
+</mapper>

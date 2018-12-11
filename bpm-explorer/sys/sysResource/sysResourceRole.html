@@ -1,0 +1,76 @@
+<!doctype html>
+<html ng-app="base">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript">
+
+var ztreeObject ;
+var roleId = $.getParam("roleId");
+function loadTree() {
+	var url = __ctx + "/sys/resRole/getTreeData";
+	var systemId = $("systemId").val() || "1";
+	var params = {systemId:systemId,roleId:roleId};
+	
+	var ztreeCreator = new ZtreeCreator('sysztreeObject',url)
+		.setCallback({})
+		.setCheckboxType({ "Y": "ps", "N": "s" })
+		.initZtree(params,2,function(treeObj){ztreeObject=treeObj});
+};
+
+function laodSystem(){
+	var url = __ctx + "/sys/subsystem/getUserSystem";
+	
+	$.post(url, {}, function(result) {
+		var result = eval("("+result+")");
+		if (result.isOk) {//成功
+			for(var i =0,system;system= result.data[i++];){
+				$("#systemId").append("<option value="+system.id+" selected="+(system.isDefault==1?'true':'false')+">"+system.name+"</option>");
+			}
+		} else {
+			$.Dialog.alert(result.msg,2);
+		}
+	});
+}
+
+function saveResRole(data){
+	var nodes = ztreeObject.getCheckedNodes();
+	var systemId = $("systemId").val() || "1";
+	var resIds = [];
+	
+	for(var i=0,node;node=nodes[i++];){
+		resIds.push(node.id);
+	}
+	
+	resIds = resIds.join(",");
+	var data = {resIds:resIds,roleId:roleId,systemId:systemId};
+	var url=__ctx +"/sys/resRole/save";
+	$.post(url,data, function(result){
+		var result=JSON.parse(result);
+		if(result.isOk){
+			$.Dialog.success("资源授权成功！");
+		}
+		else{
+			$.Dialog.error("资源授权失败！"+result.msg);
+		}
+	})
+}
+
+$(function() {
+	laodSystem();
+	loadTree();
+}); 
+</script>
+</head>
+<body class="panel success">
+	<div class="panel-heading">
+		<a class="btn btn-primary fa-save" onclick="saveResRole()"> 保存 </a>
+		<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回 </a>
+	</div>
+	<div  class="tab-content">
+		<select class="form-control" id="systemId" onchange="loadTree()"> </select>
+		<div id="sysztreeObject" class="ztree"></div>
+	</div>
+</body>
+</html>

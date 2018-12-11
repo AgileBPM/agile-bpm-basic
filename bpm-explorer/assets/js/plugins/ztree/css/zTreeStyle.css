@@ -1,0 +1,215 @@
+/*-------------------------------------
+zTree Style
+
+version:	3.4
+author:		Hunter.z
+email:		hunter.z@263.net
+website:	http://code.google.com/p/jquerytree/
+
+-------------------------------------*/
+
+.ztree * {padding:0; /* margin:0; */ font-size:12px; font-family: Verdana, Arial, Helvetica, AppleGothic, sans-serif}
+.ztree {margin: 6px 0; padding:0px; color:#333}
+.ztree li{padding:0;list-style:none; line-height:16px; text-align:left; white-space:nowrap; outline:0}
+.ztree li ul{ margin:6px 0; padding:0 0 0 18px}
+.ztree li ul.line{/* background:url(image/line_conn.gif) 0 0 repeat-y;margin-top: -10px;*/}
+.ztree li ul[class^='level0']{/* background:url(image/line_conn.gif) 0 0 repeat-y;*/}
+
+
+.ztree li a {padding:2px 2px 2px 2px; margin:0; cursor:pointer; color:#333333;height:20px; background-color: transparent;
+	text-decoration:none;  display: inline-block}
+.ztree li a:hover {text-decoration:underline;}
+.ztree li a.curSelectedNode {padding:2px 2px 2px 2px;background-color:#FFE6B0; border:1px #FFB951 solid; 
+
+}
+.ztree li a.curSelectedNode_Edit {padding-top:0px; background-color:#FFE6B0; color:black; height:16px; border:1px #FFB951 solid; opacity:0.8;}
+.ztree li a.tmpTargetNode_inner {padding-top:0px; background-color:#316AC5; color:white; height:16px; border:1px #316AC5 solid;
+	opacity:0.8; filter:alpha(opacity=80)}
+.ztree li a.tmpTargetNode_prev {}
+.ztree li a.tmpTargetNode_next {}
+.ztree li a input.rename {height:14px; width:80px; padding:0; margin:0;
+	font-size:12px; border:1px #7EC4CC solid; *border:0px}
+.ztree li span { margin-right:2px}
+.ztree li span.button { margin:0; width:16px;display: inline-block; 
+	border:0 none; cursor: pointer;outline:none;
+	background-color:transparent; background-repeat:no-repeat; background-attachment: scroll;
+	/* background-image:url("image/zTreeStandard.png") ;*/ *background-image:url("image/zTreeStandard.gif");}
+
+.ztree li span.button.chk {width:13px; height:13px; margin:5px 3px 2px 0; cursor: auto;background-image: url("image/zTreeStandard.png");}
+.ztree li span.button.chk.checkbox_false_full {background-position:0 0;}
+.ztree li span.button.chk.checkbox_false_full_focus {background-position:0 -14px}
+.ztree li span.button.chk.checkbox_false_part {background-position:0 -28px}  
+.ztree li span.button.chk.checkbox_false_part_focus {background-position:0 -42px}
+.ztree li span.button.chk.checkbox_false_disable {background-position:0 -56px}
+.ztree li span.button.chk.checkbox_true_full {background-position:-14px 0}
+.ztree li span.button.chk.checkbox_true_full_focus {background-position:-14px -14px}
+.ztree li span.button.chk.checkbox_true_part {background-position:-14px -28px}
+.ztree li span.button.chk.checkbox_true_part_focus {background-position:-14px -42px}
+.ztree li span.button.chk.checkbox_true_disable {background-position:-14px -56px}
+.ztree li span.button.chk.radio_false_full {background-position:-28px 0}
+.ztree li span.button.chk.radio_false_full_focus {background-position:-28px -14px}
+.ztree li span.button.chk.radio_false_part {background-position:-28px -28px}
+.ztree li span.button.chk.radio_false_part_focus {background-position:-28px -42px}
+.ztree li span.button.chk.radio_false_disable {background-position:-28px -56px}
+.ztree li span.button.chk.radio_true_full {background-position:-42px 0}
+.ztree li span.button.chk.radio_true_full_focus {background-position:-42px -14px}
+.ztree li span.button.chk.radio_true_part {background-position:-42px -28px}
+.ztree li span.button.chk.radio_true_part_focus {background-position:-42px -42px}
+.ztree li span.button.chk.radio_true_disable {background-position:-42px -56px}
+
+.ztree li span.button.switch {width:18px;}
+.ztree li span.button.root_open{background-position:-92px -54px;background: none;
+/*margin: 12px 0 -12px 1px;*/}
+.root_open:before{
+	content: "\f147";
+	margin: 3px;
+}
+.ztree li span.button.root_close{background-position:-74px -54px;background: none;
+/*margin: 12px 0 -12px 1px; padding-left: 2px; */}
+.root_close:before{
+	content: "\f196";
+	margin: 3px;
+}
+.ztree li span.button.roots_open{background-position:-92px 0;background: none;
+/*margin: 12px 0 -12px -1px;*/padding-left: 2px;}
+.roots_open:before{
+	content: "\f147";
+	margin: 3px; 
+}
+.ztree li span.button.roots_close{background-position:-74px 0;background: none;
+/*margin: 12px 0 -12px -1px;*/padding-left: 2px;}
+.roots_close:before{
+	content: "\f196";
+	margin: 3px;
+}
+.ztree li span.button.center_open{background-position:-92px -18px;background: none;
+/*margin: 12px 0 -2px 1px;*/padding-left: 2px;}
+.center_open:before{
+	content: "\f147";
+	margin: 1px;
+}
+.ztree li span.button.center_close{background-position:-74px -18px;background: none;
+/*margin: 12px 0 -12px 1px;*/}
+.center_close:before{
+	content: "\f196";
+	margin: 3px;
+}
+.ztree li span.button.bottom_open{background-position:-92px -36px;background: none;
+/*margin: 12px 0 -12px 1px; padding-left: 2px; */}
+.bottom_open:before{
+	content: "\f147";
+	margin: 3px;
+}
+.ztree li span.button.bottom_close{background-position:-74px -36px;background: none;
+/*margin: 12px 0 -12px 1px;*/}
+.bottom_close:before{
+	content: "\f196";
+	margin: 3px;
+}
+.ztree li span.button.noline_open{background-position:-92px -72px}
+.ztree li span.button.noline_close{background-position:-74px -72px}
+.ztree li span.button.root_docu{ background:none;}
+.ztree li span.button.roots_docu{background-position:-56px 0}
+.ztree li span.button.center_docu{background-position:-56px -18px}
+.ztree li span.button.bottom_docu{background-position:-56px -36px}
+.ztree li span.button.noline_docu{ background:none;}
+
+.ztree li span.button.ico_open{margin-right:2px; background-position:-110px -16px; background: none;
+}
+.ico_open:before{
+	content: "\f07c";
+}
+.ztree li span.button.ico_close{margin-right:2px; background-position:-110px 0; vertical-align:top; *vertical-align:middle;background: none;
+}
+.ico_close:before{
+	content: "\f07b";
+}
+.ztree li span.button.ico_docu{margin-right:2px; background-position:-110px -32px; vertical-align:top; *vertical-align:middle;background: none;
+}
+.ico_docu:before{
+	content: "\f016";
+}
+.ztree li span.button.edit {margin-right:2px; background-position:-110px -48px; vertical-align:top; *vertical-align:middle}
+.ztree li span.button.remove {margin-right:2px; background-position:-110px -64px; vertical-align:top; *vertical-align:middle}
+
+.ztree li span.button.ico_loading{margin-right:2px; background:url(image/loading.gif) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}
+
+ul.tmpTargetzTree {background-color:#FFE6B0; opacity:0.8; filter:alpha(opacity=80)}
+
+span.tmpzTreeMove_arrow {width:16px; height:16px; display: inline-block; padding:0; margin:2px 0 0 1px; border:0 none; position:absolute;
+	background-color:transparent; background-repeat:no-repeat; background-attachment: scroll;
+	background-position:-110px -80px; background-image:url("image/zTreeStandard.png"); *background-image:url("image/zTreeStandard.gif")}
+
+ul.ztree.zTreeDragUL {margin:0; padding:0; position:absolute; width:auto; height:auto;overflow:hidden; background-color:#cfcfcf; border:1px #00B83F dotted; opacity:0.8; filter:alpha(opacity=80)}
+.zTreeMask {z-index:10000; background-color:#cfcfcf; opacity:0.0; filter:alpha(opacity=0); position:absolute}
+
+/* level style*/
+/*.ztree li span.button.level0 {
+	display:none;
+}
+.ztree li ul.level0 {
+	padding:0;
+	background:none;
+}*/
+/*.fa_justify_open{
+	margin-right:2px !important;
+	vertical-align:top !important;
+	vertical-align:middle !important;
+	 margin: 10px 0 0 1px !important;
+	background-position:-110px -16px !important;
+	background:none !important;
+	background-image: none !important;
+}
+*/
+.fa_justify_close{
+	margin-right:2px !important;
+	vertical-align:top !important;*
+	vertical-align:middle !important;
+	/* margin: 10px 0 0 1px !important; */
+	background-position:-110px 0 !important;
+	background:none !important;
+	background-image: none !important;
+}
+
+
+.ico_date:before{
+	content: "D";
+	color: rgb(45, 213, 156);
+	font-weight: bold;
+}
+.ico_string:before{
+	content: "S";
+	font-weight: bold;
+}
+.ico_int:before{
+	content: "I";
+	font-weight: bold;
+}
+.ico_complex:before{
+	content: "C";
+	font-weight: bold;
+}
+.select_li,.SELECT_LI{
+	/* height:20px; */
+	 display: block;
+}
+.cloing{
+	margin: 12px 0 -2px 1px !important;
+}
+/* .center_open:after {
+	content: "...";
+	font-size: 1px;
+	margin-top: -4px;
+	margin-left: -2px;
+	vertical-align: middle;
+	position: absolute;
+	text-justify: initial;
+	letter-spacing: -2px;
+	color: gray;
+} */
+li.level0:first-of-type>ul.level0.line>li:first-of-type {
+	margin-top: 8px;
+}
+.ztree li span.button.center_open~.button.chk {
+  margin-top: 0px;
+}

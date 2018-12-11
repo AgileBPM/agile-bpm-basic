@@ -1,0 +1,66 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/gridList.css" rel="stylesheet">
+<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../build/common/gridList.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/form/formCustDialog/formCustDialogShowListController.js"></script>
+<script type="text/javascript">
+	//返回数据
+	function getData() {
+		var scope = AngularUtil.getScope();
+		return scope.getData();
+	}
+</script>
+</head>
+<body ng-controller="ctrl" ng-init="init()" ab-load="/form/formCustDialog/getObject?key={key}" ng-model="data">
+	<!-- 顶部查询操作 -->
+	<div class="panel panel-default search-panel">
+		<div class="panel-heading">
+			查询条件
+			<a 　href="javascript:void(0)" class="pull-right">
+				<i class="fa fa-angle-double-up" toggle-collapse="#searchForm"></i>
+			</a>
+		</div>
+		<div class="panel-body">
+			<form id="searchForm" class="form-horizontal">
+				<div class="form-group">
+					<span ng-repeat="field in data.conditionFields | filter:{valueSource:'param'}:true">
+						<label class="control-label col-sm-1" for="{{getId(field)}}">{{field.showName}}</label>
+						<div class="col-sm-2">
+							<input type="text" class="form-control" id="{{getId(field)}}">
+						</div>
+					</span>
+					<div class="col-sm-3" style="text-align: left;">
+						<button type="button" class="btn btn-primary fa-search">查询</button>
+						<button type="button" class="btn btn-primary fa-rotate-left">重置</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- 列表 -->
+	<div ng-class="{true:'col-sm-10',false:''}[data.multiple]" style="padding-left: 0px; padding-right: 0px">
+		<table ab-grid></table>
+	</div>
+	<!-- 已选列表 -->
+	<div ng-if="data.multiple" class="col-sm-2" style="padding-left: 5px; padding-right: 0px">
+		<table style="float: right;" class="table table-bordered table-hover" cellspacing="0">
+			<tr>
+				<th>{{data.displayFields[0].showName}}</th>
+				<th>
+					操作
+					<a href="javascript:javaScript:void(0)" ng-click="clear()" class="btn-outline btn-primary fa  fa-trash btn-sm fa-trash"></a>
+				</th>
+			</tr>
+			<tr ng-repeat="item in selectedList track by $index">
+				<td>{{item[data.displayFields[0].columnName]}}</td>
+				<td>
+					<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.del($index,selectedList)" class="btn btn-sm btn-default fa-delete"></a>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>
