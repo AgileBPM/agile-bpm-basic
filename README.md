@@ -13,7 +13,7 @@ AgileBPM 是完全模块化的项目集合，含【流程模块】、【业务�
 
 - 项目部署、实施文档: http://www.agilebpm.cn/  
 
-- 流程实施视频介绍： https://share.weiyun.com/5uuOrvS
+- 流程实施视频介绍： https://www.bilibili.com/video/BV1wz411v7Xv/
 
 - PC在线测试地址: http://test.agilebpm.cn/login.html
 
