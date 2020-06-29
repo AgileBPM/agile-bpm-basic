@@ -131,7 +131,7 @@ public class MysqlDbOperator extends DbOperator {
 
 	@Override
 	public boolean supportPartition(String tableName) {
-		String sql = "select count(*) from information_schema.partitions where table_name=?;";
+		String sql = "select count(partition_name) from information_schema.partitions where table_name=?;";
 		Integer rtn = jdbcTemplate.queryForObject(sql, Integer.class, tableName);
 		return rtn > 0;
 	}
