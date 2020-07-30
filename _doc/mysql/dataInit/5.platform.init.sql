@@ -26,7 +26,7 @@ INSERT INTO `org_user` (`id_`, `fullname_`, `account_`, `password_`, `email_`, `
 INSERT INTO `org_relation` (`id_`, `group_id_`, `user_id_`, `is_master_`, `role_id_`, `status_`, `type_`, `create_time_`, `create_by_`, `update_time_`, `update_by_`) VALUES ('410054601768697857', '410054579202555905', '1', '0', '', '1', 'groupUser', '2019-07-27 21:29:28', '1', '2019-07-27 21:29:28', '1');
 
 -- 系统参数
-INSERT INTO `sys_properties`(`id_`, `name_`, `alias_`, `group_`, `value_`, `encrypt_`, `update_by_`, `update_time_`, `create_by_`, `create_time_`, `description_`, `environment_`) VALUES ('405118036023705601', 's.k', 's.k', '系统参数', '4be760472d0af535a9897b26eca0d7086189e7823617842980412ce08a66ed40', 0, '1', '2019-05-14 12:46:12', NULL, '2018-12-21 22:31:04', '', 'DEV');
+INSERT INTO `sys_properties`(`id_`, `name_`, `alias_`, `group_`, `value_`, `encrypt_`, `update_by_`, `update_time_`, `create_by_`, `create_time_`, `description_`, `environment_`) VALUES ('405118036023705601', 's.k', 's.k', '系统参数', '0b379d3b32cab29a838de8f038a8c3e7fa295f95c053e896cbae42c2db65891cf2d239bdaa251409572bb33dda252f11', 0, '1', '2019-05-14 12:46:12', NULL, '2018-12-21 22:31:04', '', 'DEV');
 INSERT INTO `sys_properties`(`id_`, `name_`, `alias_`, `group_`, `value_`, `encrypt_`, `update_by_`, `update_time_`, `create_by_`, `create_time_`, `description_`, `environment_`) VALUES ('6', '系统管理员', 'admin.account', '系统参数', 'admin', 0, '1', '2018-12-30 22:09:52', NULL, NULL, '系统管理员', 'DEV');
 
 -- 系统脚本
