@@ -74,9 +74,9 @@ CREATE TABLE `org_role` (
 
 -- 创建组织用户关系视图
 CREATE VIEW org_relation_view AS
-SELECT tgroup.name_ groupName,tuser.fullname_ userName,role.name_ roleName ,
-	CONCAT(tgroup.name_,'-',role.name_) postName,concat(`tgroup`.`id_`,'-',`role`.`id_`) AS `postId`, relation.*
+SELECT tgroup.name_ groupName,tuser.fullname_ userName,trole.name_ roleName ,
+	CONCAT(tgroup.name_,'-',trole.name_) postName,concat(`tgroup`.`id_`,'-',`trole`.`id_`) AS `postId`, relation.*
 	FROM org_relation relation 
 	left join org_user tuser on relation.user_id_ = tuser.id_
 	left join org_group tgroup on relation.group_id_ = tgroup.id_
-	left join org_role role on relation.role_id_ = role.id_
+	left join org_role trole on relation.role_id_ = trole.id_
