@@ -140,8 +140,7 @@ http://test1.agilebpm.cn/index.html
 
 ## spring boot 版本
 https://gitee.com/agile-bpm/agilebpm-base-spring-boot/tree/master
-## vue2 移动端版本
-https://gitee.com/agile-bpm/bpm-app
+
 
 ##### 欢迎了解企业版 SpringCloud版本
 
