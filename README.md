@@ -11,15 +11,11 @@ AgileBPM 是完全模块化的项目集合，含【流程模块】、【业务�
 ## AgileBPM 项目介绍
 
 
-- 项目部署、实施文档: http://www.agilebpm.cn/  
+- 项目部署、实施文档: https://www.tongzhouyun.com/home 
 
 - 流程实施视频介绍： https://www.bilibili.com/video/BV1wz411v7Xv/
 
-- PC在线测试地址: http://test.agilebpm.cn/login.html
-
--【商业版 iview版本】 门户平台地址：http://test1.agilebpm.cn/agilebpm-eip-ui/index.html
-
--【商业版 iview版本】 流程设计开发平台地址：http://test1.agilebpm.cn/index.html
+- 在线测试地址: http://www.agilebpm.cn/zh-cn/onlineTry/
 
 - 功能缺陷请在项目上创建建 **issues**，可以查看已完成issues来寻找问题解决方法
 <br/>
@@ -125,17 +121,6 @@ AgileBPM 目前是标准的SOA架构，但依然拥有微服务架构的特点�
 ![流程全局配置](https://images.gitee.com/uploads/images/2019/0519/135631_9446a09a_1861740.png "在这里输入图片标题")
 ##### 流程节点配置
 ![流程节点配置](https://images.gitee.com/uploads/images/2019/0519/135652_dc7ce0cc_1861740.png "在这里输入图片标题")
-
-
-
-## 了解更多请移步演示环境
-
-##### 门户平台
- http://test1.agilebpm.cn/agilebpm-eip-ui
-
-##### 流程开发设计平台
-
-http://test1.agilebpm.cn/index.html
 
 
 ## spring boot 版本
