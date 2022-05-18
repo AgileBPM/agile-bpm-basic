@@ -11,8 +11,6 @@ AgileBPM 是完全模块化的项目集合，含【流程模块】、【业务�
 ## AgileBPM 项目介绍
 
 
-- 项目部署、实施文档: https://www.tongzhouyun.com/home 
-
 - 流程实施视频介绍： https://www.bilibili.com/video/BV1wz411v7Xv/
 
 - 在线测试地址: http://www.agilebpm.cn/zh-cn/onlineTry/
