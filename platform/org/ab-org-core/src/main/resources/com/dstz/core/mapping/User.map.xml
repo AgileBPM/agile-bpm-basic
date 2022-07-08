@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.org.core.dao.UserDao">
+    <resultMap id="User" type="com.dstz.org.core.model.User">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="fullname" column="fullname_" jdbcType="VARCHAR"/>
+        <result property="account" column="account_" jdbcType="VARCHAR"/>
+        <result property="password" column="password_" jdbcType="VARCHAR"/>
+        <result property="email" column="email_" jdbcType="VARCHAR"/>
+        <result property="mobile" column="mobile_" jdbcType="VARCHAR"/>
+        <result property="weixin" column="weixin_" jdbcType="VARCHAR"/>
+        <result property="address" column="address_" jdbcType="VARCHAR"/>
+        <result property="photo" column="photo_" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex_" jdbcType="VARCHAR"/>
+        <result property="from" column="from_" jdbcType="VARCHAR"/>
+        <result property="status" column="status_" jdbcType="NUMERIC"/>
+        <result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.org.core.model.User">
+		INSERT INTO org_user
+		(id_,fullname_,account_,password_,email_,mobile_,weixin_,address_,photo_,sex_,from_,status_,create_time_,create_by_,update_time_,update_by_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{fullname,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{weixin,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR}, #{photo,jdbcType=VARCHAR},
+		 #{sex,jdbcType=VARCHAR}, #{from,jdbcType=VARCHAR}, #{status,jdbcType=NUMERIC}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="User">
+		SELECT * FROM org_user 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="getByAccount" parameterType="java.lang.String" resultMap="User">
+		SELECT * FROM org_user  WHERE  account_=#{account}
+	</select>
+	
+	<!-- 获取角色用户，组织用户 -->
+	<select id="getUserListByRelation" parameterType="java.util.Map" resultMap="User">
+		SELECT distinct orgUser.* FROM org_user orgUser
+		left join org_relation relation on relation.user_id_ = orgUser.id_ 
+		where
+		<if test="relationType.equals('groupUser')"> relation.group_id_ = #{relationId}</if>
+		<if test="relationType.equals('userRole')"> relation.role_id_ = #{relationId}</if>
+	</select>
+	
+	<select id="getUserListByPost" parameterType="java.util.Map" resultMap="User">
+		SELECT orgUser.* FROM org_user orgUser  
+		left join org_relation relation on relation.user_id_ = orgUser.id_
+		WHERE  relation.type_ = 'groupUserRole'
+		and relation.group_id_ = #{groupId}
+		and relation.role_id_ = #{roleId}
+	</select>
+	
+
+    <select id="query" parameterType="java.util.Map" resultMap="User">
+        SELECT * FROM org_user
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.org.core.model.User">
+		UPDATE org_user SET
+		fullname_=#{fullname,jdbcType=VARCHAR},
+		account_=#{account,jdbcType=VARCHAR},
+		email_=#{email,jdbcType=VARCHAR},
+		mobile_=#{mobile,jdbcType=VARCHAR},
+		weixin_=#{weixin,jdbcType=VARCHAR},
+		address_=#{address,jdbcType=VARCHAR},
+		photo_=#{photo,jdbcType=VARCHAR},
+		sex_=#{sex,jdbcType=VARCHAR},
+		from_=#{from,jdbcType=VARCHAR},
+		password_=#{password,jdbcType=VARCHAR},
+		status_=#{status,jdbcType=NUMERIC},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		update_by_=#{updateBy,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM org_user 
+		WHERE
+		id_=#{id}
+	</delete>
+
+    <select id="isUserExist" resultType="java.lang.Integer">
+        SELECT count(1) FROM org_user where account_=#{account}
+        <if test="id!=null">
+            and id_!=#{id}
+        </if>
+    </select>
+    
+</mapper>

@@ -1,7 +1,8 @@
 <html ng-app="app">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<link href="../../build/common/base.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/base.js"></script>
 		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 		
 		<script type="text/javascript">
@@ -56,8 +57,8 @@
 							<tr>								
 								<th>名字:<span class="required">*</span></th>
 								<td>
-									<input id="input" class="form-control" type="text" ng-model="data.name"   ab-validate="{required:true,maxlength:765}"  />
-									<select class="form-control" type="text" ng-model="data.name"   ab-validate="{required:true,maxlength:765}" onchange="document.getElementById('input').value=this.value">
+									<input id="input" class="form-control" type="text" ng-model="data.name"   ab-validate="{required:true,maxlength:60}"  />
+									<select class="form-control" type="text" ng-model="data.name"   ab-validate="{required:true,maxlength:120}" onchange="document.getElementById('input').value=this.value">
 									    <option value="元旦">元旦</option>
 									    <option value="春节">春节</option>
 									    <option value="清明节">清明节</option>
@@ -103,7 +104,7 @@
 								<th>系统:</th>
 								<td>
 									<!-- <input class="form-control" type="text" ng-model="data.system"   ab-validate="{required:false,maxlength:192}"  /> -->
-									<select class="form-control" type="text" ng-model="data.system"   ab-validate="{required:false,maxlength:192}">
+									<select class="form-control" type="text" ng-model="data.system"   ab-validate="{required:false,maxlength:120}">
 									    <option value="public">公有</option>
 									    <option value="agilebpm">AgileBPM</option>
 									</select>
@@ -112,7 +113,7 @@
 							<tr>								
 								<th>描述:</th>
 								<td>
-									<textarea class="form-control" type="text" style="width:500px" ng-model="data.remark"   ab-validate="{required:false}"  ></textarea>
+									<textarea class="form-control" type="text" style="width:500px" ng-model="data.remark"   ab-validate="{required:false,maxlength:500}"  ></textarea>
 								</td>								
 							</tr>
 				</table>

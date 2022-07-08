@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.dstz.agilebpm</groupId>
         <artifactId>agile-bpm</artifactId>
-        <version>1.2.6</version>
+        <version>1.3.7</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -21,8 +21,8 @@
     </modules>
 
     <properties>
-        <base.version>1.2.6</base.version>
-        <platform.version>1.2.6</platform.version>
+        <base.version>1.3.7</base.version>
+        <platform.version>1.3.7</platform.version>
     </properties>
 
     <dependencyManagement>
@@ -34,11 +34,13 @@
                 <version>${platform.version}</version>
             </dependency>
 
+<!--
             <dependency>
                 <groupId>com.dstz.agilebpm</groupId>
                 <artifactId>oauth2</artifactId>
                 <version>${platform.version}</version>
             </dependency>
+-->
 
             <dependency>
                 <groupId>com.dstz.agilebpm</groupId>
@@ -48,13 +50,7 @@
 
             <dependency>
                 <groupId>com.dstz.agilebpm</groupId>
-                <artifactId>org-adaptor</artifactId>
-                <version>${platform.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.dstz.agilebpm</groupId>
-                <artifactId>org-core</artifactId>
+                <artifactId>ab-org-core</artifactId>
                 <version>${platform.version}</version>
             </dependency>
 

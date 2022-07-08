@@ -1,13 +1,13 @@
 <html ng-app="app">
 <head>
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 
 <script type="text/javascript">
 	var app = angular.module("app", [ 'base' ]);
 	app.controller('ctrl', [ '$scope', 'baseService', function($scope, baseService) {
 		$scope.conf = window.passData;
-
 		// 指定组
 		$scope.initList = [];
 		if ($scope.conf.groupName) {
@@ -20,6 +20,10 @@
 		}
 
 		$scope.groupDialog = function() {
+			if(!$scope.conf.type){
+				$.Toast.warning("请选择组织类型！",null,window);
+				return;
+			}
 			var callBack = function(data, dialog) {
 				$scope.$apply(function() {
 					$scope.initList = {};
@@ -72,7 +76,7 @@
 			<td>
 				<select id="aaa" ng-model="conf.type" class="form-control" ng-change="changeType()">
 					<option value="">请选择组类型</option>
-					<option ng-repeat="type in typeList"  value="{{type.alias}}"  ng-selected="type.alias===conf.type" >{{type.name}}</option>
+					<option ng-repeat="type in typeList"  value="{{type.key}}"  ng-selected="type.key===conf.type" >{{type.label}}</option>
 				</select>
 				
 			</td>

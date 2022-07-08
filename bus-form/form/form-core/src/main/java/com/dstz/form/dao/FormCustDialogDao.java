@@ -1,9 +1,8 @@
 package com.dstz.form.dao;
 
-import org.mybatis.spring.annotation.MapperScan;
-
 import com.dstz.base.dao.BaseDao;
 import com.dstz.form.model.FormCustDialog;
+import org.mybatis.spring.annotation.MapperScan;
 
 /**
  * form_cust_dialog DAO接口
@@ -14,5 +13,12 @@ import com.dstz.form.model.FormCustDialog;
  */
 @MapperScan
 public interface FormCustDialogDao extends BaseDao<String, FormCustDialog> {
+
+    /**
+     * 键是否存在
+     * @param key 键
+     * @return 是否存在
+     */
+    boolean existsByKey(String key);
 
 }

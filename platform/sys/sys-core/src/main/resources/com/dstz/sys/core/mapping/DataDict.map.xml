@@ -65,7 +65,7 @@
 	
 	<select id="getDictNodeList"   parameterType="java.util.Map" resultMap="DataDict">
 		SELECT * FROM sys_data_dict  WHERE  dict_key_= #{dictKey} 
-		<if test="!hasRoot">and dict_type_ = 'node'</if>
+		<if test="!hasRoot">and dict_type_ = 'node'</if> order by sn_
 	</select>
 	
 	<select id="isExistDict"   parameterType="java.util.Map" resultType="java.lang.Integer">

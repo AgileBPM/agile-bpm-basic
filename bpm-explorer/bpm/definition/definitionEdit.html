@@ -1,12 +1,15 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 
 <script type="text/javascript">
 var app = angular.module('app', ['baseDirective']);
 app.controller("newDefinition", [ '$scope', 'baseService', function($scope, baseService){
+	$scope.def = {};
+	$scope.def.typeId = parent.document.getElementById("type_id_$VEQ").value
 	
 	$scope.save = function(){
 		if (!$scope.myForm.$valid) return;
@@ -42,13 +45,15 @@ app.controller("newDefinition", [ '$scope', 'baseService', function($scope, base
 			</tr>
 			<tr>
 				<th>流程KEY</th>
-				<td><input ng-model="def.key" ab-validate="{required:true}" class="form-control"/></td>
+				<td><input ng-model="def.key" ab-validate="{required:true,varirule:true}" class="form-control"/></td>
 			</tr>
 			<tr>
-				<th>说明</th>
+				<th>描述</th>
 				<td><input ng-model="def.desc" ab-validate="{required:true}" class="form-control"/></td>
 			</tr>
 		</table>
+		<br/>
+		<p class="text-muted">　如果您是第一次使用 AgileBPM 实施流程，建议参考 在线文档 “敏捷流程实施三步曲”</p>
 	</form>
 </body>
 </html>

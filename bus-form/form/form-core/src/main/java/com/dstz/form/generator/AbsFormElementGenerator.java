@@ -1,22 +1,33 @@
 package com.dstz.form.generator;
 
+import java.awt.color.ICC_ColorSpace;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.alibaba.druid.util.StringUtils;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.dstz.base.api.exception.BusinessException;
+import com.dstz.base.core.util.StringUtil;
 import com.dstz.base.core.util.ThreadMapUtil;
 import com.dstz.bus.api.constant.BusColumnCtrlType;
 import com.dstz.bus.api.constant.BusTableRelType;
 import com.dstz.bus.api.model.IBusTableRel;
 import com.dstz.bus.api.model.IBusinessColumn;
+import com.dstz.form.api.constant.FormStatusCode;
+import com.dstz.form.model.design.FormColumn;
+import com.dstz.form.model.design.FormGroup;
 /**
  * 自定义表单控件生成器父类，提供生成表单通用公共方法<br>
  * @author jeff
  */
 public abstract class AbsFormElementGenerator {
+	protected  Logger LOG = LoggerFactory.getLogger(getClass());
+
 	public abstract String getGeneratorName();
 	
 	/**
@@ -26,13 +37,24 @@ public abstract class AbsFormElementGenerator {
 	 * @return HTML
 	 */
 	public String getColumn(IBusinessColumn column,IBusTableRel relation) {
-		BusColumnCtrlType columnType = BusColumnCtrlType.getByKey(column.getCtrl().getType());
+		if(column == null ) {
+			throw new BusinessException(String.format("%s 生成表单异常，column 为 null",relation != null? relation.getTableComment():"")) ;
+		}
 		String boCode = relation.getBusObj().getKey();
 		ThreadMapUtil.put("boCode", boCode);
 		ThreadMapUtil.put("relation", relation);
 		
-		switch (columnType) {
+		if(column.getCtrl()== null) {
+			LOG.debug(" column [{}]ctrl 配置为空，默认生成 input框，表：{}",column.getComment(),column.getTable().getComment());
+			return  getColumnOnetext(column);
+		}
 		
+		BusColumnCtrlType columnType = BusColumnCtrlType.getByKey(column.getCtrl().getType());
+		
+		try {
+			
+			switch (columnType) {
+			
 			case ONETEXT: return getColumnOnetext(column);
 			
 			case DATE: return getColumnDate(column);
@@ -44,8 +66,8 @@ public abstract class AbsFormElementGenerator {
 			case MULTITEXT: return getColumnMultitext(column);
 			
 			case CHECKBOX: return getColumnCheckBox(column);
-				
-			case MULTISELECT: return getColumnSelect(column,true);	
+			
+			//case MULTISELECT: return getColumnSelect(column,true);	
 			
 			case RADIO: return getColumnRadio(column);	
 			
@@ -54,9 +76,37 @@ public abstract class AbsFormElementGenerator {
 			case FILE: return getColumnFile(column);
 			
 			default: return "";
+			
+			}
+			
+		} catch (Exception e) {
+			throw new BusinessException(String.format("表单字段 [%s-%s]解析失败 ,控件类型[%s] :%s",column.getTable().getName(),column.getComment(), columnType.getDesc(),e.getMessage())
+					,FormStatusCode.FORM_ELEMENT_GENERATOR_ERROR,e);
+		}
+	}
+	
+	public String getColumn(FormGroup group,FormColumn formColumn) {
+		IBusTableRel tableRel = group.getTableRelation();
 		
+		// 一对一子表 的TableRelation 需要从父表中获取
+		if(StringUtil.isNotEmpty(formColumn.getTableKey())&& !formColumn.getTableKey().equals(tableRel.getTableKey())) {
+			IBusTableRel table = tableRel.find(formColumn.getTableKey());
+			if(table != null) {
+				tableRel = table;
+			}
 		}
 		
+		if(!formColumn.getTableKey().equals(tableRel.getTableKey())) {
+			LOG.error("生成表单可能存在异常！formColumnTableKey{},tableRelTableKey{}",formColumn.getTableKey(),tableRel.getTableKey());
+		}
+		
+	    IBusinessColumn businessColumn = tableRel.getTable().getColumnByKey(formColumn.getKey());
+		
+	    if(businessColumn == null) {
+	    	LOG.error("布局模板查找Column配置失败！字段：{}，表：{}",formColumn.getComment(),formColumn.getTableKey());
+	    }
+	    
+		return this.getColumn(businessColumn, tableRel);
 	}
 
 	protected abstract String getColumnOnetext(IBusinessColumn column);
@@ -118,26 +168,37 @@ public abstract class AbsFormElementGenerator {
 	 * @param column
 	 */
 	protected void handleValidateRules(Element element,IBusinessColumn column) {
-		String rulesStr = column.getCtrl().getValidRule();
-		if(StringUtils.isEmpty(rulesStr)) return ;
-		
-		JSONArray rules = JSONArray.parseArray(rulesStr);
-		//[{"name":"time","title":"时间"},{"name":"required","title":"必填"}]
-		// to {time:true,required:true}
-		JSONObject validateRule = new JSONObject();
-		for (int i = 0; i < rules.size(); i++) {
-			JSONObject rule = rules.getJSONObject(i);
-			
-			validateRule.put(rule.getString("name"), true);
+		if(column.getCtrl() == null) {
+			element.attr("ab-validate", "{}");
+			return;
 		}
 		
-		if (column.isRequired()) {
-			validateRule.put("required", true);
+		String rulesStr = column.getCtrl().getValidRule();
+		JSONObject validateRule = new JSONObject();
+		
+		if(StringUtil.isNotEmpty(rulesStr)) {
+			JSONArray rules = JSONArray.parseArray(rulesStr);
+			//[{"name":"time","title":"时间"},{"name":"required","title":"必填"}]
+			// to {time:true,required:true}
+			for (int i = 0; i < rules.size(); i++) {
+				JSONObject rule = rules.getJSONObject(i);
+				
+				validateRule.put(rule.getString("name"), true);
+			}
+			
+			if (column.isRequired()) {
+				validateRule.put("required", true);
+			}
+			if(column.getLength()>1) {
+				validateRule.put("maxlength", column.getLength());
+			}
 		}
 		
 		element.attr("ab-validate", validateRule.toJSONString());
+		
+		IBusTableRel relation = (IBusTableRel) ThreadMapUtil.get("relation");
 		//为了validateRule提示
-		element.attr("desc", column.getComment());
+		element.attr("desc",relation.getTableComment() + "-" + column.getComment());
 	}
 	
 	
@@ -207,5 +268,36 @@ public abstract class AbsFormElementGenerator {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * <pre>
+	 * 第三层需要一个v-if="subTempData.xxx"
+	 * 不然vue编译会报错
+	 * </pre>	
+	 * @param relation
+	 * @return
+	 */
+	public String getDivVIf(IBusTableRel relation) {
+		if(isThreeChildren(relation)) {
+			return "v-if=\"subTempData."+relation.getParent().getTableKey()+"\"";
+		}
+		return "";
+	}
+	
+	protected void handleElementPlaceHolder(IBusinessColumn column,Element element) {
+		if(column.getCtrl() ==null) return;
+		
+		//添加上  placeholder 的支持
+		String configStr = column.getCtrl().getConfig();
+		if (StringUtil.isEmpty(configStr)) {
+			return;
+		}
+
+		JSONObject config = JSON.parseObject(configStr);
+		Boolean placeholder = config.getBoolean("placeholder");
+		
+		if(placeholder == null || !placeholder )return ;
+		element.attr("placeholder", config.getString("placeholderText"));
 	}
 }

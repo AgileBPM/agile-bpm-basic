@@ -33,7 +33,14 @@ public enum BaseStatusCode implements IStatusCode {
     /**
      * 数据已存在
      */
-    DATA_EXISTS("101", "数据已存在");
+    DATA_EXISTS("101", "数据已存在"),
+    
+    NOT_SUPPORT("103", "不支持的方法"),
+
+    /**
+     * 远程调用服务失败
+     */
+    REMOTE_ERROR("102", "远程调用服务失败");
 
     /**
      * 编码

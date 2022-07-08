@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.dstz.base.core.util.BeanUtils;
 import com.dstz.bus.api.model.IBusTableRel;
+
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
  * <pre>
@@ -65,7 +66,7 @@ public class BusTableRel implements Serializable, IBusTableRel {
 	@Override
 	public List<IBusTableRel> getChildren(String type) {
 		List<IBusTableRel> list = new ArrayList<>();
-		if (BeanUtils.isNotEmpty(children))
+		if (CollectionUtil.isNotEmpty(children))
 			for (BusTableRel rel : children) {
 				if (type.equals(rel.getType())) {
 					list.add(rel);

@@ -6,13 +6,18 @@ app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 	$scope.init = function() {
 		// 选择中的数据
 		$scope.selectedList = [];
+		$scope.p = [];
+		$scope.rows = [];
 	};
 
 	/**
 	 * 根据字段生成其ID
 	 */
-	$scope.getId = function(field) {
+	$scope.getId = function(field, end) {
 		var id = field.columnName + "^";
+		if (end) {
+			id = field.columnName + "-end^";
+		}
 		if (field.dbType === "varchar") {
 			id += "V";
 		}
@@ -52,13 +57,21 @@ app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 			if (windowPassData && windowPassData.params) {
 				params = angular.extend(params, windowPassData.params);
 			}
-			return params;
+
+			return $.getQueryParam(params);
 		};
 
 		// 列 默认一个选择列
-		girdConf.columns = [ {
-			checkbox : true
-		} ];
+		if($scope.data.multiple){
+			girdConf.columns = [ {
+				checkbox : true
+			} ];
+		}else{
+			girdConf.columns = [ {
+				radio : true
+			} ];
+		}
+		
 		// 设置显示列
 		angular.forEach($scope.data.displayFields, function(item) {
 			var column = {
@@ -76,44 +89,67 @@ app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 		girdConf.onCheck = function(row) {
 			pushSelectedList(row);
 		};
+		
 		// 取消选上事件
 		girdConf.onUncheck = function(row) {
 			var item = getItemInSelectedList(row);
 			if (!item) {
 				return;
 			}
-			$scope.$apply(function() {
+			if (noScopeApply) {
+				noScopeApply = false;
 				ArrayTool.remove(item, $scope.selectedList);
+			} else {
+				$scope.$apply(function() {
+					ArrayTool.remove(item, $scope.selectedList);
+				});
+			}
+		};
+		
+		//全选
+		girdConf.onCheckAll = function(rows){
+			angular.forEach(rows, function(row, index) {
+				girdConf.onCheck(row);
 			});
 		};
-
-		// 有初始化值
-		if (windowPassData && windowPassData.initData) {
-			girdConf.onLoadSuccess = function(data) {
+		
+		//反选
+		girdConf.onUncheckAll = function(rows){
+			angular.forEach(rows, function(row, index) {
+				girdConf.onUncheck(row);
+			});
+		};
+		
+		girdConf.onLoadSuccess = function(data) {
+			$scope.rows = data.rows;// 列表数据
+			// 有初始化值
+			if (windowPassData && windowPassData.initData) {
 				angular.forEach(data.rows, function(row, index) {
 					angular.forEach(windowPassData.initData, function(item) {
-						//处理返回字段的返回名映射为字段名
+						// 处理返回字段的返回名映射为字段名
 						var itemTemp = {};
-						angular.forEach(item, function(val,key) {
+						angular.forEach(item, function(val, key) {
 							var isMatch = false;
-							angular.forEach($scope.data.returnFields,function(field){
-								if(field.returnName===key){
+							angular.forEach($scope.data.returnFields, function(field) {
+								if (field.returnName === key) {
 									itemTemp[field.columnName] = val;
 									isMatch = true;
 								}
 							});
-							if(!isMatch){
+							if (!isMatch) {
 								itemTemp[key] = val;
 							}
 						});
-						
+
 						if (jsonEqual(row, itemTemp)) {
 							$("[ab-grid]").bootstrapTable("check", index);// 选中
 						}
 					});
 				});
-			};
-		}
+			}
+		};
+
+		girdConf.height = $scope.data.height - 210;
 
 		return girdConf;
 	};
@@ -134,6 +170,39 @@ app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 	 */
 	$scope.clear = function() {
 		$scope.selectedList.splice(0, $scope.selectedList.length);// 清空数组
+	};
+
+	/**
+	 * 是否显示搜索栏
+	 */
+	$scope.isShowSearch = function() {
+		var show = false;
+		if (!$scope.data) {
+			return show;
+		}
+		angular.forEach($scope.data.conditionFields, function(field) {
+			// 有参数，且有控件类型
+			if (field.valueSource == "param" && field.value.ctrlType) {
+				show = true;
+			}
+		});
+		return show;
+	};
+
+	var noScopeApply;
+	$scope.del = function(index) {
+		var idx = null;
+		angular.forEach($scope.rows, function(row, i) {
+			if (jsonEqual(row, $scope.selectedList[index])) {
+				idx = i;
+			}
+		});
+		if (idx != null) {
+			noScopeApply = true;
+			$("[ab-grid]").bootstrapTable("uncheck", idx);// 反选
+		} else {
+			ArrayTool.del(index, $scope.selectedList);
+		}
 	};
 
 	/**
@@ -181,7 +250,7 @@ app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 		if (a === b) {
 			return true;
 		}
-		var allEq = true;//全相等
+		var allEq = true;// 全相等
 		var hasOneEq = false;// 有一个字段相等
 		for ( var key in b) {
 			if (a[key] && b[key] && b[key] !== a[key]) {
@@ -192,6 +261,6 @@ app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 				hasOneEq = true;
 			}
 		}
-		return allEq&&hasOneEq;
+		return allEq && hasOneEq;
 	}
 } ]);

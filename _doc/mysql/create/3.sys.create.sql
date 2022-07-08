@@ -75,26 +75,28 @@ CREATE TABLE `sys_data_source_def` (
 DROP TABLE IF EXISTS `sys_log_err`;
 CREATE TABLE `sys_log_err` (
   `id_` varchar(50) NOT NULL COMMENT '主键',
-  `ACCOUNT_` varchar(20) DEFAULT NULL COMMENT '帐号',
-  `IP_` varchar(20) DEFAULT NULL COMMENT 'IP来源',
-  `URL_` varchar(1500) DEFAULT NULL COMMENT '错误URL',
-  `CONTENT_` text COMMENT '出错信息',
-  `CREATE_TIME_` datetime DEFAULT NULL COMMENT '出错时间',
+  `account_` varchar(20) DEFAULT NULL COMMENT '帐号',
+  `ip_` varchar(20) DEFAULT NULL COMMENT 'IP来源',
+  `ip_address_` varchar(255) DEFAULT NULL COMMENT 'IP地址',
+  `status_` varchar(64) DEFAULT NULL COMMENT '状态：unchecked，checked，fixed',
+  `url_` varchar(1500) DEFAULT NULL COMMENT '错误URL',
+  `content_` text COMMENT '出错信息',
+  `request_param_` text COMMENT '请求参数',
+  `create_time_` datetime DEFAULT NULL COMMENT '出错时间',
   `stack_trace_` longtext COMMENT '出错异常堆栈',
   PRIMARY KEY (`id_`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统异常日志';
 
 -- ----------------------------
 -- Table structure for sys_properties
 -- ----------------------------
-DROP TABLE IF EXISTS `sys_properties`;
 CREATE TABLE `sys_properties` (
-  `id_` varchar(64) NOT NULL,
-  `name_` varchar(64) DEFAULT NULL,
-  `alias_` varchar(64) DEFAULT NULL,
-  `group_` varchar(64) DEFAULT NULL,
-  `value_` varchar(500) DEFAULT NULL,
-  `encrypt_` int(11) DEFAULT NULL,
+  `id_` varchar(64) NOT NULL COMMENT 'ID',
+  `name_` varchar(64) DEFAULT NULL COMMENT '属性名',
+  `alias_` varchar(64) DEFAULT NULL COMMENT '别名',
+  `group_` varchar(64) DEFAULT NULL COMMENT '分组',
+  `value_` varchar(500) DEFAULT NULL COMMENT '值',
+  `encrypt_` int(11) DEFAULT NULL COMMENT '是否加密',
   `update_by_` varchar(64) DEFAULT NULL,
   `update_time_` datetime DEFAULT NULL,
   `create_by_` varchar(64) DEFAULT NULL,
@@ -102,40 +104,24 @@ CREATE TABLE `sys_properties` (
   `description_` varchar(500) DEFAULT NULL,
   `environment_` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id_`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统属性';
+ 
 
--- ----------------------------
--- Table structure for sys_rel_resources
--- ----------------------------
-DROP TABLE IF EXISTS `sys_rel_resources`;
-CREATE TABLE `sys_rel_resources` (
-  `ID_` varchar(50) NOT NULL COMMENT '主键',
-  `RES_ID_` varchar(50) DEFAULT NULL COMMENT '资源ID',
-  `NAME_` varchar(50) DEFAULT NULL COMMENT '名称',
-  `RES_URL_` varchar(100) DEFAULT NULL COMMENT '资源地址',
-  PRIMARY KEY (`ID_`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin  COMMENT='关联资源';
-
--- ----------------------------
--- Table structure for sys_resource
--- ----------------------------
-DROP TABLE IF EXISTS `sys_resource`;
 CREATE TABLE `sys_resource` (
-  `ID_` varchar(50) NOT NULL COMMENT '主键',
-  `SYSTEM_ID_` varchar(50) DEFAULT NULL COMMENT '子系统ID',
-  `ALIAS_` varchar(50) DEFAULT NULL COMMENT '子系统中独一无二',
-  `NAME_` varchar(50) DEFAULT NULL COMMENT '资源名',
-  `default_url_` varchar(50) DEFAULT NULL COMMENT '默认地址',
-  `ENABLE_MENU_` int(11) DEFAULT NULL COMMENT '显示到菜单(1,显示,0 ,不显示)',
-  `HAS_CHILDREN_` int(11) DEFAULT NULL COMMENT '是否有子节点',
-  `OPENED_` int(11) DEFAULT NULL,
-  `ICON_` varchar(50) DEFAULT NULL COMMENT '图标',
-  `NEW_WINDOW_` int(11) DEFAULT NULL COMMENT '打开新窗口',
-  `SN_` bigint(20) DEFAULT NULL COMMENT '排序',
-  `PARENT_ID_` varchar(50) DEFAULT NULL COMMENT '父节点ID',
-  `CREATE_TIME_` datetime DEFAULT NULL COMMENT '创建时间',
+  `ID_` varchar(64) NOT NULL COMMENT '主键',
+  `system_id_` varchar(64) DEFAULT NULL COMMENT '子系统ID',
+  `alias_` varchar(64) DEFAULT NULL COMMENT '别名',
+  `name_` varchar(64) DEFAULT NULL COMMENT '名字',
+  `url_` varchar(120) DEFAULT NULL COMMENT '请求地址',
+  `enable_` int(11) DEFAULT NULL COMMENT '显示到菜单(1,显示,0 ,不显示)',
+  `opened_` int(11) DEFAULT NULL COMMENT '是否默认打开',
+  `icon_` varchar(50) DEFAULT NULL COMMENT '图标',
+  `type_` varchar(50) DEFAULT NULL COMMENT 'menu，button，link',
+  `sn_` int(10) DEFAULT NULL COMMENT '排序',
+  `parent_id_` varchar(50) DEFAULT NULL COMMENT '父节点ID',
+  `create_time_` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`ID_`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin  COMMENT='子系统资源';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统资源';
 
 -- ----------------------------
 -- Table structure for sys_res_role
@@ -144,8 +130,8 @@ DROP TABLE IF EXISTS `sys_res_role`;
 CREATE TABLE `sys_res_role` (
   `ID_` varchar(50) NOT NULL DEFAULT '' COMMENT '主键',
   `SYSTEM_ID_` varchar(50) DEFAULT NULL COMMENT '系统ID',
-  `RES_ID_` varchar(50) DEFAULT NULL COMMENT '资源ID',
-  `ROLE_ID_` varchar(50) DEFAULT NULL COMMENT '角色ID',
+  `res_id_` varchar(50) DEFAULT NULL COMMENT '资源ID',
+  `role_id_` varchar(50) DEFAULT NULL COMMENT '角色ID',
   PRIMARY KEY (`ID_`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin  COMMENT='角色资源分配';
  
@@ -181,26 +167,24 @@ CREATE TABLE `sys_serialno` (
   KEY `idx_uni_alias_val` (`alias_`,`cur_value_`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin  COMMENT='流水号生成';
 
--- ----------------------------
--- Table structure for sys_subsystem
--- ----------------------------
-DROP TABLE IF EXISTS `sys_subsystem`;
+ 
 CREATE TABLE `sys_subsystem` (
-  `ID_` varchar(50) NOT NULL COMMENT '主键',
-  `name_` varchar(50)   DEFAULT NULL COMMENT '系统名称',
-  `alias_` varchar(50) DEFAULT NULL COMMENT '系统别名',
-  `logo_` varchar(50) DEFAULT NULL COMMENT 'logo地址',
+  `id_` varchar(64) NOT NULL COMMENT '主键',
+  `name_` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '系统名称',
+  `alias_` varchar(64) DEFAULT NULL COMMENT '系统别名',
+  `url_` varchar(500) DEFAULT NULL COMMENT '子系统地址，空则为当前系统',
+  `open_type_` varchar(64) DEFAULT NULL COMMENT '打开方式',
   `enabled_` int(11) DEFAULT NULL COMMENT '是否可用 1 可用，0 ，不可用',
-  `home_url_` varchar(100) DEFAULT NULL COMMENT '主页地址',
-  `base_url_` varchar(50) DEFAULT NULL COMMENT '基础地址',
-  `tenant_` varchar(50) DEFAULT NULL COMMENT '租户名称',
-  `MEMO_` varchar(200) DEFAULT NULL COMMENT '备注',
-  `creator_Id_` varchar(50) DEFAULT NULL COMMENT '创建人ID',
-  `creator_` varchar(50) DEFAULT NULL COMMENT '创建人',
   `create_time_` datetime DEFAULT NULL COMMENT '创建时间',
   `is_default_` int(11) DEFAULT NULL COMMENT '是否默认 1 可用，0 ，不可用',
-  PRIMARY KEY (`ID_`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin  COMMENT='子系统定义';
+  `desc_` varchar(500) DEFAULT NULL,
+  `config_` varchar(2000) DEFAULT NULL,
+  `create_by_` varchar(64) DEFAULT NULL,
+  `update_time_` datetime DEFAULT NULL,
+  `update_by_` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id_`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='子系统定义';
+
 
 -- ----------------------------
 -- Table structure for sys_tree

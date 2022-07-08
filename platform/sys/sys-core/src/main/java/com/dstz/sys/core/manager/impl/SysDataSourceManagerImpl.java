@@ -101,7 +101,7 @@ public class SysDataSourceManagerImpl extends BaseManager<String, SysDataSource>
     	if(DbContextHolder.getDataSource().equals(key)) {
     		return (JdbcTemplate) AppUtil.getBean("jdbcTemplate");
     	}
-		
+    	
 		return new JdbcTemplate(getDataSourceByKey(key));
 	}
 

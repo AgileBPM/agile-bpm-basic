@@ -2,7 +2,8 @@
 <head>
 <title>节点初始化</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <link href="../../build/common/codeMirror.css" rel="stylesheet">
 
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
@@ -44,7 +45,7 @@
 		var keyStr = node.name;
 		// 流程变量
 		if (node.nodeType == 'var'){
-			//keyStr = "variableScope." + node.name;
+			keyStr = "variableScope.getVariable('"+node.name+"')";
 		}// 业务对象取值
 		else {
 			 keyStr = scope.getBoStr(node);
@@ -67,9 +68,9 @@
 		.setDataKey({ name : 'name' })
 		.setCallback({ onClick : scope.setVariable })
 		.makeCombTree("varTree",300)
-		.initZtree({defId:$.getParam("defId"),nodeId:$.getParam("nodeId")}, 2);
-		
-		$(".varTree").bind("click", function(){
+        .initZtree({defId:$.getParam("defId"),nodeId:$.getParam("nodeId")}, 2);
+
+        $(".varTree").bind("click", function(){
 			var broadcast = $(this).attr("broadcast")
 			scope.CodeMirrorBroadcast = broadcast;
 			varTree.showMenu($(this));
@@ -115,10 +116,9 @@
 				<th>展示前脚本</th>
 				<td style=" max-width: 500px;">
 					<div>
-					    <a id="varTree" class="btn btn-primary btn-xs varTree" broadcast="beforeShow">表单字段选择</a>
 						<a class="btn btn-primary btn-xs" ng-click="selectScript('beforeShow')">常用脚本</a>
+					    <a id="varTree" class="btn btn-primary btn-xs varTree" broadcast="beforeShow">表单字段选择</a>
 						<span class="text-warning">流程节点表单打开时每次执行,可用于数据初始化</span>
-						<div id="tempTree"></div>
 					</div>
    					<textarea ng-model="nodeInit.beforeShow" ui-codemirror="" height="100px"  broadcast="beforeShow"  ></textarea>
 				</td>
@@ -127,8 +127,8 @@
 				<th>保存后脚本</th>
 				<td style=" max-width: 500px;">
 					<div>
-					    <a class="btn btn-primary btn-xs varTree" broadcast="whenSave">表单字段选择</a>
 						<a class="btn btn-primary btn-xs" ng-click="selectScript('whenSave')">常用脚本</a>
+					    <a class="btn btn-primary btn-xs varTree" broadcast="whenSave">表单字段选择</a>
 						<span class="text-warning">表单保存时执行，可用于流水号赋值，等数据加工</span>
 					</div>
    					<textarea ng-model="nodeInit.whenSave" ui-codemirror=""  height="150px" broadcast="whenSave"></textarea>

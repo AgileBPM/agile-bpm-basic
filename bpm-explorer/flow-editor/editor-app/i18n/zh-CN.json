@@ -30,7 +30,7 @@
     "TOOLBAR.ACTION.REDO" : "重复",
     "TOOLBAR.ACTION.ZOOMIN" : "放大",
     "TOOLBAR.ACTION.ZOOMOUT" : "缩小",
-    "TOOLBAR.ACTION.ZOOMACTUAL" : "实际大小 ",
+    "TOOLBAR.ACTION.ZOOMACTUAL" : "实际大小,如果位置计算出现偏差，请再次点击计算 ",
     "TOOLBAR.ACTION.ZOOMFIT" : "适应屏幕",
     "TOOLBAR.ACTION.MOVE" : "移动",
     "TOOLBAR.ACTION.IMPORT" : "导入",

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.org.core.dao.RoleDao">
+    <resultMap id="Role" type="com.dstz.org.core.model.Role">
+        <id property="id" column="id_" jdbcType="VARCHAR"/>
+        <result property="name" column="name_" jdbcType="VARCHAR"/>
+        <result property="alias" column="alias_" jdbcType="VARCHAR"/>
+        <result property="enabled" column="enabled_" jdbcType="NUMERIC"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+        <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="create" parameterType="com.dstz.org.core.model.Role">
+		INSERT INTO org_role
+		(id_,name_,alias_,enabled_,description,create_time_,create_by_,update_time_,update_by_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR}, #{enabled,jdbcType=NUMERIC},#{description,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+	</insert>
+
+    <select id="get" parameterType="java.lang.String" resultMap="Role">
+		SELECT * FROM org_role 
+		WHERE 
+		id_=#{id}
+	</select>
+
+    <select id="getByAlias" parameterType="java.lang.String" resultMap="Role">
+		SELECT * FROM org_role 
+		WHERE 
+		alias_=#{alias}
+	</select>
+	
+    <select id="query" parameterType="java.util.Map" resultMap="Role">
+        SELECT * FROM org_role
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY id_ DESC
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.dstz.org.core.model.Role">
+		UPDATE org_role SET
+		name_=#{name,jdbcType=VARCHAR},
+		alias_=#{alias,jdbcType=VARCHAR},
+		enabled_=#{enabled,jdbcType=NUMERIC},
+		description=#{description},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		update_by_=#{updateBy,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+
+    <delete id="remove" parameterType="java.lang.String">
+		DELETE FROM org_role 
+		WHERE
+		id_=#{id}
+	</delete>
+	
+	<!-- 这里默认获取岗位职务角色为 该角色的用户  -->
+    <select id="getByUserId" parameterType="java.lang.String" resultMap="Role">
+        SELECT role.* from org_role role
+        left join org_relation relation on role.id_ = relation.role_id_ 
+        where enabled_ = 1 and relation.status_ =1 
+        and relation.user_id_ = #{userId}
+    </select>
+
+    <select id="isRoleExist" resultType="java.lang.Integer">
+        SELECT count(1) FROM org_role where alias_=#{alias}
+        <if test="id!=null">
+            and id_=#{id}
+        </if>
+    </select>
+</mapper>

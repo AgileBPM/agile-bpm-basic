@@ -27,10 +27,16 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 	 */
 	$scope.saveNode = function() {
 		var url = __ctx + "/sys/sysTreeNode/save";
+		if (!$scope.activeTreeNode.key || !$scope.activeTreeNode.name) {
+			jQuery.Toast.error("请完善节点名字和别名信息");
+			return;
+		}
+
 		var rtn = baseService.post(url, $scope.activeTreeNode);
 		rtn.then(function(data) {
 			if (data.isOk) {
 				jQuery.Toast.success(data.msg);
+				$scope.activeTreeNode.id = data.data.id;
 				$scope.loadTree();
 			} else {
 				jQuery.Toast.error(data.msg, data.cause);
@@ -39,17 +45,17 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 			jQuery.Toast.error("请求失败!" + errorCode);
 		});
 	};
-	
+
 	/**
 	 * 初始化当前编辑节点
 	 */
-	function initActiveTreeNode(){
+	function initActiveTreeNode() {
 		$scope.activeTreeNode = {};
 		$scope.activeTreeNode.parentName = "无";
 		$scope.activeTreeNode.treeId = $scope.data.id;
 		$scope.activeTreeNode.parentId = "0";// 默认0
 	}
-	
+
 	// 以下代码是跟ztree相关的--------------------------》》》
 	/**
 	 * 加载树
@@ -63,7 +69,8 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 		var url = __ctx + "/sys/sysTreeNode/getNodes";
 		new ZtreeCreator('sysTree', url).setCallback({
 			onClick : zTreeOnLeftClick,
-			onRightClick : zTreeOnRightClick
+			onRightClick : zTreeOnRightClick,
+			onMouseDown : zTreeOnMouseDown
 		}).initZtree(params, function(treeObj) {
 			$scope.sysTree = treeObj
 		});
@@ -73,7 +80,9 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 	 * 树左击事件
 	 */
 	function zTreeOnLeftClick(event, treeId, treeNode) {
+		var parentNode = treeNode.getParentNode();
 		$scope.$apply(function() {
+			$scope.activeTreeNode.parentName = parentNode ? parentNode.name : "无";
 			$scope.activeTreeNode.id = treeNode.id;
 			$scope.activeTreeNode.key = treeNode.key;
 			$scope.activeTreeNode.name = treeNode.name;
@@ -108,6 +117,15 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 		menu.menu('show', {
 			left : x,
 			top : y
+		});
+	}
+
+	function zTreeOnMouseDown(event, treeId, treeNode) {
+		if (treeNode) {
+			return;
+		}
+		$scope.$apply(function() {
+			initActiveTreeNode();
 		});
 	}
 

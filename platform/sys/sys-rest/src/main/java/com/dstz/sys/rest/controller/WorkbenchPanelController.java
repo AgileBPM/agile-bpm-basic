@@ -16,7 +16,7 @@ import com.dstz.base.core.util.StringUtil;
 import com.dstz.base.db.model.query.DefaultQueryFilter;
 import com.dstz.base.manager.Manager;
 import com.dstz.base.rest.BaseController;
-import com.dstz.base.rest.GenericController;
+import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
 import com.dstz.sys.core.manager.WorkbenchLayoutManager;
 import com.dstz.sys.core.manager.WorkbenchPanelManager;
@@ -48,7 +48,7 @@ public class WorkbenchPanelController extends BaseController<WorkbenchPanel>{
 		}else{
 			DefaultQueryFilter filter = (DefaultQueryFilter) getQueryFilter(request);
 			//将request请求的参数都put进去。用的时候可以用
-			filter.getParams().putAll(RequestUtil.getParameterValueMap(request,false,true));
+			filter.getParams().putAll(RequestUtil.getParameterValueMap(request,false));
 			json = workbenchPanelManager.getDataByInterFace(filter,dataSource);
 		}
 		

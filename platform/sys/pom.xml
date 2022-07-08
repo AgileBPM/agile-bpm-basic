@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.dstz.agilebpm</groupId>
         <artifactId>platform</artifactId>
-        <version>1.2.6</version>
+        <version>1.3.7</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>sys</artifactId>
@@ -21,6 +21,7 @@
     <properties>
         <com.jayway.jsonpath>0.9.1</com.jayway.jsonpath>
         <activeMq.version>5.9.0</activeMq.version>
+        <io.lettuce.core.version>5.1.6.RELEASE</io.lettuce.core.version>
     </properties>
 
     <!-- 定义全局的依赖，供子模块调用 -->
@@ -46,6 +47,12 @@
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
                 <version>1.4.7</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.lettuce</groupId>
+                <artifactId>lettuce-core</artifactId>
+                <version>${io.lettuce.core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

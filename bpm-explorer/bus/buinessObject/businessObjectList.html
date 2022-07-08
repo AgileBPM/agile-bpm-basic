@@ -2,7 +2,8 @@
 <head>
 <title>业务对象列表</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/gridList.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/gridList.js"></script>
 <script type="text/javascript" src="../../build/common/easyLayout.js"></script>
 </head>
@@ -26,7 +27,7 @@
 						<div class="col-sm-2">
 							<input type="text" class="form-control" id="key_^VLK">
 						</div>
-						<label class="control-label col-sm-1" for="name_^VLK">表名</label>
+						<label class="control-label col-sm-1" for="name_^VLK">名称</label>
 						<div class="col-sm-2">
 							<input type="text" class="form-control" id="name_^VLK">
 						</div>
@@ -49,6 +50,7 @@
 					<th data-field="name">名字</th>
 					<th data-field="desc">描述</th>
 					<th data-formatter="innerHtmlFormatter" data-title="管理">
+						<span class='btn btn-outline btn-primary fa-building' openDialog='JSON数据结构' qtip='数据结构' url='./businessObjectInitJson.html?key={key}'></span>
 						<span class='btn btn-outline btn-primary fa-edit' openDialog='编辑' qtip='编辑' url='./businessObjectEdit.html?id={id}'></span>
 						<span class='btn btn-outline btn-primary fa  fa-trash' sendAction='删除' qtip='删除' url='/bus/businessObject/remove?id={id}'></span>
 					</th>

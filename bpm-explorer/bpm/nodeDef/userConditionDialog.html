@@ -1,6 +1,7 @@
 <html ng-app="app">
 <head>
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/bpm/nodeDef/userConditionController.js"></script>
 
@@ -23,18 +24,19 @@
 			<legend style="width: 90px; border-bottom: 0; margin-bottom: 10px;">
 				<span>人员设置</span>
 			</legend>
-			<div class="datagrid-toolbar" style="height: 35px; text-align: right;">
+			<div class="datagrid-toolbar" style="height: 35px; text-align: left;">
 				<a class="btn btn-primary fa fa-plus" ng-click="addCalc()">添加</a>
-				<a ng-click="preview()" class="btn btn-primary">预览</a>
+				<a ng-click="preview()" ng-hide="true" class="btn btn-primary">预览</a>
 			</div>
 			<table class="table table-bordered table-hover">
 				<thead>
 					<tr style="background:#E6E6E6;">
 						<th width="200">人员类型</th>
 						<th width="360">人员选择</th>
-						<th ab-tip title="若人员为组类型，抽取则候选人为当前组所有人，若不抽取。则候选人为组。<br>eg:如果某岗位，抽取。则候选人在任务产生时确定为当时该岗位所有人员，若不抽取，则候选人为该岗位，任务产生后该岗位进行人员变动也不会受到影响。">
-						是否抽取</th>
-						<th ab-tip title="与前一列进行运算，eg:且，则说明与前一列共有的人员才会作为任务候选人">运算类型</th>
+						<th>
+						是否抽取 <span class="fa fa-question-circle text-info" ab-tip title="若人员为组类型，抽取，任务候选人为当前组所有人。若不抽取。则候选人为组，不具体到人。<br>eg:如果某岗位，抽取。则候选人在任务产生时获取该岗位所有人作为候选人。若不抽取，则候选人为该岗位，任务产生后该岗位人员发生变动不受影响"></span></th>
+						<th>运算类型 
+						<span class="fa fa-question-circle text-info" ab-tip title="与前一列进行运算，eg:且，则说明与前一列共有的人员才会作为任务候选人"></span></th>
 						<th>操作</th>
 					</tr>
 				</thead>
@@ -45,19 +47,19 @@
 							</select>
 						</td>
 						<td>
-							<a ng-show="calc.pluginType!='approver'" href="javascript:javaScript:void(0)" class="btn btn-xs {{calc.description?'btn-primary':'btn-danger'}}" ng-click="selector(calc)">选择</a>
-							<span ng-if="calc.description">[{{calc.description}}]</span>
+							<a ng-show="'approver,sameNode'.indexOf(calc.pluginType)==-1" href="javascript:javaScript:void(0)" class="btn btn-xs {{calc.description?'btn-primary':'btn-danger'}}" ng-click="selector(calc)">选择</a>
+							
+							<select ng-if="calc.pluginType=='sameNode'"  ng-model="calc.nodeId"  class="form-control"  
+								ng-options="node.nodeId as node.nodeName for node in nodeList" >
+									<option value="">请选择</option>
+							</select>
+							 
+							<span ng-if="calc.description && calc.pluginType!='sameNode'">[{{calc.description}}]</span>
 						</td>
 						<td>
-							<select ng-if="nodeType=='UserTask'" ng-model="calc.extract" class="form-control">
+							<select ng-show="'approver,sameNode,user'.indexOf(calc.pluginType)==-1" ng-model="calc.extract" class="form-control">
 								<option value="no">不抽取</option>
 								<option value="extract">抽取</option>
-							</select>
-							<select ng-if="nodeType=='SignTask'" ng-model="calc.extract">
-								<option value="no">不抽取</option>
-								<option value="extract">抽取</option>
-								<option value="delayExtract">延迟抽取</option>
-								<option value="groupUserExtract">用户组合</option>
 							</select>
 						</td>
 						<td>

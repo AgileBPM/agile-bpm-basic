@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import com.alibaba.fastjson.JSONObject;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * <pre>
  * 描述：表单定义的页面数据类
@@ -14,6 +17,7 @@ import com.alibaba.fastjson.JSONObject;
  * 版权:summer
  * </pre>
  */
+@ApiModel(description="表单定义的页面数据类")
 public class FormDefData implements Serializable {
 	/**
 	 * <pre>
@@ -39,6 +43,7 @@ public class FormDefData implements Serializable {
 	 * }
 	 * </pre>
 	 */
+    @ApiModelProperty("表单的业务数据 JSON")
 	private JSONObject data;
 	/**
 	 * <pre>
@@ -60,6 +65,7 @@ public class FormDefData implements Serializable {
 	 * }
 	 * </pre>
 	 */
+    @ApiModelProperty("表单的初始化数据")
 	private JSONObject initData;
 	/**
 	 * <pre>
@@ -74,6 +80,7 @@ public class FormDefData implements Serializable {
 	 * }
 	 * </pre>
 	 */
+    @ApiModelProperty("表单字段的权限")
 	private JSONObject permission;
 	/**
 	 * <pre>
@@ -85,10 +92,12 @@ public class FormDefData implements Serializable {
 	 * }
 	 * </pre>
 	 */
+    @ApiModelProperty("表单的表权限")
 	private JSONObject tablePermission;
 	/**
 	 * 页面html
 	 */
+    @ApiModelProperty("表单的HTML 源码")
 	private String html;
 	
 	public JSONObject getData() {

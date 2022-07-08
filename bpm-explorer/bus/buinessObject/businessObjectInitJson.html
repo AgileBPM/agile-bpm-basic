@@ -1,0 +1,21 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript">
+	var app = angular.module('app', [ 'baseDirective' ]);
+	app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', function($scope, baseService, ArrayToolService) {
+		
+	} ]);
+</script>
+</head>
+<body ng-controller="ctrl">
+	<div class="ibox-title">
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+	</div>
+	<div ab-load="/bus/businessObject/getBoStruct?key={key}" ng-model="data"></div>
+	<textarea class="form-control" style="height: 90%">{{data|json}}</textarea>
+</body>
+</html>

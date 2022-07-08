@@ -46,6 +46,18 @@ public class MobileFormElementGenerator extends AbsFormElementGenerator{
 		}
 		
 		element.attr("v-model",getScopePath(relation)+ "." + column.getKey());
+		
+		//添加上  placeholder 的支持
+		String configStr = column.getCtrl().getConfig();
+		if (StringUtil.isEmpty(configStr)) {
+			return;
+		}
+
+		JSONObject config = JSON.parseObject(configStr);
+		Boolean placeholder = config.getBoolean("placeholder");
+		
+		if(placeholder == null || !placeholder )return ;
+		element.attr("placeholder", config.getString("placeholderText"));
 	}
  
 	
@@ -60,13 +72,14 @@ public class MobileFormElementGenerator extends AbsFormElementGenerator{
 		return element.toString();
 	}
 	
-	//<datetime v-model="data.kjcs.sr" format="YYYY-MM-DD HH:mm:ss" ab-validate="{&quot;date&quot;:true}" desc="生日" v-ab-permission="permission.kjcs.cskj.sr"></datetime>
+	//<ab-date v-model="data.kjcs.sr" format="YYYY-MM-DD HH:mm:ss" ab-validate="{&quot;date&quot;:true}" desc="生日" v-ab-permission="permission.kjcs.cskj.sr"></ab-date>
 	protected String getColumnDate(IBusinessColumn column) {
-		Element element = getElement("datetime");
+		Element element = getElement("ab-date");
 		
 		handleVModel(element, column);
 		handleValidateRules(element, column);
 		handlePermission(element, column);
+		element.attr(":ab-permission", getPermissionPath(column));
 		
 		String configStr = column.getCtrl().getConfig();
 		if(StringUtil.isEmpty(configStr)) {
@@ -178,7 +191,6 @@ public class MobileFormElementGenerator extends AbsFormElementGenerator{
 			
 			child.attr("value", option.getString("key"));
 			label.appendText(option.getString("txt"));
-			child.attr("name",String.format("%s-%s-%s",(String) ThreadMapUtil.get("boCode"), column.getTable().getKey(),column.getName()));
 		}
 		
 		return permissionElement.toString();
@@ -215,14 +227,18 @@ public class MobileFormElementGenerator extends AbsFormElementGenerator{
 		
 		return permissionElement.toString();
 	}
-
+	
+	/**
+	 * <pre>
+	 * <ab-upload v-model="files" v-bind:permission="xxx">
+	 * 		<a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary fa fa-upload">上传</a>
+	 * </ab-upload>
+	 * </pre>
+	 */
 	protected String getColumnFile(IBusinessColumn column) {
-		//<a href="javascript:void(0)" class="btn btn-primary fa-upload" ab-upload ng-model="test">指令测试</a>
-		Element element = getElement("a").attr("href", "javascript:void(0)").addClass("btn btn-primary fa-upload");
-		element.attr("ab-upload","");
-	//	handleVModel(element, column);
-		element.attr("v-ab-permission:edit",getPermissionPath(column));
-		
+		Element element = getElement("ab-upload").attr("v-bind:permission", getPermissionPath(column));
+		handleVModel(element, column);
+		element.append("<a href=\"javascript:;\" class=\"weui-btn weui-btn_mini weui-btn_primary fa fa-upload\">"+column.getComment()+"</a>");
 		return element.toString();
 	}
 	
@@ -258,6 +274,6 @@ public class MobileFormElementGenerator extends AbsFormElementGenerator{
 
 	@Override
 	public String getGeneratorName() {
-		return "vuxGenerator";
+		return "mobileGenerator";
 	}
 }

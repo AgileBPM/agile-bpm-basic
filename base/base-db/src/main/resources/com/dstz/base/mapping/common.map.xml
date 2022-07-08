@@ -11,8 +11,7 @@
     <select id="queryFormList" parameterType="java.util.Map" resultType="java.util.HashMap">
         SELECT * FROM (
         ${sql}
-        ) T
-        <where>
+         <where>
             <if test="whereSql!=null">
                 ${whereSql}
             </if>
@@ -20,6 +19,8 @@
         <if test="orderBySql!=null">
             ORDER BY ${orderBySql}
         </if>
+        ) T
+       
     </select>
 
     <select id="getCount" parameterType="java.util.Map" resultType="Integer">

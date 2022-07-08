@@ -31,6 +31,18 @@ public class PcFormElementGenerator extends AbsFormElementGenerator{
 		}
 		
 		element.attr("ng-model",getScopePath(relation)+ "." + column.getKey());
+		
+		//添加上  placeholder 的支持
+		String configStr = column.getCtrl().getConfig();
+		if (StringUtil.isEmpty(configStr)) {
+			return;
+		}
+
+		JSONObject config = JSON.parseObject(configStr);
+		Boolean placeholder = config.getBoolean("placeholder");
+		
+		if(placeholder == null || !placeholder )return ;
+		element.attr("placeholder", config.getString("placeholderText"));
 	}
 	
 	

@@ -1,0 +1,115 @@
+<html ng-app="app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript" src="../../assets/js/platform/bus/businessObject/businessObjectDesign.js"></script>
+	<script type="text/javascript" src="../../assets/js/plugins/softable/Sortable.min.js"></script>
+	<link rel="stylesheet" href="../../assets/js/plugins/jqueryui/css/base/jquery-ui-1.10.4.custom.min.css">
+	<script src="../../assets/js/plugins/jqueryui/js/jquery-ui-1.10.4.custom.js"></script>
+	<link rel="stylesheet" href="../../assets/js/platform/bus/businessObject/businessObjectDesign.css">
+	<script type="text/javascript" src="../../build/common/easyLayout.js"></script>
+
+	<style>
+		.sortable-column{ height: 39px ;list-style-type: none; margin: 0; padding: 0;} 
+	</style>
+</head>
+<body class="easy-layout"  ng-controller="ctrl" >
+<div data-options="region:'west',split:true,border:true,title:'业务对象'" style="width: 200px;">
+	<div id="boTree" class="ztree"></div>
+</div>
+<div data-options="region:'center',border:false" style="background-color: #f3f3f4">
+	<div class="ibox-title" ab-load="/bus/businessObject/getOverallArrangement?boCode={boCode}" ng-model="overallArrangement" fastjson>
+		<a class="btn btn-primary fa-save" href="javascript:void(0)" ng-click="save()">保存</a>
+		<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+		<p class="text-danger">第一次使用必读： 1.点击左侧实体名，会创建一个分组。2.可以调整分组中字段的顺序，字段所占列数，单行表单模板时列数将无效
+			3.可以调整分组的排序， 4.当选择分组后，点击字段可以将字段添加至分组中。5.一对一子表默认位于父表中不支持单独创建组。
+			6.若使用TAB 模式，则必须将需要展示的组添加到TAB面板中。</p>
+		<form class="form-inline">
+  			<div class="form-group">
+    			<label for="exampleInputName2">默认列数</label>
+    			<select ng-model="config.row"  class="form-control" id="exampleInputName2">
+    				<option value="1">单列</option>
+    				<option value="2">两列</option>
+    				<option value="3">三列</option>
+    				<option value="4">四列</option>
+    			</select>
+  			</div>
+		  <div class="form-group">
+		  		<label>
+		          <input type="checkbox" ng-model="config.containHideColumn"> 含隐藏字段
+		        </label>
+		        <label>
+		          <input type="checkbox" ng-model="config.containOne2oneChild"> 父表一并带出一对一子表内容
+		        </label>
+		      <button type="button" ng-click="addTabLayout()" class="btn btn-default">TAB 页布局</button>
+		  </div>
+</form>
+	</div>
+	
+	<div ng-repeat="tab in overallArrangement.tabList" class="draggable" style="width: 350px">
+		<div class="content">
+			<div class="ibox-title sort-handle ">
+				<input class="form-control" style="width: 130px" placeholder="请输入 TAB 标题" ng-model="tab.comment">
+				<select ng-model="selectedGroup" class="form-control" style="width: 105px"
+				ng-options="group as group.comment for group in overallArrangement.groupList" 
+				ng-change="add2Tab(tab)">
+					<option value="">请选择组</option>
+				</select>
+				<div class="ibox-tools">
+					<a href="#" ng-click="ArrayTool.del($index,overallArrangement.tabList)"><i class="fa fa-times"></i></a>
+				</div>
+			</div>
+			<div class="ibox-content" >
+				<ul id="sortable" class="row">
+					<li ng-repeat="group in tab.groupList" class="col-xs-12">
+						 <span class="label label-primary">{{group.comment}}</span>
+						 <a href="javaScript:void(0)" ng-click="ArrayTool.del($index,tab.groupList)" class="btn btn-sm btn-default fa-times ng-scope"></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="groupSortable">
+	<div ng-repeat="group in overallArrangement.groupList" data-id="{{$index}}"  class="sortablebody {{$index}} draggable group" style="width: 100%;">
+		<div class="content" ng-click="config.currentGroup=group">
+			<div class="ibox-title sort-handle">
+				<input class="form-control" placeholder="分组标题，为空则不展示标题栏" ng-model="group.comment">
+				<select ng-model="oneColumnRowSet" class="form-control" style="width: 110px"
+				   ng-change="batchResetRow(group)">
+					<option value="">批量排列</option>
+					<option value="1">单列</option>
+					<option value="2">两列</option>
+					<option value="3">三列</option>
+					<option value="4">四列</option>
+				</select>
+				<div class="ibox-tools">
+					<span class="label label-danger" ng-if="config.currentGroup==group">正在编辑</span>
+					<a href="#" ng-click="ArrayTool.del($index,overallArrangement.groupList)"><i class="fa fa-times"></i></a>
+				</div>
+			</div>
+			<div class="ibox-content" >
+				<ul id="columnSortable{{$index}}" class="row">
+					<li ng-repeat="column in group.columnList" data-id="{{$index}}" ng-class="'sortablebody sortable-column col-xs-'+ 12/column.row">
+						<div class="form-group">
+							<div class="input-group">
+						      	<div class="input-group-addon  sort-handle" style="width: 120px">{{column.comment}}</div>
+								<select ng-model="column.row" class="form-control" style="width: 75px">
+									<option value="1">单列</option>
+									<option value="2">两列</option>
+									<option value="3">三列</option>
+									<option value="4">四列</option>
+								</select>
+								<a href="#" class="input-group-addon btn"  style="float: left; border: none;" ng-click="ArrayTool.del($index,group.columnList)">&times; </a>
+						      </div>
+					    </div> 
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+</body>
+</html>

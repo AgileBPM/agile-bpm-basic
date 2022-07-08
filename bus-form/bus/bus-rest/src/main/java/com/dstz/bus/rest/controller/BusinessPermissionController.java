@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dstz.base.api.response.impl.ResultMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,11 +49,11 @@ public class BusinessPermissionController extends BaseController<BusinessPermiss
 	 */
 	@RequestMapping("getObject")
 	@CatchErr(write2response = true, value = "获取businessPermission异常")
-	public void getObject(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ResultMsg<BusinessPermission> getObject(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String objType = RequestUtil.getString(request, "objType");
 		String objVal = RequestUtil.getString(request, "objVal");
 		BusinessPermission businessPermission = businessPermissionManager.getByObjTypeAndObjVal(objType, objVal);
-		writeSuccessData(response, businessPermission);
+		return getSuccessResult(businessPermission);
 	}
 
 	/**
@@ -67,7 +68,7 @@ public class BusinessPermissionController extends BaseController<BusinessPermiss
 	 */
 	@RequestMapping("getBo")
 	@CatchErr(write2response = true, value = "获取boo异常")
-	public void getBo(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ResultMsg<Map<String, BusinessObject>> getBo(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String[] boKeys = RequestUtil.getStringAryByStr(request, "boKeys");
 		
 		Map<String, BusinessObject> boMap = new HashMap<>();
@@ -75,7 +76,7 @@ public class BusinessPermissionController extends BaseController<BusinessPermiss
 			BusinessObject bo = businessObjectManager.getFilledByKey(boKey);
 			boMap.put(boKey, bo);
 		}
-		writeSuccessData(response, boMap);
+		return getSuccessResult(boMap);
 	}
 
 	@Override

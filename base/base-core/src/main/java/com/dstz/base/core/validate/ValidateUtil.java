@@ -1,23 +1,23 @@
 package com.dstz.base.core.validate;
 
-import com.dstz.base.api.constant.BaseStatusCode;
-import com.dstz.base.api.exception.BusinessException;
-import com.dstz.base.api.exception.BusinessMessage;
-import com.dstz.base.core.util.StringUtil;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.dstz.base.api.constant.BaseStatusCode;
+import com.dstz.base.api.exception.BusinessMessage;
+import com.dstz.base.core.util.StringUtil;
 
 public class ValidateUtil {
     private static ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 
-    private static Log logger = LogFactory.getLog(ValidateUtil.class);
+    private final static Logger logger = LoggerFactory.getLogger(ValidateUtil.class);
 
     /**
      * @param o
@@ -25,7 +25,7 @@ public class ValidateUtil {
     public static void validate(Object o) {
         String msg = ValidateUtil.getValidateMsg(o);
         if (StringUtil.isNotEmpty(msg)) {
-            logger.info("参数拦截信息" + msg);
+            logger.info("参数拦截信息{}",msg);
             throw new BusinessMessage(msg, BaseStatusCode.PARAM_ILLEGAL);
         }
     }

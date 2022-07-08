@@ -2,13 +2,41 @@
 <html ng-app="base">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<link href="../../build/common/base.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/base.js"></script>
 		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 		<script type="text/javascript">
 			var controller = ['$scope','baseService',function(scope,baseService){
-				var instanceId = window.passData.instanceId;
-				var defId = window.passData.defId;
-				 $("#test").attr("src",__ctx+"/bpm/instance/flowImage?instId="+instanceId+"&defId="+defId);
+                var instanceId, defId;
+			    try{
+					instanceId = window.passData.instanceId;
+					defId = window.passData.defId;
+                }catch (e) {
+                    instanceId = $.getParam('instanceId');
+                    defId = $.getParam('defId');
+                }
+                $("#test").attr("src", __ctx + "/bpm/instance/flowImage?instId=" + instanceId + "&defId=" + defId);
+                
+                var defer = baseService.postForm(__ctx + "/bpm/instance/getInstanceAndChildren", {
+        			id : instanceId
+        		});
+        		$.getResultData(defer, function(data) {
+        			scope.bpmInstance = data.bpmInstance;
+         			scope.bpmInstanceChildren = data.bpmInstanceChildren;
+        		})
+        		
+        		scope.showImage = function(id,title){
+        			
+        			var conf = {title: title||"查看流程图",url:"/bpm/instance/instanceImageDialog.html?openedFlag=true&instanceId="+id,height:'95%',width:'80%',passData:null,topOpen:false};
+					conf.ok = function(index,innerWindow){
+						$.Dialog.close(innerWindow);
+					}
+					$.Dialog.open(conf);
+        		}
+        		
+        		if($.getParam('openedFlag')){
+        			scope.canotOpen = true;
+        		}
 			}];
 			
 			function isValidate(){
@@ -18,6 +46,10 @@
 		</script>
 	</head>
 	<body class="panel success" ng-controller="controller" style="overflow:auto;">
+		<button ng-hide="canotOpen"  class="btn btn-primary fa fa-image btn-xs" ng-if="bpmInstance.parentInstId" ng-click="showImage(bpmInstance.parentInstId)"> 查看父流程图</button>
+		<button  ng-hide="canotOpen"  class="btn btn-primary fa fa-image btn-xs"  ng-repeat="instance in bpmInstanceChildren" ng-click="showImage(instance.id,instance.subject+'流程图')" > 查看子流程 "{{instance.subject}}" 流程图</button>
+		
+		<br/>
 		<img id="test"/>
 	</body>
 </html>

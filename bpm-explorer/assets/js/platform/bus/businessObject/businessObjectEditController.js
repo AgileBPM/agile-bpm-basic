@@ -26,15 +26,27 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 				}
 			});
 		});
-
+		
+		ToolsController.getInterFaceImpls("com.dstz.bus.api.service.IBusinessDataPersistenceBeanService").then(function(data) {
+			$scope.$apply(function() {
+				$scope.IBusinessDataPersistenceBeanService = data;
+			});
+		});
+		baseService.get(__ctx + '/form/formCustDialog/microServiceSelector/exists').then(function (res) {
+			if(res.code === '200'){
+				$scope.isShowMicroServiceSelectorBtn = res.data;
+			}else{
+				$.Dialog.alert(res.msg, '2');
+			}
+		});
 		$scope.data = {};
 		$scope.data.relation = {};
 	};
-	
+
 	$scope.$on("afterSaveEvent", function(event, data) {
 		if (!data.r) {
 			$.Dialog.close(window);
-		}else{
+		} else {
 			window.location.reload();
 		}
 	});
@@ -45,6 +57,17 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 		angular.forEach($scope.data.relation.children, function(item) {
 			$scope.addTableDetail(item.tableKey);
 		});
+		if ($scope.data.persistenceType == "http") {
+			$scope.data.perTypeConfig = angular.fromJson($scope.data.perTypeConfig);
+		}
+	});
+
+	$scope.$on("beforeSaveEvent", function(event, data) {
+		if (!$scope.data.relation.children) {
+			data.pass = false;
+			jQuery.Toast.error("请先选择主业务表");
+			return;
+		}
 	});
 
 	/**
@@ -66,6 +89,22 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 				$scope.data.relation.tableComment = data[0].comment;
 				// 选择主表后、将子表全部置为空数组
 				$scope.data.relation.children = [];
+			});
+		}, initData, {
+			multiple : false
+		}, true);
+	};
+
+	$scope.selectMicroServices = function () {
+		var initData = {
+			'serviceId': $scope.data.perTypeConfig
+		};
+		CustUtil.openCustDialog("microServiceSelector", null, function(data) {
+			if (data.length < 1) {
+				return;
+			}
+			$scope.$apply(function() {
+				$scope.data.perTypeConfig = data[0].serviceId;
 			});
 		}, initData, {
 			multiple : false

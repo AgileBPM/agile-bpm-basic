@@ -12,7 +12,6 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dstz.base.core.util.BeanUtils;
 import com.dstz.base.core.util.StringUtil;
 import com.dstz.base.manager.impl.BaseManager;
 import com.dstz.org.api.model.IGroup;
@@ -22,6 +21,8 @@ import com.dstz.sys.core.dao.SysAuthorizationDao;
 import com.dstz.sys.core.manager.SysAuthorizationManager;
 import com.dstz.sys.core.model.SysAuthorization;
 import com.dstz.sys.util.ContextUtil;
+
+import cn.hutool.core.collection.CollectionUtil;
 
 
 @Service("sysAuthorizationManager")
@@ -39,14 +40,14 @@ public class SysAuthorizationManagerImpl extends BaseManager<String, SysAuthoriz
      */
     @Override
     public Set<String> getUserRights(String userId) {
-        List<IGroup> list = userGroupService.getGroupsByUserId(userId);
+        List<? extends IGroup> list = userGroupService.getGroupsByUserId(userId);
 
         Set<String> rights = new HashSet<String>();
         rights.add(String.format("%s-%s", userId, SysAuthorization.RIGHT_TYPE_USER));
         rights.add(String.format("%s-%s", SysAuthorization.RIGHT_TYPE_USER, SysAuthorization.RIGHT_TYPE_ALL));
 
 
-        if (BeanUtils.isEmpty(list)) return rights;
+        if (CollectionUtil.isEmpty(list)) return rights;
 
         for (IGroup group : list) {
             rights.add(String.format("%s-%s", group.getGroupId(), group.getGroupType()));

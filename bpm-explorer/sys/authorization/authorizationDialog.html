@@ -2,7 +2,8 @@
 <html ng-app="app">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>授权</title>
-	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 	
 	<head>
@@ -125,7 +126,7 @@
 							<th>岗位:</th>
 							<td>
 								<span ng-repeat="rights in rightsList |filter:{rightsType:'post'}" class="label label-danger"> {{rights.rightsIdentityName}}</span>
-								<span class="btn  btn-sm btn-primary fa  ng-scope" ng-click="selectIdentitys('post','postSelector')">选择</span>							</td>								
+								<span class="btn  btn-sm btn-primary fa  ng-scope" ng-click="selectIdentitys('post','postSelector','name','postId')">选择</span>							</td>								
 						</tr>
 
 						<tr id="orgTr" ng-if="!isAll">								

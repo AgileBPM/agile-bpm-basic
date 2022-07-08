@@ -66,4 +66,15 @@ public interface IBusinessDataService {
 	 * @param businessData
 	 */
 	JSONObject assemblyFormDefData(IBusinessData businessData);
+	
+	/**
+	 * <pre>
+	 * 加载数据
+	 * </pre>	
+	 * @param businessObject
+	 * @param id
+	 * @param init	当id为空时是否需要初始化数据
+	 * @return
+	 */
+	IBusinessData loadData(IBusinessObject businessObject, Object id, boolean init);
 }

@@ -1,6 +1,8 @@
 package com.dstz.bus.api.constant;
+
 /**
- * <pre> 
+ * <pre>
+ *  
  * 描述：BusinessObject中PersistenceType属性的枚举
  * 作者:aschs
  * 邮箱:aschs@qq.com
@@ -12,11 +14,19 @@ public enum BusinessObjectPersistenceType {
 	/**
 	 * 数据库
 	 */
-	DB("db", "数据库"), 
+	DB("db", "数据库"),
 	/**
-	 * 实例表
+	 * 远程http
 	 */
-	INST("inst", "实例表-暂不支持");
+	HTTP("http", "远程http -基础版不支持"),
+	/**
+	 * ServiceBean
+	 */
+	BEAN("bean", "ServiceBean -基础版不支持"),
+	/**
+	 * Feign接口
+	 */
+	FEIGN("feign", "Feign接口 -基础版不支持");
 	private String key;
 	private String desc;
 
@@ -32,11 +42,12 @@ public enum BusinessObjectPersistenceType {
 	public String getDesc() {
 		return desc;
 	}
-	
+
 	/**
 	 * <pre>
 	 * 根据key来判断是否跟当前一致
 	 * </pre>
+	 * 
 	 * @param key
 	 * @return
 	 */

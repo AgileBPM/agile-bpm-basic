@@ -1,11 +1,11 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <link href="../../build/common/codeMirror.css" rel="stylesheet">
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../build/common/codeMirror.js"></script>
-<script type="text/javascript" src="../../assets/js/platform/bus/businessObject/editAndDialogCommon.js"></script>
 
 <script type="text/javascript">
 	var app = angular.module('app', [ 'baseDirective', 'ui.codemirror' ]);
@@ -57,7 +57,19 @@
 
 		//权限配置用自定义对话框的弹框js
 		$scope.custDialog = function(permission, dialogKey) {
-			CustUtil.openCustDialog(dialogKey, function(data, innerWindow) {
+			var initData = [];
+			if ($scope.data[permission.type]) {
+				var ns = $scope.data[permission.type].desc.match(/\[(\S*)\]/)[1].split(",");
+				var is = $scope.data[permission.type].id.split(",");
+				angular.forEach(is, function(i, index) {
+					initData.push({
+						id : is[index],
+						name : ns[index]
+					});
+				});
+			}
+
+			CustUtil.openCustDialog(dialogKey, null, function(data, innerWindow) {
 				var json = {};
 				json.type = permission.type;
 				var ids = [];
@@ -72,6 +84,8 @@
 					$scope.data[json.type] = json;
 				});
 				$.Dialog.close();
+			}, initData, {
+				multiple : true
 			});
 		};
 

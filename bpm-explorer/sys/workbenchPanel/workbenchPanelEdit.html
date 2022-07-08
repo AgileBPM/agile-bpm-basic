@@ -2,32 +2,22 @@
 <html ng-app="app">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<link href="../../build/common/base.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/base.js"></script>
 		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 		<script type="text/javascript">
 
 		var app = angular.module('app', ['baseDirective',]);
 		app.controller("ctrl", [ '$scope', 'baseService', function($scope, baseService) {
 			
-			$scope.selectQuery = function(){
-				CustomDialog.openCustomDialog('custQueryDialog',function(data,dialog){
-					$scope.$apply(function(){
-						$scope.data.dataSource = data[0].alias;
-					})
-				    dialog.dialog('close');
-				},{selectNum:1});
-			}
-			
-			
 			$scope.selectTemp = function(){
-				CustomDialog.openCustomDialog('workbenchPanelTempl',function(data,dialog){
+				CustUtil.openCustDialog("workbenchPanelTempl",function(arrData,innerWindow){
 					$scope.$apply(function(){
-						$scope.data.type = data[0].key;
-						
-						$scope.data.displayContent = data[0].html.replaceAll("data-alias",$scope.data.alias);
+						$scope.data.type = arrData[0].key;
+						$scope.data.displayContent = arrData[0].html.replaceAll("data-alias",$scope.data.alias);
 					})
-				    dialog.dialog('close');
-				},{selectNum:1});
+				    $.Dialog.close(innerWindow);
+				},{selectNum:1})
 			}
 			
 			$scope.preview = function(){
@@ -84,7 +74,7 @@
 									<input class="form-control" type="text" ng-model="data.dataSource" style="width: 300px" ab-validate="{required:false,maxlength:765}"  />
 									<p class="text-muted" ng-if="data.dataType=='interface'">spring 环境中 service接口 eg:userService.getUserInfo</p>
 									<p class="text-muted" ng-if="data.dataType=='iframe'">填写一个系统URL连接，可以忽略展示内容，若以http开头则不会添加ctx信息</p>
-									<a class="btn btn-primary" ng-if="data.dataType=='custQuery'" ng-click="selectQuery()"><span>选择</span></a>
+									<!-- <a class="btn btn-primary" ng-if="data.dataType=='custQuery'" ng-click="selectQuery()"><span>选择</span></a> -->
 								</td>								
 							</tr>
 							<tr>								

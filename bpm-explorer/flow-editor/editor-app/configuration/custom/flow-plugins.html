@@ -1,5 +1,6 @@
 <div class="form-inline" ng-controller="FlowPluginsController" style="height:97%">
-	<div class="panel  panel-default inline {{plugin.row}}" ng-repeat="plugin in pluginList" ng-if="plugin.supprotType.indexOf(selectedItem.nodeType)!=-1">
+	<div class="panel  panel-default inline {{plugin.row}}" ng-repeat="plugin in pluginList" 
+				ng-if="plugin.supprotType.indexOf(selectedItem.nodeType)!=-1" ng-show="pluginHasPermission(plugin.pluginKey)">
 		  <div class="toolbar-head">{{plugin.name}}</div>
 		  <div class="panel-body">
 		  	<div dynamic-directive="bpm-{{plugin.key}}:''">
@@ -7,7 +8,31 @@
 		  	</div>
 		  </div>
 	</div>
+	
+	
+	<div class="selected-item-body" ng-if="'BoundaryTimerEvent,CatchTimerEvent,ServiceTask,StartTimerEvent'.indexOf(selectedItem.nodeType)!=-1">
+	     <div>{{selectedItem.nodeType}}
+	          <div class="property-row" ng-repeat="property in selectedItem.properties" ng-hide="'oryx-documentation,oryx-process_id,oryx-name,oryx-overrideid,oryx-namepackage,oryx-name'.indexOf(property.key)!=-1"
+	             ng-click="propertyClicked($index)" ng-class="{'clear' : $index%2 == 0}">
+	             <span class="title" ng-if="!property.hidden">{{ property.title }}&nbsp;:</span>
+	             <span class="title-removed" ng-if="property.hidden"><i>{{ property.title }}&nbsp;({{'PROPERTY.REMOVED' | translate}})&nbsp;:</i></span>
+	             <span class="value"> 
+	                 <ng-include
+	                     src="getPropertyTemplateUrl($index)" ng-if="!property.hasReadWriteMode"></ng-include>
+	                 <ng-include src="getPropertyReadModeTemplateUrl($index)"
+	                     ng-if="property.hasReadWriteMode && property.mode == 'read'"></ng-include>
+	                 <ng-include src="getPropertyWriteModeTemplateUrl($index)"
+	                     ng-if="property.hasReadWriteMode && property.mode == 'write'"></ng-include>
+	             </span>
+	         </div>
+	     </div>
+	 </div>	
+	
 </div>
+
+
+
+
 <style>
 
  .toolbar-head{

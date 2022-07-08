@@ -2,34 +2,38 @@ var app = angular.module("app", [ 'base', 'baseDirective' ]);
 app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter', function($scope, baseService, ArrayToolService, $filter) {
 	var filter = $filter('filter');
 	$scope.ArrayTool = ArrayToolService;
-	
-	var type = formType ? formType : "pc";
-	var ifremeCssUrl = type==='pc' ? '../../assets/js/plugins/ueditor/themes/pcframe.css' : '../../assets/js/plugins/ueditor/themes/mobileFormIframe.css';
-	
+
+	var ifremeCssUrlMap = {
+		"pc" : '../../assets/js/plugins/ueditor/themes/pcframe.css',
+		"pc_vue" : '../../assets/js/plugins/ueditor/themes/pcframe.css',
+		"mobile" : '../../assets/js/plugins/ueditor/themes/mobileFormIframe.css',
+		"pc_iview" : '../../assets/iview/css/iview.css',
+	};
+
 	$scope.init = function() {
 		// uedtor的配置
 		$scope.editorConfig = {
-			toolbars : [ [ 'source', 'undo', 'redo', 'bold', 'italic', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', '|', 'selectTemplate' ] ],
+		//	toolbars : [ [ 'source', 'undo', 'redo', 'bold', 'italic', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', '|', 'selectTemplate' ] ],
 			initialFrameHeight : window.innerHeight - 260,
 			enableAutoSave : false,
 			autoHeightEnabled : false,
 			allHtmlEnabled : true,
 			focus : true,
-			iframeCssUrl : ifremeCssUrl,// 加入css
+			iframeCssUrl : ifremeCssUrlMap[formType],// 加入css
 		};
 	};
 
 	$scope.$on("afterLoadEvent", function(event, data) {
-		$scope.data.type = type;
+		$scope.data.type = formType;
 	});
-	
+
 	$scope.$on("afterSaveEvent", function(event, data) {
-		if(window.opener && window.opener.reloadGrid){
+		if (window.opener && window.opener.reloadGrid) {
 			window.opener.reloadGrid();
 		}
 		if (!data.r) {
 			window.close();
-		}else{
+		} else {
 			window.location.reload();
 		}
 	});
@@ -37,11 +41,27 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 	/**
 	 * 预览
 	 */
-	$scope.preview = function() {
+	$scope.preview = function(isBlank) {
+		var previewUrlMap = {
+			"pc" : 'formDefPreview.html',
+			"pc_vue" : 'vueFormDefPreview.html',
+			"pc_iview" : window.__ctx_pc_iview + '/#/bpm/form/preview',
+			"mobile" : window.__ctx_mb + '/#/bpm/preview',
+		};
+
+		if (!previewUrlMap[formType]) {
+			$.Dialog.alert(formType + "类型表单暂不支持预览");
+			return;
+		}
+		if(isBlank){
+			window.open(previewUrlMap[formType] + "?key=" + $scope.data.key,"_blank");
+			return ;
+		}
+
 		var conf = {
 			height : 0,
 			title : "预览",
-			url : "formDefPreview.html?key=" + $scope.data.key,
+			url : previewUrlMap[formType] + "?key=" + $scope.data.key,
 			passData : {
 				html : $scope.data.html
 			}
@@ -88,12 +108,11 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 	/**
 	 * 选择模板
 	 */
-	$scope.selectTemplate = function(type) {
-		if(!type)type="pc";
+	$scope.selectTemplate = function() {
 		var conf = {
 			height : 600,
 			width : 800,
-			url : "/form/formDef/selectTemplate.html?type="+type,// url不为空则使用iframe类型对话框
+			url : "/form/formDef/selectTemplate.html?type=" + formType,
 			title : "选择模板",
 			topOpen : true,
 			btn : true,

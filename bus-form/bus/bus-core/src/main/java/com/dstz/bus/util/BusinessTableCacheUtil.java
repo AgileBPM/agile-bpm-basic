@@ -3,6 +3,7 @@ package com.dstz.bus.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dstz.base.core.cache.ICache;
 import com.dstz.base.core.util.AppUtil;
 import com.dstz.bus.model.BusinessTable;
 
@@ -23,19 +24,27 @@ public class BusinessTableCacheUtil {
 	}
 
 	public static void put(BusinessTable businessTable) {
-		Map<String, BusinessTable> map = (Map<String, BusinessTable>) AppUtil.getCache().getByKey(businessTableMap);
+		Map<String, BusinessTable> map = (Map<String, BusinessTable>) AppUtil.getBean(ICache.class).getByKey(businessTableMap);
 		if (map == null) {
 			map = new HashMap<>();
 		}
 		map.put(businessTable.getKey(), businessTable);
-		AppUtil.getCache().add(businessTableMap, map);
+		AppUtil.getBean(ICache.class).add(businessTableMap, map);
 	}
 
 	public static BusinessTable get(String key) {
-		Map<String, BusinessTable> map = (Map<String, BusinessTable>) AppUtil.getCache().getByKey(businessTableMap);
+		Map<String, BusinessTable> map = (Map<String, BusinessTable>) AppUtil.getBean(ICache.class).getByKey(businessTableMap);
 		if (map == null) {
 			return null;
 		}
 		return map.get(key);
+	}
+
+	public static void clean() {
+		Map<String, BusinessTable> map = (Map<String, BusinessTable>) AppUtil.getBean(ICache.class).getByKey(businessTableMap);
+		if (map == null) {
+			return;
+		}
+		map.clear();
 	}
 }

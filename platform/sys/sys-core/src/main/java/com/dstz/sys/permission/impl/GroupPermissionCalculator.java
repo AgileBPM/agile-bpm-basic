@@ -27,14 +27,14 @@ public abstract class GroupPermissionCalculator implements IPermissionCalculator
 	
 	@Override
 	public boolean haveRights(JSONObject json) {
-		Map<String, List<IGroup>> allGroup = (Map<String, List<IGroup>>) ThreadMapUtil.get(threadMapKey);
+		Map<String, List<? extends IGroup>> allGroup = (Map<String, List<? extends IGroup>>) ThreadMapUtil.get(threadMapKey);
 		if(allGroup ==null) {
 			GroupService groupService = AppUtil.getBean(GroupService.class);
 			allGroup = groupService.getAllGroupByUserId(ContextUtil.getCurrentUserId());
 			ThreadMapUtil.put(threadMapKey, allGroup);
 		}
 		
-		List<IGroup> groups;
+		List<? extends IGroup> groups;
 		if("post".equals(this.getType())) {//岗位的命名不一致
 			groups = allGroup.get("position");
 		}else {

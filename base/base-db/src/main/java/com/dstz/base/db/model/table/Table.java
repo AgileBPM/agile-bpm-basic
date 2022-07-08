@@ -90,7 +90,7 @@ public class Table<C extends Column> implements Serializable{
 			return null;
 		}
 		for (C c : columns) {
-			if (name.equals(c.getName())) {
+			if (name.equalsIgnoreCase(c.getName())) {
 				return c;
 			}
 		}

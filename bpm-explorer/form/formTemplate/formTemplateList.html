@@ -2,7 +2,8 @@
 <head>
 <title>表单模板</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/gridList.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/gridList.js"></script>
 
 <script type="text/javascript">
@@ -56,7 +57,7 @@
 				<th data-field="key">别名</th>
 				<th data-field="name">名称</th>
 				<th data-field="formType">表单类型</th>
-				<th data-field="type" data-formatter="labelFormatter"  data-value-style="main-主表-primary,subTable-子表-info,">模板类型</th>
+				<th data-field="type" data-formatter="labelFormatter"  data-value-style="main-主表-primary,subTable-子表-info,mainFormOverallArrangement-主表[布局版]-success,subTableFormOverallArrangement-子表[布局版]-success,">模板类型</th>
 				<th data-formatter="innerHtmlFormatter" data-title="管理">
 					<span class='btn btn-outline btn-primary fa-edit' openDialog='编辑' qtip='编辑' url='./formTemplateEdit.html?id={id}'></span>
 					<span class='btn btn-outline btn-primary fa  fa-trash' sendAction='删除' qtip='删除' if="{editable}" url='/form/formTemplate/remove?id={id}'></span>

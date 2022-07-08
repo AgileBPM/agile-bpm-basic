@@ -81,3 +81,28 @@ ToolsController.getInterFaceImpls = function(classPath) {
 	});
 	return deferred.promise();
 };
+
+/**
+ * 得到当前时间
+ *
+ * @param format 格式化
+ */
+ToolsController.getCurrentTime = function (format) {
+	var currentTime = null;
+	$.ajax({
+		url: __ctx + '/sys/tools/getCurrentTime',
+		type: 'POST',
+		data: {'format': format},
+		dataType: 'json',
+		async: false,
+		success: function (data) {
+			if(data.isOk){
+				currentTime = data['data'];
+			}
+		}
+	});
+	if (!currentTime) {
+		throw "请求出错，请检查格式及服务器是否正常"
+	}
+	return currentTime;
+};

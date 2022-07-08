@@ -17,7 +17,11 @@ public enum FormTemplateType {
 	/**
 	 * 子表模板
 	 */
-	SUB_TABLE("subTable", "子表模板")
+	SUB_TABLE("subTable", "子表模板"),
+	
+	MAIN_OVERALLARRANGEMENT("mainFormOverallArrangement", "主表[布局版]"),
+	
+	SUB_OVERALLARRANGEMENT("subTableFormOverallArrangement", "子表[布局版]")
 	;
 	/**
 	 * key

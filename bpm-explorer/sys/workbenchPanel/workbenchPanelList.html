@@ -2,7 +2,8 @@
 <head>
 <title>工作台面板</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/gridList.js"></script>
 </head>
 <body class="panel-body">
@@ -33,7 +34,6 @@
 		<div class="btn-group toolbar">
 			<a class="btn btn-outline btn-primary fa-plus" openDialog="添加面板" url="workbenchPanelEdit" href="javascript:void(0)">新增 </a>
 			<button class="btn btn-outline btn-primary fa-detail" openDialog="默认布局设置" url="/sys/workbenchPanel/myWorkbench.html?layoutKey=default_layout" top="true">设置默认工作台布局</button>
-			<button class="btn btn-outline btn-primary fa-remove">删除</button>
 		</div>
 		<table ab-grid data-id-field="id" data-url="sys/workbenchPanel/listJson">
 			<thead>

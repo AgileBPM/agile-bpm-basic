@@ -47,6 +47,40 @@
             ORDER BY id_ DESC
         </if>
     </select>
+    
+    <select id="queryWithBo" parameterType="java.util.Map" resultType="java.util.HashMap">
+        SELECT a.id_ id,a.type_ type,a.key_ 'key',a.name_ 'name',a.desc_ 'desc',a.group_id_ groupId,a.group_name_ groupName,
+        a.bo_key_ boKey,a.bo_name_ boName,a.create_time_ createTime,a.create_by_ createBy,a.update_time_ updateTime,a.update_by_ updateBy,
+        a.version_ version,a.delete_ 'delete',b.persistence_type_ persistenceType FROM form_def a inner join bus_object b on a.bo_key_ = b.key_
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY a.id_ DESC
+        </if>
+    </select>
+    
+    <select id="queryWithBo" parameterType="java.util.Map" resultType="java.util.HashMap" databaseId="oracle">
+        SELECT a.id_ "id",a.type_ "type",a.key_ "key",a.name_ "name",a.desc_ "desc",a.group_id_ "groupId",a.group_name_ "groupName",
+        a.bo_key_ "boKey",a.bo_name_ "boName",a.create_time_ "createTime",a.create_by_ "createBy",a.update_time_ "updateTime",a.update_by_ "updateBy",
+        a.version_ "version",a.delete_ "delete",b.persistence_type_ "persistenceType" FROM form_def a inner join bus_object b on a.bo_key_ = b.key_
+        <where>
+            <if test="whereSql!=null">
+                ${whereSql}
+            </if>
+        </where>
+        <if test="orderBySql!=null">
+            ORDER BY ${orderBySql}
+        </if>
+        <if test="orderBySql==null">
+            ORDER BY a.id_ DESC
+        </if>
+    </select>
 
     <update id="update" parameterType="com.dstz.form.model.FormDef">
 		UPDATE form_def SET

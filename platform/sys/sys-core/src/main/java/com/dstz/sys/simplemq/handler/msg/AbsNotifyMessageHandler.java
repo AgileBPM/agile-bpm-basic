@@ -14,15 +14,26 @@ import java.io.Serializable;
  */
 public abstract class AbsNotifyMessageHandler<T extends Serializable> implements JmsHandler<T> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbsNotifyMessageHandler.class);
+	protected static final Logger LOGGER = LoggerFactory.getLogger(AbsNotifyMessageHandler.class);
 
-
+	/**
+	 * 消息类型名
+	 * @return
+	 */
 	public abstract String getTitle();
 
+	/**
+	 * 是否默认选中
+	 * @return
+	 */
 	public boolean getIsDefault() {
 		return false;
 	}
-
+	
+	/**
+	 * 是否支持 HTML 内容
+	 * @return
+	 */
 	public boolean getSupportHtml() {
 		return true;
 	}
@@ -33,7 +44,12 @@ public abstract class AbsNotifyMessageHandler<T extends Serializable> implements
 		 // 日志记录一下？？？
 		 return  sendMessage(message.getData());
 	 }
-
+	 
+	 /**
+	  * 发送消息处理器具体实现 不同消息的发送
+	  * @param data
+	  * @return
+	  */
 	 public abstract boolean sendMessage(T data);
 
 }

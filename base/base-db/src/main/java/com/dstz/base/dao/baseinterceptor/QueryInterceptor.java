@@ -21,6 +21,8 @@ import com.dstz.base.api.query.FieldSort;
 import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.core.util.BeanUtils;
 import com.github.pagehelper.PageHelper;
+
+import cn.hutool.core.util.ArrayUtil;
 /**
  * 查询的切面逻辑
  * @author Jeff
@@ -37,7 +39,7 @@ public class QueryInterceptor  implements Interceptor{
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		Object[] args = invocation.getArgs();
-		if(BeanUtils.isEmpty(args) || args.length < 2) {
+		if(ArrayUtil.isEmpty(args) || args.length < 2) {
 			 return invocation.proceed();
 		}
 		

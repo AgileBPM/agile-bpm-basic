@@ -12,11 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.dstz.base.core.util.BeanUtils;
 import com.dstz.base.db.dboper.DbOperator;
 import com.dstz.base.db.dboper.DbOperatorFactory;
 import com.dstz.base.db.model.table.Column;
 import com.dstz.base.db.model.table.Table;
+
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
  * <pre>
@@ -205,7 +206,7 @@ public abstract class TableOperator {
 	 */
 	public void updateData(Map<String, Object> data) {
 		Object id = data.get(table.getPkColumn().getName());
-		if (BeanUtils.isEmpty(id)) {
+		if (id == null) {
 			throw new RuntimeException("操作更新表[" + table.getComment() + "(" + table.getName() + ")]时，参数中有没主键[" + table.getPkColumn().getComment() + "(" + table.getPkColumn().getName() + ")]");
 		}
 
@@ -293,7 +294,7 @@ public abstract class TableOperator {
 	 */
 	public List<Map<String, Object>> selectData(List<String> columnName, Map<String, Object> param) {
 		StringBuilder sql = new StringBuilder();
-		if (BeanUtils.isEmpty(columnName)) {
+		if (CollectionUtil.isEmpty(columnName)) {
 			sql.append("SELECT * FROM " + table.getName());
 		} else {
 			sql.append("SELECT");
@@ -331,8 +332,9 @@ public abstract class TableOperator {
 		if (!isTableCreated()) {
 			return;
 		}
-		Set<String> dbColumnNames = new HashSet<>();//数据库中存在的字段名
-		for (Column c : getDbTable().getColumns()) {
+		Set<String> dbColumnNames = new HashSet<>();// 数据库中存在的字段名
+		Table<Column> dbTable = getDbTable();
+		for (Column c : dbTable.getColumns()) {
 			dbColumnNames.add(c.getName());
 		}
 
@@ -343,16 +345,24 @@ public abstract class TableOperator {
 		}
 
 		for (Column column : table.getColumns()) {
-			if (!dbColumnNames.contains(column.getName())) {// 结构有，数据库表内没有，增加
+			boolean exits = false;
+			for (String columnName : dbColumnNames) {
+				if (columnName.equalsIgnoreCase(column.getName())) {
+					exits = true;
+					break;
+				}
+			}
+			if (!exits) {// 结构有，数据库表内没有，增加
 				addColumn(column);
+			} else if (!dbTable.getColumn(column.getName()).equals(column)) {
+				updateColumn(column);// 更新一遍结构
 			}
 		}
-
 	}
 
 	public Table<Column> getDbTable() {
 		DbOperator dbOperator = DbOperatorFactory.newOperator(type(), jdbcTemplate);
 		return dbOperator.getTable(table.getName());
 	}
-	
+
 }

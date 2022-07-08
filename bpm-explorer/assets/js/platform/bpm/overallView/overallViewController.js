@@ -8,7 +8,8 @@ overallViewApp.controller("overallViewController", [ '$scope', 'baseService', 'A
 			var param = {defId:defId};
 			var defer = baseService.postForm(__ctx+"/bpm/overallView/getOverallView",param);
 			$.getResultData(defer,function(data){
-				$scope.overallView = data;
+					$scope.overallView = data;  
+					$scope.defSetting = $scope.overallView.defSetting;
 			});
 		}
 		if(defId){
@@ -38,7 +39,7 @@ overallViewApp.controller("overallViewController", [ '$scope', 'baseService', 'A
 				overallViewList.push(obj);
 			}
 			if(overallViewList.length==0){
-				$.Dialog.error("要上传的数据不存在！,请先导入合法的流程定义文件");
+				$.Dialog.error("要上传的数据不存在！请先导入合法的流程定义文件");
 				return;
 			}
 			
@@ -114,8 +115,8 @@ overallViewApp.controller("overallViewController", [ '$scope', 'baseService', 'A
 		
 		$scope.getIsSame = function(newObj,oldObj,path){
 			try {
-				var newVal = eval("newObj."+path);
-				var oldVal = eval("oldObj."+path);
+				var newVal = newObj ? eval("newObj."+path):"";
+				var oldVal =  newObj ? eval("oldObj."+path):"";
 				
 				if(typeof  newVal == "string"){
 					newVal = newVal.trim();

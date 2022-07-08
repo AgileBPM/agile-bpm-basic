@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:p="http://www.springframework.org/schema/p"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
@@ -9,24 +8,33 @@
 
     <!-- 缓存配置实现 -->
     <!-- com.dstz.sys.redis.RedisCache  可切换为redis 的实现-->
-    <bean id="iCache" class="com.dstz.base.core.cache.impl.MemoryCache"/>
+<!--    <bean id="iCache" class="com.dstz.base.core.cache.impl.MemoryCache"/>-->
 
-    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
-        <property name="maxIdle" value="${redis.maxIdle}"/>
-        <property name="maxTotal" value="${redis.maxActive}"/>
-        <property name="maxWaitMillis" value="${redis.maxWait}"/>
-        <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+	<!-- jwtService -->
+	<bean id="jWTService" class="com.dstz.base.core.jwt.JWTService"/>
+
+    <bean id="lettuceConnectionFactory" class="org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory">
+        <constructor-arg index="0">
+            <bean class="org.springframework.data.redis.connection.RedisStandaloneConfiguration">
+                <property name="hostName" value="${redis.host}"/>
+                <property name="port" value="${redis.port}"/>
+                <property name="password" value="#{T(org.springframework.data.redis.connection.RedisPassword).of('${redis.pass}')}"/>
+                <property name="database" value="${redis.database.bpm}"/>
+            </bean>
+        </constructor-arg>
     </bean>
 
-    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-          p:host-name="${redis.host}" p:port="${redis.port}" p:password="${redis.pass}"
-          p:database="${redis.database.bpm}" p:pool-config-ref="poolConfig"/>
-
     <bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+    <bean id="fstRedisSerializer" class="com.dstz.base.core.spring.FstRedisSerializer" />
 
     <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
-        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="connectionFactory" ref="lettuceConnectionFactory"/>
         <property name="keySerializer" ref="stringRedisSerializer"/>
+        <property name="valueSerializer" ref="fstRedisSerializer" />
+    </bean>
+
+    <bean id="redisMessageListenerContainer" class="org.springframework.data.redis.listener.RedisMessageListenerContainer">
+        <property name="connectionFactory" ref="lettuceConnectionFactory" />
     </bean>
 
     <import resource="sys-mq-redis.xml"/>
@@ -46,4 +54,5 @@
             <bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy"/>
         </property>
     </bean>
+
 </beans>

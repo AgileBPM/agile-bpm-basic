@@ -1,44 +1,45 @@
 package com.dstz.base.core.spring;
 
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertiesPropertySource;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * 系统配置属性
  * TODO 支持加密、支持不同环境配置
  */
-public class CustPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements IProperty{
+public class CustPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements IProperty, EnvironmentAware {
 
-    /**
-     * 属性key,value
-     */
-    private static Map<String, String> properties;
+    private Environment environment;
 
-    public CustPropertyPlaceholderConfigurer() {
-        properties = new HashMap<String, String>();
-    }
-
-    /**
-     *
-     */
+    @Override
     protected void convertProperties(Properties props) {
-        Set<String> keys = props.stringPropertyNames();
-        for (String key : keys) {
-            String value = props.getProperty(key);
-            properties.put(key, value);
+        ConfigurableEnvironment configurableEnvironment = (ConfigurableEnvironment) environment;
+        Properties newProperties = new Properties();
+        for (Map.Entry<Object, Object> propEntry : props.entrySet()) {
+            if (!configurableEnvironment.containsProperty(String.valueOf(propEntry.getKey()))) {
+                newProperties.put(propEntry.getKey(), propEntry.getValue());
+            }
         }
+        configurableEnvironment.getPropertySources().addLast(new PropertiesPropertySource("agilebpm", newProperties));
         super.convertProperties(props);
     }
 
     /**
      * 根据建获取属性中的值。
      */
+    @Override
     public String getValue(String key) {
-        return properties.get(key);
+        return environment.getProperty(key);
     }
 
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
 }

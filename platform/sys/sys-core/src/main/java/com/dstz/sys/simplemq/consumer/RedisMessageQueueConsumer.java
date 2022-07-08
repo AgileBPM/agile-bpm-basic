@@ -3,6 +3,7 @@ package com.dstz.sys.simplemq.consumer;
 import cn.hutool.core.thread.ThreadFactoryBuilder;
 import com.dstz.sys.api.jms.constants.JmsDestinationConstant;
 import com.dstz.sys.api.jms.model.JmsDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -21,6 +22,11 @@ import java.util.concurrent.TimeUnit;
 public class RedisMessageQueueConsumer extends AbstractMessageQueue implements DisposableBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisMessageQueueConsumer.class);
+
+    /**
+     * reidsTemplate 容器中名称
+     */
+    private String redisTemplateBeanName;
 
     /**
      * 处理消息核心线程数
@@ -56,6 +62,10 @@ public class RedisMessageQueueConsumer extends AbstractMessageQueue implements D
      * Redis队列监听器
      */
     private RedisQueueListener redisQueueListener;
+
+    public void setRedisTemplateBeanName(String redisTemplateBeanName) {
+        this.redisTemplateBeanName = redisTemplateBeanName;
+    }
 
     /**
      * 设置处理消息核心线程数
@@ -109,7 +119,11 @@ public class RedisMessageQueueConsumer extends AbstractMessageQueue implements D
     @Override
     protected void containerInitialCompleteAfter() {
         LOGGER.debug("初始化Redis消息队列处理");
-        this.messageQueue = getApplicationContext().getBean(RedisTemplate.class).boundListOps(JmsDestinationConstant.DEFAULT_NAME);
+        if (StringUtils.isEmpty(this.redisTemplateBeanName)) {
+            this.messageQueue = getApplicationContext().getBean(RedisTemplate.class).boundListOps(JmsDestinationConstant.DEFAULT_NAME);
+        } else {
+            this.messageQueue = getApplicationContext().getBean(redisTemplateBeanName, RedisTemplate.class).boundListOps(JmsDestinationConstant.DEFAULT_NAME);
+        }
         this.handleMessageThreadPool = new ThreadPoolExecutor(
                 handleMessageCoreThreadSize,
                 handleMessageMaxThreadSize,
@@ -139,7 +153,7 @@ public class RedisMessageQueueConsumer extends AbstractMessageQueue implements D
                 try {
                     jmsDTO = messageQueue.leftPop(listenInterval, TimeUnit.MILLISECONDS);
                 } catch (Exception e) {
-                    LOGGER.warn("监听Redis消息队列({})返回结果出错", e);
+                    LOGGER.warn("监听Redis消息队列({})返回结果出错", JmsDestinationConstant.DEFAULT_NAME, e);
                     continue;
                 }
                 if (jmsDTO == null) {

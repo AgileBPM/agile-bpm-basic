@@ -2,7 +2,8 @@
 <head>
 <title>自定义对话框</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/gridList.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/gridList.js"></script>
 </head>
 <body class="panel-body">
@@ -48,7 +49,7 @@
 				<th data-field="system" data-formatter="labelFormatter" data-val-text="{'true':'是','false':'否'}" data-val-style="{'false':'primary','true':'warning'}">系统内置</th>
 				<th data-formatter="innerHtmlFormatter" data-title="管理">
 					<span class='btn btn-outline btn-primary fa-edit' openDialog='编辑' qtip='编辑' url='./formCustDialogEdit.html?id={id}'></span>
-					<span class='btn btn-outline btn-primary fa  fa-trash' sendAction='删除' qtip='删除'  url='/form/formCustDialog/remove?id={id}'></span>
+					<span if="!{system}" class='btn btn-outline btn-primary fa  fa-trash' sendAction='删除' qtip='删除'  url='/form/formCustDialog/remove?id={id}'></span>
 					<span class='btn btn-outline btn-primary fa  fa-eye' qtip='预览对话框' onclick='CustUtil.openCustDialog("{key}")'></span>
 					<span class='btn btn-outline btn-primary fa  fa-search' qtip='预览查询' onclick='CustUtil.doCustQuery("{key}")'></span>
 				</th>

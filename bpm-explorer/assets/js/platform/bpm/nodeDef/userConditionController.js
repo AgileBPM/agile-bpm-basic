@@ -3,9 +3,9 @@ app.controller('userConditionCtrl', [ '$scope', 'baseService', 'ArrayToolService
 	$scope.ArrayTool = ArrayToolService;
 	$scope.nodeType = nodeType;
 	$scope.userCondition = {calcs:[],rule:""};
-	
 	if(window.passData){
-			$scope.userCondition=window.passData;
+			$scope.userCondition=window.passData.userCondition;
+			$scope.nodeList=window.passData.nodeList;
 	}
 	
 	var post = ToolsController.getInterFaceImpls("com.dstz.bpm.api.engine.plugin.context.UserCalcPluginContext").then(function(data){
@@ -117,7 +117,7 @@ app.controller('userConditionCtrl', [ '$scope', 'baseService', 'ArrayToolService
 	
 	function scriptSelector(calc){
 		var url='/bpm/definition/definitionScriptDialog.html?defId='+defId+'&nodeId='+nodeId;
-		var  passData ={script:calc.script,desc:calc.description||"",notice:"此脚本返回人员集合 Set<String> ids"};
+		var  passData ={script:calc.script,desc:calc.description||"",notice:"此脚本返回人员集合 Set<SysIdentity>"};
 		
 		$.Dialog.open({url:url,width:840,height:530,title:"事件脚本设置　"+nodeId,passData:passData,topOpen:true,
 			ok:function(index, innerWindow){
@@ -144,7 +144,9 @@ function getData(){
 	 }
 	 
 	 for(var i=0,calc;calc =userCondition.calcs[i++];){
-		 if(!calc.description && calc.pluginType!='approver') {
+		 if(calc.nodeId && !calc.description){calc.description =calc.nodeId };
+		 
+		 if(!calc.description && calc.pluginType!='approver' ) {
 			 jQuery.Dialog.warning("请完善人员配置！");
 			 return false;
 		 }

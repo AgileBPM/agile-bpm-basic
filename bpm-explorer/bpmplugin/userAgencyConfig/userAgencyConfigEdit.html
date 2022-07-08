@@ -1,0 +1,167 @@
+<html ng-app="app">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="../../build/common/base.css" rel="stylesheet">
+    <script type="text/javascript" src="../../build/common/base.js"></script>
+    <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+    <script type="text/javascript" src="../../build/common/ngEdit-ori.js"></script>
+
+    <script type="text/javascript">
+        var id = $.getParam("id");
+
+        var app = angular.module('app', ['baseDirective']);
+        app.controller("ctrl", ['$scope', 'baseService', 'ArrayToolService', function ($scope, baseService, ArrayToolService) {
+            $scope.ArrayTool = ArrayToolService;
+            $scope.data = $scope.data || {};
+            $scope.$on('afterLoadEvent', function (event, data) {
+                $scope.init();
+            });
+
+            $scope.init = function () {
+                if ($scope.data) {
+                    if ($scope.data.agencyFlowKey) {
+                        var a = $scope.data.agencyFlowKey.split(',');
+                        var b = $scope.data.agencyFlowName.split(',');
+                        $scope.data.flowList = [];
+                        for (var i = 0, l = a.length; i < l; i++) {
+                            if (!a[i]) continue;
+                            $scope.data.flowList.push({
+                                'key': a[i],
+                                'name': b[i]
+                            });
+                        }
+                    }
+                    if ($scope.data.targetUserId) {
+                        var a = $scope.data.targetUserId.split(',');
+                        var b = $scope.data.targetUserName.split(',');
+                        $scope.data.userList = [];
+                        for (var i = 0, l = a.length; i < l; i++) {
+                            if (!a[i]) continue;
+                            $scope.data.userList.push({
+                                'id': a[i],
+                                'name': b[i]
+                            });
+                        }
+                    }
+                    $scope.data.datetimeRange = $scope.data.startDatetime + ' - ' + $scope.data.endDatetime;
+                }else{
+                    $scope.data = {};
+                }
+            };
+            /**
+             * 选择流程
+             */
+            $scope.selectFlow = function () {
+                $scope.data.flowList = $scope.data.flowList || [];
+                CustUtil.openCustDialog("bpmDefSelector", null, function (data, innerWindow) {
+                    $scope.$apply(function () {
+                        angular.forEach(data, function (item, index, objs) {
+                            $scope.data.flowList.push({
+                                name: item.name,
+                                key: item.key
+                            });
+                        });
+                    });
+                    $.Dialog.close(innerWindow);
+                }, $scope.flowList, {multiple: true});
+            };
+
+            /**
+             * 选择用户
+             */
+            $scope.selectUser = function () {
+                $scope.data.userList = $scope.data.userList || [];
+                CustUtil.openCustDialog("userSelector", null, function (data, innerWindow) {
+                    $scope.$apply(function () {
+                        angular.forEach(data, function (item, index, objs) {
+                            $scope.data.userList.push({
+                                name: item.name,
+                                id: item.id
+                            });
+                        });
+                    });
+                    $.Dialog.close(innerWindow);
+                }, $scope.userList, {multiple: true});
+            };
+
+            laydate.render({
+                elem: 'input[ng-model="data.datetimeRange"]',
+                type: 'datetime',
+                min: ToolsController.getCurrentTime('yyyy-MM-dd'),
+                range: true,
+                done: function (value, date, endDate) {
+                    var datetimeRange = value.split(' - ');
+                    $scope.data.startDatetime = datetimeRange[0];
+                    $scope.data.endDatetime = datetimeRange[1];
+                }
+            });
+
+            $scope.$on('beforeSaveEvent', function (event, data) {
+                var dataModel = $scope.data;
+                angular.forEach(dataModel.flowList, function (item, index) {
+                    if (!dataModel['agencyFlowKey']) dataModel['agencyFlowKey'] = '';
+                    if (!dataModel['agencyFlowName']) dataModel['agencyFlowName'] = '';
+                    var separator = ',';
+                    if (dataModel.flowList.length === (index + 1)) separator = '';
+                    dataModel['agencyFlowKey'] += (item.key + separator);
+                    dataModel['agencyFlowName'] += (item.name + separator);
+                });
+                angular.forEach(dataModel.userList, function (item, index) {
+                    if (!dataModel['targetUserId']) dataModel['targetUserId'] = '';
+                    if (!dataModel['targetUserName']) dataModel['targetUserName'] = '';
+                    var separator = ',';
+                    if (dataModel.userList.length === (index + 1)) separator = '';
+                    dataModel['targetUserId'] += (item.id + separator);
+                    dataModel['targetUserName'] += (item.name + separator);
+                });
+            });
+        }]);
+    </script>
+</head>
+<body ng-controller="ctrl" class="panel success">
+<!-- 顶部按钮 -->
+<div class="panel-heading">
+    <a class="btn btn-primary fa-save" ng-model="data" use-default-after-save-event="true"
+       ab-save="/bpm/userAgencyConfig/save"> 保存 </a>
+    <a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">
+        返回 </a>
+</div>
+<form name="form" method="post" ab-load="/bpm/userAgencyConfig/get?id={id}" ng-model="data">
+    <table class="form-table" cellspacing="0">
+        <tr>
+            <th>
+                <span>日期范围:</span>
+                <span class="required">*</span>
+            </th>
+            <td>
+                <input class="form-control" type="text" ng-model="data.datetimeRange" ab-validate="{required:false}"/>
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                <span>代理流程（为空则代理所有）:</span>
+            </th>
+            <td>
+                <span ng-repeat="flowItem in data.flowList" style="margin-right: 10px" class="label label-danger"> {{flowItem.name}}
+				<button href="javascript:void(0)" class="btn btn-link btn-default btn-xs"
+                        ng-click="ArrayTool.remove(flowItem,data.flowList)">×</button></span>
+                <span class="btn  btn-sm btn-primary fa fa-search" ng-click="selectFlow()">选择</span>
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                <span>代理人员:</span>
+            </th>
+            <td>
+                 <span ng-repeat="userItem in data.userList" style="margin-right: 10px" class="label label-danger"> {{userItem.name}}
+				<button href="javascript:void(0)" class="btn btn-link btn-default btn-xs"
+                        ng-click="ArrayTool.remove(userItem,data.userList)">×</button></span>
+                <span class="btn  btn-sm btn-primary fa fa-search" ng-click="selectUser()">选择</span>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

@@ -1,7 +1,8 @@
 <html ng-app="baseDirective">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 	</head>
 	<body class="panel">
@@ -13,20 +14,29 @@
 					</tr>
 					<tr>								
 						<th><span>上级组织名称:</span></th>
-						<td> {{data.parentOrgName }}</td>
+						<td> {{data.parentName }}</td>
 					</tr>
 					<tr>								
 						<th><span>排序号:</span></th>
-						<td> {{data.orderNo }}</td>
+						<td> {{data.sn }}</td>
 					</tr>
 					<tr>								
 						<th><span>组织编码:</span></th>
 						<td> {{data.code }}</td>
 					</tr>
 					<tr>								
-						<th><span>级别:</span></th>
-						<td> {{data.grade }}</td>
+						<th><span>组织类型:</span></th>
+						<td> 
+							{{['集团','分公司','2','部门'][data.type]}}
+						 </td>
 					</tr>
+					
+					<tr>
+				<th><span>组织岗位：</span></th>
+				<td>
+					<span ng-repeat="relation in data.orgRelationList |filter:{type:'groupRole'}" style="margin-right: 10px" class="label label-danger"> {{relation.postName}}
+					</td>
+			</tr>
 		</table>
 		</form>
 	</body>

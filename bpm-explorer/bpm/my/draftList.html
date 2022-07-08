@@ -2,7 +2,8 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>我的草稿</title>
-	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/gridList.js"></script>
 </head>
 <body>
@@ -12,13 +13,13 @@
          <div class="panel-body">
              <form id="searchForm" class="form-horizontal">
                  <div class="form-group">
-                     <label class="control-label col-sm-1" for="def_name_^VLK">名字</label>
-                     <div class="col-sm-3">
-                         <input type="text" class="form-control" id="def_name_^VLK">
-                     </div>
-                     <label class="control-label col-sm-1" for="subject_^VLK">标题</label>
+                     <label class="control-label col-sm-1" for="subject_^VLK">流程标题</label>
                      <div class="col-sm-3">
                          <input type="text" class="form-control" id="subject_^VLK">
+                     </div>
+                     <label class="control-label col-sm-1" for="def_name_^VLK">流程名字</label>
+                     <div class="col-sm-3">
+                         <input type="text" class="form-control" id="def_name_^VLK">
                      </div>
                      <div class="col-sm-4" style="text-align:left;">
                      		<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
@@ -32,8 +33,8 @@
           <thead>
           <tr>
               <th data-checkbox="true">ID</th>
-              <th data-field="subject">标题</th>
-              <th data-field="defName">名称</th>
+              <th data-field="subject">流程标题</th>
+              <th data-field="defName">流程名称</th>
               <th data-field="defKey">流程KEY</th>
               <th data-field="isForbidden" data-formatter="labelFormatter" data-value-style="0-正常-primary,1-禁止-danger,">是否禁止</th>
               <th data-field="status" data-formatter="labelFormatter" 
@@ -44,7 +45,7 @@
               <th data-field="duration" data-formatter="$.timeLag">持续时间</th>
               
               <th data-formatter="innerHtmlFormatter" data-title="管理">
-              		<span class="fa-send btn btn-outline btn-primary btn-sm" qtip='启动' openDialog="启动" top="true" url="bpm/definition/start.html?instanceId={id}"></span>
+              		<span class="fa-send btn btn-outline btn-primary btn-sm" qtip='启动' openDialog="草稿启动【subject】" top="true" url="bpm/definition/start.html?instanceId={id}"></span>
 			  </th>
           </tr>
           </thead>

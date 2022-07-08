@@ -18,6 +18,7 @@ import com.dstz.base.api.query.QueryOP;
 import com.dstz.base.core.util.AppUtil;
 import com.dstz.base.core.util.BeanUtils;
 import com.dstz.base.core.util.StringUtil;
+import com.dstz.base.core.util.ThreadMapUtil;
 import com.dstz.base.dao.CommonDao;
 import com.dstz.base.db.dboper.DbOperator;
 import com.dstz.base.db.dboper.DbOperatorFactory;
@@ -111,13 +112,13 @@ public class FormCustDialogManagerImpl extends BaseManager<String, FormCustDialo
         }
         
         List<?> list;
-        if (formCustDialog.isPage()) {
+        boolean isPage = (boolean) ThreadMapUtil.getOrDefault("isPage", true);
+        if (isPage) {
             list = commonDao.queryForListPage(sql, queryFilter);
         } else {
         	queryFilter.setPage(null);
         	list = commonDao.queryForListPage(sql, queryFilter);
         }
-
         return list;
     }
     
@@ -212,5 +213,10 @@ public class FormCustDialogManagerImpl extends BaseManager<String, FormCustDialo
         }
 
         return queryFilter;
+    }
+
+    @Override
+    public boolean existsByKey(String key) {
+        return formCustDialogDao.existsByKey(key);
     }
 }

@@ -2,7 +2,8 @@
 <head>
 <title>角色下的用户</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/gridList.js"></script>
 </head>
 <body class="panel-body">
@@ -28,14 +29,17 @@
 		  <button class="btn btn-outline btn-primary fa-plus" onclick="addUser()">新增 </button>
 		  <a class="btn btn-outline btn-primary fa-back" onClick="javascript:$.Dialog.close(window);"><span>返回</span></a>
      </div>
-	 <table ab-grid data-id-field="id" data-url="/org/userRole/listJson?roleId={roleId}">
+	 <table ab-grid data-id-field="id" data-url="/org/orgRelation/roleJson?roleId={roleId}">
          <thead>
          <tr>
              <th data-checkbox="true">ID</th>
-             <th data-field="account">账户</th>
-             <th data-field="fullname" >用户姓名</th>
+             <th data-field="userName">用户名</th>
+             <th data-field="userAccount">用户账户</th>
+             <th data-field="roleName" >角色名</th>
+             <th data-field="updateTime" >操作时间</th>
              <th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
-				<a class='btn btn-outline btn-primary fa  fa-trash' sendAction='删除' qtip='删除' url='/org/userRole/remove?id={id}'></a>
+				<a if="'{type}'!='groupUserRole'" class='btn btn-outline btn-danger fa  fa-trash' sendAction='删除' qtip='删除' url='/org/orgRelation/remove?id={id}'></a>
+				<a if="'{type}'=='groupUserRole'" class='btn btn-outline btn-default fa fa-trash' qtip="当前用户角色关系为组织【{groupName}】下岗位，需要从该组织下移除该用户的职务"></a>
              </th>
          </tr>
          </thead>
@@ -51,11 +55,11 @@ var roleId = $.getParam("roleId");
  				ids.push(user.id);
  			}
  			
- 			$.post(__ctx + "/org/userRole/saveRoleUsers",{userId:ids.join(","),roleId:roleId},function(data){
+ 			$.post(__ctx + "/org/orgRelation/saveRoleUsers",{userIds:ids.join(","),roleId:roleId},function(data){
 				 data = JSON.parse(data);
 				 reloadGrid();
 				 if(data.isOk){
-					$.Dialog.success("添加成功！");
+					$.Dialog.success(data.msg);
  		   			$.Dialog.close(innerWindow);
 				 }else{
 					 $.Dialog.error("操作失败"+data.msg);

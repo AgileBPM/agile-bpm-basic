@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.dstz.base.core.cache.ICache;
 import com.dstz.base.core.util.AppUtil;
 
 /**
@@ -30,12 +31,12 @@ public class BusinessObjectCacheUtil {
 	 * @param dsKeys
 	 */
 	public static void putDataSourcesKeys(String boKey, Set<String> dsKeys) {
-		Map<String, Set<String>> map = (Map<String, Set<String>>) AppUtil.getCache().getByKey(BUSINESS_OBJECT_DATASOURCE_KEYS_MAP);
+		Map<String, Set<String>> map = (Map<String, Set<String>>)  AppUtil.getBean(ICache.class).getByKey(BUSINESS_OBJECT_DATASOURCE_KEYS_MAP);
 		if (map == null) {
 			map = new HashMap<>();
 		}
 		map.put(boKey, dsKeys);
-		AppUtil.getCache().add(BUSINESS_OBJECT_DATASOURCE_KEYS_MAP, map);
+		 AppUtil.getBean(ICache.class).add(BUSINESS_OBJECT_DATASOURCE_KEYS_MAP, map);
 	}
 	
 	/**
@@ -46,7 +47,7 @@ public class BusinessObjectCacheUtil {
 	 * @return
 	 */
 	public static Set<String> getDataSourcesKeys(String boKey) {
-		Map<String, Set<String>> map = (Map<String, Set<String>>) AppUtil.getCache().getByKey(BUSINESS_OBJECT_DATASOURCE_KEYS_MAP);
+		Map<String, Set<String>> map = (Map<String, Set<String>>) AppUtil.getBean(ICache.class).getByKey(BUSINESS_OBJECT_DATASOURCE_KEYS_MAP);
 		if (map == null) {
 			return null;
 		}

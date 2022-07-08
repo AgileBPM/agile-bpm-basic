@@ -2,7 +2,8 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>我申请的流程</title>
-	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/gridList.js"></script>
 </head>
 <body>
@@ -12,20 +13,20 @@
          <div class="panel-body">
              <form id="searchForm" class="form-horizontal">
                  <div class="form-group">
-                     <label class="control-label col-sm-1" for="def_name_^VLK">名字</label>
-                     <div class="col-sm-2">
-                         <input type="text" class="form-control" id="def_name_^VLK">
-                     </div>
-                     <label class="control-label col-sm-1" for="subject_^VLK">标题</label>
+                     <label class="control-label col-sm-1" for="subject_^VLK">流程标题</label>
                      <div class="col-sm-2">
                          <input type="text" class="form-control" id="subject_^VLK">
+                     </div>
+                     <label class="control-label col-sm-1" for="def_name_^VLK">任务名字</label>
+                     <div class="col-sm-2">
+                         <input type="text" class="form-control" id="def_name_^VLK">
                      </div>
                      <label class="control-label col-sm-1" for="status_^VLK">状态</label>
                      <div class="col-sm-2">
                          <select id="status_^VLK" class="form-control">
                             <option value="">所有</option>
                             <option value="running">运行中</option>
-                         	<option value="end">办结</option>
+                         	<option value="end">终止</option>
                          	<option value="manualend">人工终止</option>
                          </select>
                      </div>
@@ -41,17 +42,17 @@
           <thead>
           <tr>
               <th data-checkbox="true">ID</th>
-              <th data-field="subject">标题</th>
-              <th data-field="defName">名称</th>
+              <th data-field="subject">流程标题</th>
+              <th data-field="defName">任务名称</th>
               <th data-field="status" data-formatter="labelFormatter" 
               			data-value-style="running-运行中-primary,Sdraft-草稿-warninginfo,end-终止-default,manualend-人工终止-danger,back-驳回-danger,revoke-撤销-danger,">状态</th>
               <th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">创建时间</th>
               <th data-field="creator">创建人</th>
-              <th data-field="endTime" data-formatter=dateTimeFormatter data-sort-name="end_time_" data-sortable="true">完成创建时间</th>
+              <th data-field="endTime" data-formatter=dateTimeFormatter data-sort-name="end_time_" data-sortable="true">完成时间</th>
               <th data-field="duration" data-formatter="$.timeLag">持续时间</th>
               
               <th data-formatter="innerHtmlFormatter" data-title="管理">
-              		<a class="fa-detail btn btn-outline btn-primary btn-sm" openDialog='详情' qtip='详情' url='/bpm/instance/instanceDetail.html?id={id}' ></a>
+              		<a class="fa-detail btn btn-outline btn-primary btn-sm" openDialog='详情【{subject}】' qtip='详情' url='/bpm/instance/instanceDetail.html?id={id}' ></a>
 			  </th>
           </tr>
           </thead>

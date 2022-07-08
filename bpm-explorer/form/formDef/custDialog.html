@@ -1,7 +1,8 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 
 <script type="text/javascript">
@@ -144,7 +145,6 @@
 					$scope.dialog.returnFieldList.push(field.returnName.toLowerCase());
 				});
 				
-				
 				//说明重新选择了对话框，则重置参数调节
 				if(!dialogName){
 					$scope.dialogParam = {};
@@ -169,16 +169,17 @@
 		$scope.initScopeValuePaths = function(){
 			$scope.scopeValuePath = [];
 			angular.forEach($scope.ngModelPathList, function(ngModelPath) {
-				//处理当前选中的子表作用域
-				if(currentSubTableName === ngModelPath.key){
+				//处理当前选中的子表作用域，排除掉主表
+				if( currentSubTableName === ngModelPath.key){
 					angular.forEach(ngModelPath.columns,function(colom){
 						$scope.scopeValuePath.push({path:ngModelPath.key+"."+colom.key,name: ngModelPath.comment+"-"+colom.comment});
 					});
 				}
 				
-				angular.forEach($scope.bo.relation.table.columns,function(colom){
-					$scope.scopeValuePath.push({path:"data."+$scope.boCode+"."+colom.key,name:$scope.bo.relation.table.comment+"-"+colom.comment});
-				});
+			});
+			
+			angular.forEach($scope.bo.relation.table.columns,function(colom){
+				$scope.scopeValuePath.push({path:"data."+$scope.boCode+"."+colom.key,name:$scope.bo.relation.table.comment+"-"+colom.comment});
 			});
 		}
 		 
@@ -249,10 +250,8 @@
 					 	<tr ng-repeat="param in dialogParamArray">
 					 		<td>{{param.name}}</td>
 					 		<td>
-					 			<select ng-options="m.path as m.name for m in scopeValuePath" ng-model="param.path" ng-show="!showScript">
+					 			<select ng-options="m.path as m.name for m in scopeValuePath" ng-model="param.path">
 					 			</select>
-					 			<input type="text" ng-model="param.path" class="form-control" ng-show="showScript">
-					 			<label ab-tip title="可以手动写js脚本获取当前作用域下值"> <input type="checkbox" ng-model="showScript" >展示取值脚本</label>
 					 		</td>
 					 	</tr>
 					 </table>
@@ -262,7 +261,7 @@
 			</tr>
 		</table>
 		<div class="btn-group toolbar">
-			<a ng-show="data.key" class="fa fa-plus btn btn-primary" href="javascript:void(0)" ng-click="addMap()">添加映射字段</a>
+			<a ng-show="dialog.key" class="fa fa-plus btn btn-primary" href="javascript:void(0)" ng-click="addMap()">添加映射字段</a>
 		</div>
 		<table class="form-table">
 			<tr>

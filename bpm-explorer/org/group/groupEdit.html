@@ -2,22 +2,27 @@
 <html ng-app="app">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 	
 	<script type="text/javascript" >
 	
 	var parentId =  $.getParam("parentId");
-	var parentOrgName =  parent.getSelectNode().name;
 	var id =  $.getParam("id");
 	var code =  $.getParam("code");
 	
-	
 	var app = angular.module('app', ['baseDirective']);
-	app.controller("ctrl", [ '$scope', 'baseService' ,function($scope, baseService) {
-		if(!$scope.data){
-			$scope.data = {parentOrgName:parentOrgName,parentId:parentId};
+	app.controller("ctrl", [ '$scope', 'baseService','ArrayToolService' ,function($scope, baseService,ArrayToolService) {
+		$scope.ArrayTool = ArrayToolService;
+		if(!id){
+			var parentName =  parent.getSelectNode ? parent.getSelectNode().name : "测试中";
+			$scope.data = {parentName:parentName,parentId:parentId,sn:1};
 		}
+		
+		ToolsController.getEnum('com.dstz.org.api.constant.GroupGradeConstant').then(function(data) {
+			$scope.gradeTypes = data; 
+		});
 		
 		$scope.save = function(){
 			if (!$scope.form.$valid) return;
@@ -27,9 +32,54 @@
 				window.location = window.location;
 			});
 		}
+		
+		$scope.selectRoleRelation = function(){
+	 		if(!$scope.data.orgRelationList){
+	 			$scope.data.orgRelationList = [];
+	 		}
+	 		var arr = [];
+	 		var newList = [];
+			for(var i=0,relation;relation = $scope.data.orgRelationList[i++];){
+				if(relation.type == "groupRole"){
+					var object = {};
+					object.id = relation.roleName;
+					object.name = relation.roleId;
+					arr.push(object);
+				}else{
+					newList.push(relation);
+				}
+			}
+	 		
+	 		CustUtil.openCustDialog("roleSelector",function(data,innerWindow){
+				$scope.$apply(function(){
+					$scope.data.orgRelationList = newList;
+					
+					//将重新选择的放入到List中
+					for(var i = 0; i < data.length; i++) {
+						var rights = {
+							type :"groupRole",
+							roleId: data[i].id,
+							roleName : data[i].name,
+							groupId : $scope.data.id || "asdf",
+							};
+						$scope.data.orgRelationList.push(rights);
+					}
+					});
+			   $.Dialog.close(innerWindow);
+			},arr);
+	 	}
+		
+		$scope.remove = function(relation){
+			var rtn = baseService.postForm(__ctx+"/org/orgRelation/removeCheck", relation);
+			rtn.then(function(data){
+				if(data.isOk){
+					ArrayToolService.remove(relation,$scope.data.orgRelationList);
+				}else{
+					jQuery.Toast.error(data.msg,"删除岗位失败！");
+				}
+			})
+		}
 	}]);
-	
-	
 	</script>
 
 </head>
@@ -43,7 +93,7 @@
 		<table class="form-table" cellspacing="0">
 			<tr>
 				<th><span>上级组织：</span></th>
-				<td> <input class="form-control" ng-model="data.parentOrgName" disabled="disabled" style="border: 0" name="parentOrgName" /></td>
+				<td> <input class="form-control" ng-model="data.parentName" disabled="disabled" style="border: 0" /></td>
 			</tr>
 			<tr>
 				<th><span>组织名称：</span></th>
@@ -56,13 +106,27 @@
 
 			<tr>
 				<th><span>排序：</span></th>
-				<td><input class="form-control" type="text" ng-model="data.sn" ab-validate="{required:false,number:true,maxIntLen:10}" /></td>
+				<td><input class="form-control" type="text" ng-model="data.sn" ab-validate="{required:false,number:true,maxIntLen:10}" />
+				<span class="fa fa-question-circle btn text-info ng-isolate-scope" ab-tip=""  title="默认值1，数字越大同级组织排序越靠前"></span></td>
 			</tr>
 
 			<tr>
-				<th><span>级别：</span></th>
-				<td><input class="form-control" type="text" ng-model="data.grade" ab-validate="{required:false,maxlength:192}" /></td>
+				<th><span>组织类型：</span></th>
+				<td>
+					<select class="form-control" type="text" ng-model="data.type" ng-options="v.key as v.label for (k,v) in gradeTypes" > </select> 
+					<span class="fa fa-question-circle btn text-info ng-isolate-scope" ab-tip=""  title="可用于组织等级定义，当需要查找某级别的组织的时候、该设置会非常有用"></span>
+					</td>
 			</tr>
+			<tr>
+				<th><span>组织岗位：</span></th>
+				<td>
+					<span ng-repeat="relation in data.orgRelationList |filter:{type:'groupRole'}" style="margin-right: 10px" class="label label-danger"> {{relation.roleName}}
+					<button href="javascript:void(0)" class="btn btn-link btn-default btn-xs" ng-click="remove(relation)">×</button></span>
+					<span class="btn  btn-sm btn-primary  fa fa-search" ng-click="selectRoleRelation()">选择</span> 
+					<span class="fa fa-question-circle text-info btn" ab-tip=""  title="定义该组织下的岗位，岗位 = 组织  + 角色<br/> 当您需要指派工作给某个部门的某个岗位的时候，岗位会非常有用，<br/>比如：部门负责人处理该部门的员工请假申请。"></span>
+					</td>
+			</tr>
+			
 			<tr>
 				<th>描述</th>
 				<td>	<textarea rows="3"  ng-model="data.desc" class="form-control"></textarea>

@@ -6,11 +6,12 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
-import com.dstz.base.core.util.BeanUtils;
 import com.dstz.base.manager.impl.BaseManager;
 import com.dstz.sys.core.dao.WorkbenchLayoutDao;
 import com.dstz.sys.core.manager.WorkbenchLayoutManager;
 import com.dstz.sys.core.model.WorkbenchLayout;
+
+import cn.hutool.core.collection.CollectionUtil;
 
 
 @Service("workbenchLayoutManager")
@@ -33,7 +34,7 @@ public class WorkbenchLayoutManagerImpl extends BaseManager<String, WorkbenchLay
     public List<WorkbenchLayout> getByUserId(String userId) {
         List<WorkbenchLayout> list = workbenchLayoutDao.getByUserId(userId);
 
-        if (BeanUtils.isEmpty(list)) {
+        if (CollectionUtil.isEmpty(list)) {
             list = workbenchLayoutDao.getByUserId(WorkbenchLayout.DEFAULT_LAYOUT);
         }
         return list;

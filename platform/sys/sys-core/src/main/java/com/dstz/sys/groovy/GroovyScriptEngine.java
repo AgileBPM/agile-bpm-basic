@@ -1,14 +1,12 @@
 package com.dstz.sys.groovy;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import com.dstz.base.core.util.AppUtil;
@@ -22,9 +20,9 @@ import groovy.lang.GroovyShell;
  * 实现了IScript接口的类。 可以在脚本中使用。
  */
 @Component
-public class GroovyScriptEngine implements IGroovyScriptEngine, ApplicationListener{
+public class GroovyScriptEngine implements IGroovyScriptEngine, ApplicationListener<ContextRefreshedEvent>{
 
-    private Log logger = LogFactory.getLog(GroovyScriptEngine.class);
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private GroovyBinding groovyBinding = new GroovyBinding();
     
     @Override
@@ -63,8 +61,8 @@ public class GroovyScriptEngine implements IGroovyScriptEngine, ApplicationListe
         groovyBinding.setThreadVariables(vars);
         
         if(logger.isDebugEnabled()) {
-        	logger.debug("执行:" + script);
-        	logger.debug("variables:" +vars+"");
+        	logger.debug("执行:{}", script);
+        	logger.debug("variables:{}",vars+"");
         }
         
         GroovyShell shell = new GroovyShell(groovyBinding);
@@ -77,12 +75,13 @@ public class GroovyScriptEngine implements IGroovyScriptEngine, ApplicationListe
         return rtn;
     }
 
-    
     @Override
-    public void onApplicationEvent(ApplicationEvent arg0) {
-    	Map<String, IScript> scirptImpls =	AppUtil.getImplInstance(IScript.class);
-    	for(Entry<String, IScript> scriptMap : scirptImpls.entrySet()) {
-    		groovyBinding.setProperty(scriptMap.getKey(), scriptMap.getValue());
-    	}
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (event.getApplicationContext().getParent() == null) {
+            Map<String, IScript> scirptImpls =	AppUtil.getImplInstance(IScript.class);
+            for(Entry<String, IScript> scriptMap : scirptImpls.entrySet()) {
+                groovyBinding.setProperty(scriptMap.getKey(), scriptMap.getValue());
+            }
+        }
     }
 }

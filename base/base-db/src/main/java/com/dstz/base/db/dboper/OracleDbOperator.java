@@ -45,7 +45,7 @@ public class OracleDbOperator extends DbOperator {
 		List<Map<String, Object>> list;
 		if (StringUtils.isNotEmpty(tableName)) {
 			sql += " AND t.table_name LIKE ?";
-			list = jdbcTemplate.queryForList(sql, "%" + tableName + "%");
+			list = jdbcTemplate.queryForList(sql, "%" + tableName.toUpperCase() + "%");
 		} else {
 			list = jdbcTemplate.queryForList(sql);
 		}
@@ -64,7 +64,7 @@ public class OracleDbOperator extends DbOperator {
 		if (StringUtils.isNotEmpty(viewName))
 			sql += " WHERE VIEW_NAME LIKE ?";
 		List<String> list = new ArrayList<>();
-		List<Map<String, Object>> results = jdbcTemplate.queryForList(sql, "%" + viewName + "%");
+		List<Map<String, Object>> results = jdbcTemplate.queryForList(sql, "%" + viewName.toUpperCase() + "%");
 		for (Map<String, Object> line : results) {
 			list.add(line.get("VIEW_NAME").toString());
 		}
@@ -74,13 +74,13 @@ public class OracleDbOperator extends DbOperator {
 	@Override
 	public Table<Column> getTable(String tableName) {
 		Table<Column> table = new Table<>();
-		Map<String, String> tableNames = getTableNames(tableName);
+		Map<String, String> tableNames = getTableNames(tableName.toUpperCase());
 		if (tableNames.isEmpty()) {
-			throw new BusinessException(String.format("根据表名[%s]获取不到表", tableName));
+			throw new BusinessException(String.format("根据表名[%s]获取不到表", tableName.toUpperCase()));
 		}
-		table.setName(tableName);
-		table.setComment(tableNames.get(tableName));
-		table.setColumns(getColumns(tableName));
+		table.setName(tableName.toUpperCase());
+		table.setComment(tableNames.get(tableName.toUpperCase()));
+		table.setColumns(getColumns(tableName.toUpperCase()));
 
 		return table;
 	}
@@ -90,11 +90,11 @@ public class OracleDbOperator extends DbOperator {
 		Table<Column> table = new Table<>();
 		List<String> viewNames = getViewNames(viewName);
 		if (viewNames.isEmpty()) {
-			throw new BusinessException(String.format("根据视图名[%s]获取不到视图", viewName));
+			throw new BusinessException(String.format("根据视图名[%s]获取不到视图", viewName.toUpperCase()));
 		}
-		table.setName(viewName);
-		table.setComment(viewName);
-		table.setColumns(getColumns(viewName));
+		table.setName(viewName.toUpperCase());
+		table.setComment(viewName.toUpperCase());
+		table.setColumns(getColumns(viewName.toUpperCase()));
 		return table;
 	}
 
@@ -110,7 +110,7 @@ public class OracleDbOperator extends DbOperator {
 	private List<Column> getColumns(String name) {
 		// 先找到主键
 		String sqlT = "select col.column_name from user_constraints con,user_cons_columns col where con.constraint_name=col.constraint_name and con.constraint_type='P' and col.table_name= ?";
-		List<Map<String, Object>> listT = jdbcTemplate.queryForList(sqlT, name);
+		List<Map<String, Object>> listT = jdbcTemplate.queryForList(sqlT, name.toUpperCase());
 		Set<String> pkNames = new HashSet<>();// 主键
 		for (Map<String, Object> map : listT) {
 			pkNames.add(getOrDefault(map, "COLUMN_NAME", "").toString());
@@ -118,19 +118,20 @@ public class OracleDbOperator extends DbOperator {
 
 		// 开始解析字段信息
 		String sql = "select a.*,b.comments from user_tab_columns a inner join user_col_comments b on a.table_name = b.table_name and a.column_name = b.column_name and a.table_name = ? ";
-		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql, name);
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql, name.toUpperCase());
 		List<Column> columns = new ArrayList<>();
 		for (Map<String, Object> map : list) {
 			Column column = new Column();
 			column.setComment(getOrDefault(map, "COMMENTS", "").toString());
 			Object defVal = map.get("DATA_DEFAULT");
-			if(defVal!=null&&!defVal.toString().trim().equals("NULL")) {
+			if (defVal != null && !defVal.toString().trim().equals("NULL")) {
 				column.setDefaultValue(map.get("DATA_DEFAULT").toString());
 			}
 			column.setName(getOrDefault(map, "COLUMN_NAME", "").toString());
-			column.setPrimary(pkNames.contains(column.getName()));
+			column.setPrimary(pkNames.contains(column.getName().toUpperCase()));
 			column.setRequired("N".equals(getOrDefault(map, "NULLABLE", "Y")));
-			column.setType(ColumnType.getByDbDataType(map.get("DATA_TYPE").toString()).getKey());
+			column.setType(ColumnType.getByDbDataType(map.get("DATA_TYPE").toString(), "字段[" + column.getComment() + "(" + column.getName().toUpperCase() + ")]").getKey());
+
 			if (ColumnType.VARCHAR.equalsWithKey(column.getType())) {
 				column.setLength(Integer.parseInt(getOrDefault(map, "DATA_LENGTH", "0").toString()));
 			}
@@ -146,7 +147,7 @@ public class OracleDbOperator extends DbOperator {
 	@Override
 	public boolean supportPartition(String tableName) {
 		String sql = "select count(*) from user_tab_partitions where table_name = ?";
-		Integer rtn = jdbcTemplate.queryForObject(sql, Integer.class, tableName);
+		Integer rtn = jdbcTemplate.queryForObject(sql, Integer.class, tableName.toUpperCase());
 		return rtn > 0;
 	}
 
@@ -154,7 +155,7 @@ public class OracleDbOperator extends DbOperator {
 	public boolean isExsitPartition(String tableName, String partName) {
 		String sql = "select count(*) from user_tab_partitions where table_name = ? and partition_name = ?";
 		String[] args = new String[2];
-		args[0] = tableName;
+		args[0] = tableName.toUpperCase();
 		args[1] = "P_" + partName.toUpperCase();
 		Integer rtn = jdbcTemplate.queryForObject(sql, args, Integer.class);
 		return rtn > 0;
@@ -162,7 +163,7 @@ public class OracleDbOperator extends DbOperator {
 
 	@Override
 	public void createPartition(String tableName, String partName) {
-		String sql = "ALTER TABLE " + tableName + " ADD PARTITION P_" + partName.toUpperCase() + " VALUES ( '" + partName + "') NOCOMPRESS ";
+		String sql = "ALTER TABLE " + tableName.toUpperCase() + " ADD PARTITION P_" + partName.toUpperCase() + " VALUES ( '" + partName + "') NOCOMPRESS ";
 		jdbcTemplate.update(sql);
 	}
 }

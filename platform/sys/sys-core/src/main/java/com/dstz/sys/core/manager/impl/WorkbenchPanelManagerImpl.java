@@ -13,10 +13,8 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dstz.base.api.exception.BusinessException;
-import com.dstz.base.api.model.PageList;
 import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.core.util.AppUtil;
-import com.dstz.base.core.util.BeanUtils;
 import com.dstz.base.core.util.StringUtil;
 import com.dstz.base.db.datasource.DbContextHolder;
 import com.dstz.base.db.model.query.DefaultQueryFilter;
@@ -29,6 +27,8 @@ import com.dstz.sys.core.manager.WorkbenchPanelManager;
 import com.dstz.sys.core.model.WorkbenchLayout;
 import com.dstz.sys.core.model.WorkbenchPanel;
 import com.dstz.sys.util.ContextUtil;
+
+import cn.hutool.core.collection.CollectionUtil;
 
 
 @Service("workbenchPanelManager")
@@ -51,7 +51,7 @@ public class WorkbenchPanelManagerImpl extends BaseManager<String, WorkbenchPane
 
         List<WorkbenchPanel> layOut = workbenchPanelDao.getByUser(userPermission);
 
-        if (BeanUtils.isEmpty(layOut)) {
+        if (CollectionUtil.isEmpty(layOut)) {
             userPermission.put("userId", WorkbenchLayout.DEFAULT_LAYOUT);
             layOut = workbenchPanelDao.getByUser(userPermission);
         }
@@ -110,9 +110,6 @@ public class WorkbenchPanelManagerImpl extends BaseManager<String, WorkbenchPane
             objct = invokeMethod(serviceBean, method, filter);
         } catch (Exception e) {
             throw new RuntimeException("查询异常！" + e.getMessage(), e);
-        }
-
-        if (objct instanceof PageList) {
         }
 
         return (JSON) JSON.toJSON(objct);

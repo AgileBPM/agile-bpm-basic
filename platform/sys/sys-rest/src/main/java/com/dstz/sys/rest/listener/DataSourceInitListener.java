@@ -69,8 +69,12 @@ public class DataSourceInitListener implements ApplicationListener<ContextRefres
 			if (DataSourceUtil.isDataSourceExist(sysDataSource.getKey()) || sysDataSource.getKey().equals(DataSourceUtil.GLOBAL_DATASOURCE) || sysDataSource.getKey().equals(DataSourceUtil.DEFAULT_DATASOURCE)) {
 				continue;
 			}
-			DataSourceUtil.addDataSource(sysDataSource.getKey(), sysDataSourceManager.tranform2DataSource(sysDataSource), sysDataSource.getDbType(), false);
-			LOGGER.debug("add datasource " + sysDataSource.getKey());
+			try {
+				DataSourceUtil.addDataSource(sysDataSource.getKey(), sysDataSourceManager.tranform2DataSource(sysDataSource), sysDataSource.getDbType(), false);
+				LOGGER.debug("add datasource " + sysDataSource.getKey());
+			} catch (Exception e) {
+				LOGGER.error("在系统配置的数据源[" + sysDataSource.getKey() + "]启动项目时无法正确加载进去，请正确配置该数据源", e);
+			}
 		}
 	}
 

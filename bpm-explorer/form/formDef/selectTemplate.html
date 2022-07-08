@@ -1,7 +1,8 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 
 <script type="text/javascript">
@@ -21,7 +22,7 @@
 
 		//生成html
 		$scope.createHtml = function() {
-			var url = __ctx + "/form/formDef/createHtml?boKey=" + $scope.parentScope.data.boKey;
+			var url = __ctx + "/form/formDef/createHtml?boKey=" + $scope.parentScope.data.boKey+"&formType="+type;
 			var defer = baseService.post(url, $scope.data);
 			$.getResultData(defer, function(data) {
 				$scope.parentScope.$apply(function() {
@@ -50,7 +51,7 @@
 				</th>
 				<td>{{item.typeDesc}}</td>
 				<td>
-					<select class="form-control" ng-model="item.templateKey" ng-options="m.key as m.name for m in item.templates" ng-init="">
+					<select class="form-control" ng-init="item.templateKey ? '' : item.templateKey=item.templates[0].key" ng-model="item.templateKey" ng-options="m.key as m.name for m in item.templates">
 					</select>
 				</td>
 			</tr>

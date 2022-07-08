@@ -29,5 +29,6 @@
 	<!-- 整合activiti -->
     <import resource="conf/bpm-core.xml"/>
 
-
+    <!-- 引入j2cache -->
+    <import resource="classpath*:spring-j2cache.xml" />
 </beans> 

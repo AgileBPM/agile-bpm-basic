@@ -56,6 +56,8 @@ CREATE TABLE `bus_object` (
   `group_id_` varchar(64) DEFAULT NULL COMMENT '分组id',
   `group_name_` varchar(128) DEFAULT NULL COMMENT '分组名称',
   `persistence_type_` varchar(64) DEFAULT NULL COMMENT '持久化类型',
+   per_type_config_ varchar(255) DEFAULT NULL COMMENT '持久化类型的配置内容',
+  `overall_arrangement_` text DEFAULT NULL COMMENT '整体布局',
   `create_time_` datetime DEFAULT NULL COMMENT '创建时间',
   `create_by_` varchar(64) DEFAULT NULL COMMENT '创建人',
   `update_time_` datetime DEFAULT NULL COMMENT '更新时间',

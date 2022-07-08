@@ -11,22 +11,21 @@ AgileBPM 是完全模块化的项目集合，含【流程模块】、【业务�
 ## AgileBPM 项目介绍
 
 
-- 项目部署、实施文档: http://doc.agilebpm.cn/  
+- 流程实施视频介绍： https://www.bilibili.com/video/BV1wz411v7Xv/
 
-- 流程实施视频介绍： https://share.weiyun.com/5uuOrvS
-
-- PC在线测试地址: http://test.agilebpm.cn/login.html
+- 在线测试地址: http://www.agilebpm.cn/zh-cn/onlineTry/
 
 - 功能缺陷请在项目上创建建 **issues**，可以查看已完成issues来寻找问题解决方法
+<br/>
 
-![移动端测试地址](https://images.gitee.com/uploads/images/2018/0719/100556_de9bc8a4_1861740.png "屏幕截图.png")
+![移动端测试地址](https://images.gitee.com/uploads/images/2019/0212/102913_df0360bd_1861740.png "屏幕截图.png")
 
 移动端测试账号密码 admin 1  [源码](https://gitee.com/agile-bpm/bpm-app)
 
 ## 工作流解决方案
 **我们通过业务对象、表单、流程引擎共同协作来解决业务流难实施的痛点**
 
-业务对象用来承载、持久化业务数据；表单则是业务数据的展示层；流程则用来驱动业务数据流转。
+业务对象用来承载、持久化业务数据；表单则是业务数据的展示层；流程则用来驱动业务数据流转
 
 三者协作完成流程实施。
 
@@ -40,12 +39,8 @@ AgileBPM 是完全模块化的项目集合，含【流程模块】、【业务�
 
 当然、流程也支持url表单，方便已有业务、异构系统的流程实施
 
-**具体实施步骤请参考 [文档](https://agile-bpm.gitee.io/docs/implement/businessObject.html) 中的敏捷流程实施三部曲** :smirk: 
-> 流程配置页面、任务处理页面、流程实例页面截图
 
-<img src="https://images.gitee.com/uploads/images/2018/0719/110744_34dddb3b_1861740.png" width="30%"  align=left /> 
-<img src="https://images.gitee.com/uploads/images/2018/0719/110900_7f2d6a78_1861740.png" width="30%"  align=left /> 
-<img src="https://images.gitee.com/uploads/images/2018/0719/111013_03f9b51c_1861740.png" width="33%"  align=left /> 
+**具体实施步骤请参考 [文档](https://agile-bpm.gitee.io/website/zh-cn/docs/businessObject.html) 中的敏捷流程实施三部曲** :smirk: 
 
 
 
@@ -53,9 +48,9 @@ AgileBPM 是完全模块化的项目集合，含【流程模块】、【业务�
 
 #### 组件化
 系统通过功能划分出了多个模块，每个模块由API、CORE、REST、SERVICE(apiImpl) 几部分组成。模块与模块间通过API交互，WEB则用于整合各个模块 
-[系统模块介绍介绍]( https://agile-bpm.gitee.io/docs/base/framework.html)
+[系统模块介绍介绍](https://agile-bpm.gitee.io/website/zh-cn/docs/framework.html)
 
-[组件更多详细介绍](http://agile-bpm.gitee.io/docs/base/module.html)
+[组件更多详细介绍](https://agile-bpm.gitee.io/website/zh-cn/docs/module.html)
  
 
 #### 前后端分离
@@ -98,15 +93,39 @@ AgileBPM 目前是标准的SOA架构，但依然拥有微服务架构的特点�
 资源管理（用于服务器鉴权，用户分配资源菜单）、数据字典、定时计划（定时调度引擎）、系统属性（多环境系统参数定义）、系统数据源（系统支持多数据源的数据获取，系统数据源的动态切换，读写数据源的分离）、工作台（个人自定义首页）、流水号、常用脚本管理、自定义对话框、系统树
 
 ## 其他说明
-我们是专业工作流研发团队，有多年工作流程实施经验，针对各种特殊场景，经过近一年多的(业余)时间设计开发了这款产品。
-目前还有很多组件正在筹备开发中，如果有更多人支持，我们也会继续下去。
+
+鄙人是一个深沉内敛的程序员，不善于使用夸张辞藻，但是我相信AgileBPM是一个越用越好用，时不时境遇小惊喜的开发平台
+
+
+## 截图
+
+
+
+
+
+##### 表单布局
+![表单布局](https://images.gitee.com/uploads/images/2019/0519/135502_e57cd2d4_1861740.png "在这里输入图片标题")
+
+##### 表单设计
+![表单设计](https://images.gitee.com/uploads/images/2019/0519/135543_b9508b90_1861740.png "在这里输入图片标题")
+
+##### 表单源码
+![表单源码](https://images.gitee.com/uploads/images/2019/0519/135610_e9ac1b4d_1861740.png "在这里输入图片标题")
+
+##### 流程表单界面
+![流程处理界面](https://images.gitee.com/uploads/images/2019/0519/135712_6aec7d79_1861740.gif "在这里输入图片标题")
+
+##### 流程全局配置
+![流程全局配置](https://images.gitee.com/uploads/images/2019/0519/135631_9446a09a_1861740.png "在这里输入图片标题")
+##### 流程节点配置
+![流程节点配置](https://images.gitee.com/uploads/images/2019/0519/135652_dc7ce0cc_1861740.png "在这里输入图片标题")
+
 
 ## spring boot 版本
 https://gitee.com/agile-bpm/agilebpm-base-spring-boot/tree/master
-## vue2 移动端版本
-https://gitee.com/agile-bpm/bpm-app
 
-##### SpringCloud 微服务版本正在构建中...
+
+##### 欢迎了解企业版 SpringCloud版本
 
 ## 欢迎 **Star** 持续关注！！！ 
-qq 群 477781857  
+qq 群 364350411

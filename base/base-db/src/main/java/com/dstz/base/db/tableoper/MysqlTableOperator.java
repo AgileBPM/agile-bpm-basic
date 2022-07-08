@@ -111,7 +111,7 @@ public class MysqlTableOperator extends TableOperator {
 			sb.append(" NULL");
 		}
 		if (StringUtil.isNotEmpty(column.getDefaultValue())) {
-			sb.append(" DEFAULT " + column.getDefaultValue() + "");
+			//sb.append(" DEFAULT " + column.getDefaultValue() + "");
 		}
 		sb.append(" COMMENT '" + column.getComment() + "'");
 		return sb.toString();

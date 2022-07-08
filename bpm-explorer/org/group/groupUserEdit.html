@@ -2,7 +2,8 @@
 <html ng-app="app">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<link href="../../build/common/base.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/base.js"></script>
 		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 		<script type="text/javascript">
 			 var id = $.getParam("id");
@@ -33,9 +34,9 @@
 			 		
 			 	}
 			 	
-				var get = baseService.get(__ctx+"/org/groupRelation/getByGroupId?groupId="+groupId,{});
+				var get = baseService.get(__ctx+"/org/orgRelation/getGroupPost?groupId="+groupId,{});
 			 	$.getResultData(get,function(data){
-			 		$scope.groupRelList = data;
+			 		$scope.postList = data;
 			 	})
 			 	
 			 	var get = baseService.get(__ctx+"/org/group/get?id="+groupId,{});
@@ -45,7 +46,7 @@
 			 	
 			 	
 			 	$scope.save = function(){
-			 		var get = baseService.postForm(__ctx+"/org/groupUser/saveGroupUserRel",$scope.data);
+			 		var get = baseService.postForm(__ctx+"/org/orgRelation/saveGroupUserRel",$scope.data);
 			 		
 			 		get.then(function(data){
 			 			if(data.isOk){
@@ -91,7 +92,8 @@
 						<tr>								
 							<th>岗位:</th>
 							<td>
-								<label ng-repeat="rel in groupRelList"><input type="checkbox" ab-checkbox="" ng-model="data.relIds"  value="{{rel.id}}">{{rel.name}}</label>
+								<label ng-repeat="post in postList"><input type="checkbox" ab-checkbox="" ng-model="data.roleIds"  value="{{post.roleId}}">{{post.roleName}}</label>
+								<span class="fa fa-question-circle btn text-info ng-isolate-scope" ab-tip=""  title="组织下的岗位，可以在编辑组织信息的时候去定义一些该组织的岗位<br/>若不选择岗位、默认添加至该部门下"></span>
 							</td>								
 						</tr>
 				</table>

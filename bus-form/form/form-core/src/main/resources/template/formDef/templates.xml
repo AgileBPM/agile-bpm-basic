@@ -2,22 +2,20 @@
 <templates>
 
 	<!-- pc 端默认的所有模板  -->
-	<!-- 主表的模板 -->
+	<!-- 主表的模板-->
 	<template key="mainOneColumn" name="单列模板" desc="单列模板" type="main" dir="pc"/>
 	<template key="mainTwoColumn" name="两列模板" desc="两列模板" type="main" dir="pc"/>
 	<template key="mainThreeColumn" name="三列模板" desc="三列模板" type="main" dir="pc"/>
 	<template key="mainFourColumn" name="四列模板" desc="四列模板" type="main" dir="pc"/>
-	<!-- 子表的模板 -->
-	<template key="subOneColumn" name="单列模板" desc="单列模板" type="subTable" dir="pc"/>
-	<template key="subTwoColumn" name="两列模板" desc="两列模板" type="subTable" dir="pc"/>
-	<template key="subThreeColumn" name="三列模板" desc="三列模板" type="subTable" dir="pc"/>
-	<template key="subOneline" name="单行模板" desc="单行模板，暂时不支持一对一" type="subTable" dir="pc"/>
-	
-	
+	<!-- 子表的模板-->
+	<template key="subOneColumn" name="子表单列模板" desc="单列模板" type="subTable" dir="pc"/>
+	<template key="subTwoColumn" name="子表两列模板" desc="两列模板" type="subTable" dir="pc"/>
+	<template key="subThreeColumn" name="子表三列模板" desc="三列模板" type="subTable" dir="pc"/>
+	<template key="subOneline" name="子表单行模板" desc="单行模板，暂时不支持一对一" type="subTable" dir="pc"/>
+
+	  
 	<!-- 移动 端默认的所有模板  -->
-	<template key="vuxMainTemplate" name="vux主表模板" desc="vux主表模板" type="main" dir="mobile"/>
-	<template key="vuxSubTemplate" name="vux子表模板" desc="vux子表模板" type="subTable" dir="mobile"/>
-	
-	<!-- pc端 vue js 的所有模板   -->
-	
+	<template key="mobileMainTemplate" name="mobile主表模板" desc="mobile主表模板" type="main" dir="mobile"/>
+	<template key="mobileSubTemplate" name="mobile子表模板" desc="mobile子表模板" type="subTable" dir="mobile"/>
+	 
 </templates>

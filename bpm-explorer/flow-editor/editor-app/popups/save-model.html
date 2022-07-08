@@ -13,14 +13,14 @@
                        ng-disabled="status.loading"
                        id="nameField"
                        class="form-control"
-                       ng-model="saveDialog.name"
+                       ng-model="bpmDefSetting.bpmDefinition.name"
                        ui-keypress="{13:'save()'}"
                        auto-focus />
         	</div>
         	<div class="form-group">
            		<label for="docTextArea">{{'MODEL.DESCRIPTION' | translate}}</label>
-           		<textarea id="docTextArea" ng-disabled="status.loading" class="form-control" ng-model="saveDialog.description"></textarea>
-        	</div>
+           		<textarea id="docTextArea" ng-disabled="status.loading" class="form-control" ng-model="bpmDefSetting.bpmDefinition.desc"></textarea>
+        	</div> 
         </div>
         <div class="modal-footer">
         

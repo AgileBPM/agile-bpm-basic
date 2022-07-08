@@ -1,7 +1,8 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/bus/businessTable/businessTableEditController.js"></script>
 <script type="text/javascript">
@@ -55,7 +56,10 @@
 					</select>
 				</td>
 				<th>是否已生成表</th>
-				<td ng-if="data.createdTable">是</td>
+				<td ng-if="data.createdTable">
+					是
+					<a href="javaScript:void(0)" style="text-decoration: none; color: red;" title="在生成表后，用户可以自由增删字段，保存后系统会自动同步到数据库。<br/>对于修改字段类型（长度，必填），用户必须考虑到新类型对旧数据的兼容问题，否则很容易报错。" class="fa fa-exclamation-circle ab-help" ab-tip> </a>
+				</td>
 				<td ng-if="!data.createdTable">
 					否
 					<a ng-if="data.id" href="javascript:void(0)" class="btn btn-primary fa-eject" ng-click="createTable()">生成表</a>
@@ -90,7 +94,7 @@
 				<th style="width: 8%">数据库字段名</th>
 				<th style="width: 5%">必填</th>
 				<th style="width: 8%">数据类型</th>
-				<th style="width: 5%">属性长度</th>
+				<th style="width: 6%">属性长度</th>
 				<th style="width: 5%">
 					默认值
 					<a href="javaScript:void(0)" style="text-decoration: none; color: red;" title="以{}包含的以脚本运行，eg:{return '123'}" class="fa fa-exclamation-circle ab-help" ab-tip> </a>
@@ -98,7 +102,7 @@
 				<th style="width: 10%">字段控件</th>
 				<th style="width: 15%">控件配置</th>
 				<th style="width: 10%">字段校验</th>
-				<th style="width: 5%">操作</th>
+				<th style="width: 7%">操作</th>
 			</tr>
 			<tr ng-repeat="column in data.columns">
 				<!-- 注释 -->
@@ -115,7 +119,7 @@
 				</td>
 				<!-- 必填 -->
 				<td>
-					<span ng-disabled="data.createdTable&&column.id" ab-boolean text="必填" ng-model="column.required"></span>
+					<span  ab-boolean text="必填" ng-model="column.required"></span>
 				</td>
 				<!-- 数据类型 -->
 				<td>
@@ -124,9 +128,9 @@
 				</td>
 				<!-- 属性长度 -->
 				<td>
-					<input ng-disabled="data.createdTable&&column.id" type="text" class="form-control" ng-if="column.type=='varchar'  || column.type=='number'" ng-model="column.length" ab-validate="{required:true,number:true}" />
+					<input type="text" class="form-control" style="width: 56px" ng-if="column.type=='varchar'  || column.type=='number'" ng-model="column.length" ab-validate="{required:true,number:true}" />
 					<span ng-if="column.type=='number'">.</span>
-					<input ng-disabled="data.createdTable&&column.id" type="text" class="form-control" style="width: 50px" ng-if="column.type=='number'" ng-model="column.decimal" ab-validate="{required:true,number:true}" />
+					<input type="text" class="form-control" style="width: 36px" ng-if="column.type=='number'" ng-model="column.decimal" ab-validate="{required:true,number:true}" />
 				</td>
 				<!-- 默认值 -->
 				<td>
@@ -142,7 +146,7 @@
 					<div ng-if="!column.primary">
 						<!-- {{column.ctrl.config |json}} -->
 						<!-- 多行行文本框 -->
-						<div ng-if="column.ctrl.type=='multitext'" class="form-inline">
+						<span ng-if="column.ctrl.type=='multitext'" class="form-inline">
 							<label>
 								<span ab-boolean="1/0" text="编辑器/TextArea" ng-model="column.ctrl.config.isEditor" />
 							</label>
@@ -150,28 +154,33 @@
 							<input type="text" class="form-control" ng-model="column.ctrl.config.ewidth" style="width: 50px" ab-validate="{required:true,number:true}" />
 							高:
 							<input type="text" class="form-control" ng-model="column.ctrl.config.eheight" style="width: 50px" ab-validate="{required:true,number:true}" />
-						</div>
+						</span>
 						<!-- 下拉框 -->
-						<div ng-if="column.ctrl.type=='select'||column.ctrl.type=='multiselect'||column.ctrl.type=='checkbox'||column.ctrl.type=='radio'">
+						<span ng-if="column.ctrl.type=='select'||column.ctrl.type=='multiselect'||column.ctrl.type=='checkbox'||column.ctrl.type=='radio'">
 							<a class="btn btn-outline btn-primary fa-edit" ng-click="openColCtrlCfgDialog(column)" href="javascript:void(0)">设置 </a>
-						</div>
+						</span>
 						<!-- 数据字典 -->
-						<div ng-if="column.ctrl.type=='dic'" style="width: 180px">
+						<span ng-if="column.ctrl.type=='dic'" style="width: 180px">
 							<span ab-combox="" value-key="column.ctrl.config.key" value-name="column.ctrl.config.keyName" url="/sys/dataDict/getDictTree"></span>
-						</div>
+						</span>
 						<!-- 流水号 -->
-						<div ng-if="column.ctrl.type=='serialno'" style="width: 180px">
+						<span ng-if="column.ctrl.type=='serialno'" style="width: 180px">
 							<span class="btn btn-primary" ng-if="column.ctrl.config.name">{{column.ctrl.config.name}}</span>
 							<a class="btn btn-outline btn-primary fa-edit" value-name="column.ctrl.config.name" value-alias="column.ctrl.config.alias" ab-cust-dialog="IdentitySeletor" href="javascript:void(0)">选择 </a>
-						</div>
+						</span>
 						<!-- 日期 -->
-						<div ng-if="column.ctrl.type=='date'" class="form-inline">
+						<span ng-if="column.ctrl.type=='date'" class="form-inline">
 							格式化:
 							<input ng-model="column.ctrl.config.format" class="form-control" />
-						</div>
+						</span>
+						<span>
+							<span ab-boolean text="隐藏占位符/显示占位符" ng-model="column.ctrl.config.placeholder"></span>
+							<input ng-if="column.ctrl.config.placeholder"   ab-validate="{required:true}" placeholder="请输入控件  placeholder 信息" ng-model="column.ctrl.config.placeholderText" class="form-control" />
+						</span>
 					</div>
 				</td>
-				<!-- 字段校验 -->
+				<!-- 
+				字段校验 -->
 				<td>
 					<select ng-if="!column.primary" class="form-control" ng-model="column.ctrl.newRule" ng-options="m as m.title for m in FormRules" ng-change="addRule(column.ctrl)">
 					</select>
@@ -186,7 +195,9 @@
 				</td>
 				<!-- 操作 -->
 				<td>
-					<a href="javaScript:void(0)" ng-if="!column.primary" ng-click="ArrayTool.del($index,data.columns)" class="btn btn-sm btn-primary fa-times"></a>
+					<a href="javascript:void(0)" ng-if="!column.primary&&$index!=1" ng-click="ArrayTool.up($index,data.columns)" class="btn btn-sm btn-default fa-chevron-up"></a>
+					<a href="javascript:void(0)" ng-if="!column.primary" ng-click="ArrayTool.down($index,data.columns)" class="btn btn-sm btn-default fa-chevron-down"></a>
+					<a href="javaScript:void(0)" ng-if="!column.primary" ng-click="ArrayTool.del($index,data.columns)" class="btn btn-sm btn-default fa-times"></a>
 					<span ng-if="column.primary" style="color: red">主键字段</span>
 				</td>
 			</tr>

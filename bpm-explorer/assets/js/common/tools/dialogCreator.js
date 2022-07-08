@@ -116,9 +116,19 @@ dialogHelper__.initDialogs = function(){
 			
 			if(!height)height = 500;
 			if(!width)width = 600;
-			 delete conf.url;
-			 delete conf.height;
-			 delete conf.width;
+			
+			delete conf.url;
+			delete conf.height;
+			delete conf.width;
+			 
+			 // 支持 % 赋值 
+			 height = height+'',width = width + '';
+			 if(height.indexOf('%')== -1){
+				 height = height+'px';
+			 }
+			 if(width.indexOf('%')== -1){
+				 width = width+'px';
+			 }
 			
 			var dialogConf = {
 				   // type: 2,
@@ -127,7 +137,7 @@ dialogHelper__.initDialogs = function(){
 				    closeBtn: 1,
 				    shadeClose:false,
 				    anim: -1 ,
-				    area: [width+'px', height+'px'],
+				    area: [width, height],
 				    content: url
 				};
 			if(conf.ok){
@@ -182,27 +192,28 @@ dialogHelper__.initDialogs = function(){
 		
 	},
 	Toast:{
-		warning:function(content,title){
-			if(top.toastr){
-				top.toastr.warning(content,title)
-				return;
+		warning:function(content,title,openner){
+			if(!openner){
+				openner = top.toastr ? top : window;
 			}
-			toastr.warning(content,title);
+			
+			openner.toastr.warning(content,title);
 		},
-		success:function(content,title){
-			if(top.toastr){
-				top.toastr.success(content,title)
-				return;
+		success:function(content,title,openner){
+			if(!openner){
+				openner = top.toastr ? top : window;
 			}
-			toastr.success(content,title);
+			
+			openner.toastr.success(content,title);
 		},
-		error:function(content,title){
+		error:function(content,title,openner){
 			if(!title)title = "错误提示！";
-			if(top.toastr){
-				top.toastr.error(content,title)
-				return;
+			
+			if(!openner){
+				openner = top.toastr ? top : window;
 			}
-			toastr.error(content,title);
+			
+			openner.toastr.error(content,title);
 		}
 		
 	},
@@ -352,16 +363,6 @@ dialogHelper__.initCustDialogs = function(){
 				var dialogConf = result.data;
 				dialogConf = jQuery.extend(dialogConf, dialogSetting);
 				
-				//1 修改对话框的配置
-				if (dialogConf.page) {// 默认有分页配置
-					if (param.offset == null) {// 入参没有对分页页码
-						param.offset = 0;
-					}
-					if (param.limit == null) {// 入参没有对分页长度
-						param.limit = dialogConf.pageSize;
-					}
-				}
-				
 				//2 根据条件配置修改入参
 				window.CustUtil.handleParam(dialogConf,param);
 				
@@ -417,7 +418,7 @@ dialogHelper__.getProjectUrl = function(url){
 		 var pathname =window.document.location.pathname;
 		 var projectPath = pathname.substring(0,pathname.substr(1).indexOf('/')+1);
 		 // 特殊处理下流程设计器
-		 if(projectPath === '' || "/bus,/bpm,/sys,/org,/form,/flow-editor".indexOf(projectPath)!= -1){
+		 if(projectPath === '' || "/bus,/bpm,/sys,/org,/form,/flow-editor,/bpmplugin".indexOf(projectPath)!= -1){
 			 return url;
 		 }
 		if(url.startWith(projectPath)){

@@ -1,7 +1,8 @@
 <html ng-app="app">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 	<script type="text/javascript">
 		var app = angular.module('app', [ 'baseDirective' ]);
@@ -37,25 +38,25 @@
 			<tr ng-if="data.dictType=='dict'">
 				<th>分类</th>
 				<td>
-					<span ab-combox="data.typeId" tree-key="dict" ng-model="data.typeId" ab-validate="{required:true}"></span>
+					<span ab-combox="data.typeId" tree-key="dict" ng-model="data.typeId" ab-validate="{required:true,maxlength:80}"></span>
 				</td>
 			</tr>
 			<tr>
 				<th ><span>名称:</span></th>
 				<td>
-					<input type="text" ng-model="data.name" class="form-control" ab-validate="{required:true}" />
+					<input type="text" ng-model="data.name" class="form-control" ab-validate="{required:true,maxlength:60}" />
 				</td>
 			</tr>
 			<tr>
 				<th><span>KEY</span></th>
 				<td>
-					<input type="text" ab-pinyin="data.name" ng-model="data.key" class="form-control" ab-validate="{required:true}" />
+					<input type="text" ab-pinyin="data.name" ng-model="data.key" ng-disabled="data.id" class="form-control" ab-validate="{required:true,maxlength:60}" />
 				</td>
 			</tr>
 			<tr ng-if="data.dictType=='node'">
 				<th><span>序号</span></th>
 				<td>
-					<input type="text"  ng-model="data.sn" class="form-control" ab-validate="{number:true}" ng-init="data.sn? '':data.sn=1"/>
+					<input type="text"  ng-model="data.sn" class="form-control" ab-validate="{number:true,maxlength:60}" ng-init="data.sn? '':data.sn=1"/>
 				</td>
 			</tr>
 		</table>

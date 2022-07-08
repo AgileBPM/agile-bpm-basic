@@ -1,51 +1,86 @@
 package com.dstz.base.core.cache.impl;
 
+import com.dstz.base.api.constant.BaseStatusCode;
+import com.dstz.base.api.exception.BusinessException;
+import com.dstz.base.core.cache.ICache;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.dstz.base.core.cache.ICache;
-
 /**
  * 内存的cache实现。
+ *
+ * @author jeff
  */
 public class MemoryCache<T> implements ICache<T> {
-    private Logger logger = LoggerFactory.getLogger(MemoryCache.class);
 
-    private Map<String, T> map = new ConcurrentHashMap<String, T>();
+    private Map<String, T> map = new ConcurrentHashMap<>();
 
+    @Override
     public void add(String key, T obj) {
-    	if(key == null) return;
+        if (key == null) {
+            return;
+        }
         map.put(key, obj);
-        logger.info("MemoryCache add " + key);
     }
 
+    @Override
     public void delByKey(String key) {
-    	if(key == null) return;
+        if (key == null) {
+            return;
+        }
         map.remove(key);
-        logger.info("MemoryCache delByKey " + key);
     }
 
+    @Override
     public void clearAll() {
         map.clear();
-        logger.info("MemoryCache clearAll");
     }
 
+    @Override
     public T getByKey(String key) {
-    	if(key == null) return null;
+        if (key == null) {
+            return null;
+        }
         return map.get(key);
     }
-    
-    
+
+    @Override
     public boolean containKey(String key) {
-    	if(key == null) return false;
+        if (key == null) {
+            return false;
+        }
         return map.containsKey(key);
     }
 
+    @Override
     public void add(String key, T obj, int timeout) {
-    	
+        throw new BusinessException(BaseStatusCode.NOT_SUPPORT);
+    }
+
+    @Override
+    public void add2Region(String region, String key, T obj) {
+        this.add(key, obj);
+    }
+
+    @Override
+    public T getByKey(String region, String key) {
+        return this.getByKey(key);
+    }
+
+    @Override
+    public void clearRegion(String region) {
+
+    }
+
+    @Override
+    public void delByKey(String region, String key) {
+        this.delByKey(key);
+    }
+
+    @Override
+    public boolean containKey(String region, String key) {
+        return this.containKey(key);
     }
 
 }

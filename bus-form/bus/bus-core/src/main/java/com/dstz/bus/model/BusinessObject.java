@@ -59,6 +59,10 @@ public class BusinessObject extends BaseModel implements IBusinessObject {
 	 */
 	@NotEmpty
 	private String persistenceType;
+	/**
+	 * 持久化类型的配置项（根据不同类型会存放不同内容）
+	 */
+	private String perTypeConfig;
 
 	// 以下的字段不会进行持久化（不存数据库）
 	private BusTableRel relation;
@@ -119,12 +123,22 @@ public class BusinessObject extends BaseModel implements IBusinessObject {
 		this.groupName = groupName;
 	}
 
+	@Override
 	public String getPersistenceType() {
 		return persistenceType;
 	}
 
 	public void setPersistenceType(String persistenceType) {
 		this.persistenceType = persistenceType;
+	}
+
+	@Override
+	public String getPerTypeConfig() {
+		return perTypeConfig;
+	}
+
+	public void setPerTypeConfig(String perTypeConfig) {
+		this.perTypeConfig = perTypeConfig;
 	}
 
 	@Override
@@ -233,11 +247,11 @@ public class BusinessObject extends BaseModel implements IBusinessObject {
 			return RightsType.getDefalut().isDbReadable();
 		}
 	}
-	
+
 	@Override
 	public Set<String> calDataSourceKeys() {
 		Set<String> keys = new HashSet<>();
-		for(BusTableRel rel:relation.list()) {
+		for (BusTableRel rel : relation.list()) {
 			keys.add(rel.getTable().getDsKey());
 		}
 		return keys;

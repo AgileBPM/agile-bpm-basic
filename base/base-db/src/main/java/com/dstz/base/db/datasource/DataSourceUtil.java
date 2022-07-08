@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import com.dstz.base.core.util.AppUtil;
 import com.dstz.base.core.util.StringUtil;
 
 /**
@@ -17,7 +16,9 @@ public class DataSourceUtil {
     public static final String DEFAULT_DATASOURCE = "dataSourceDefault";
 
     public static final String TARGET_DATASOURCES = "targetDataSources";
-
+    
+    public static DynamicDataSource dynamicDataSource;
+    
     /**
      * 添加数据源 。
      *
@@ -28,7 +29,6 @@ public class DataSourceUtil {
      * @throws IllegalAccessException
      */
     public static void addDataSource(String key, DataSource dataSource, boolean replace) {
-        DynamicDataSource dynamicDataSource = (DynamicDataSource) AppUtil.getBean(GLOBAL_DATASOURCE);
         if (dynamicDataSource.isDataSourceExist(key)) {
             if (!replace)
                 return;
@@ -63,7 +63,6 @@ public class DataSourceUtil {
      * @return
      */
     public static boolean isDataSourceExist(String key) {
-        DynamicDataSource dynamicDataSource = (DynamicDataSource) AppUtil.getBean(GLOBAL_DATASOURCE);
         return dynamicDataSource.isDataSourceExist(key);
     }
 
@@ -75,7 +74,6 @@ public class DataSourceUtil {
      * @throws IllegalAccessException
      */
     public static void removeDataSource(String key) throws IllegalAccessException, NoSuchFieldException {
-        DynamicDataSource dynamicDataSource = (DynamicDataSource) AppUtil.getBean(GLOBAL_DATASOURCE);
         dynamicDataSource.removeDataSource(key);
     }
 
@@ -87,7 +85,6 @@ public class DataSourceUtil {
      * @throws IllegalAccessException
      */
     public static Map<String, DataSource> getDataSources() {
-        DynamicDataSource dynamicDataSource = (DynamicDataSource) AppUtil.getBean(GLOBAL_DATASOURCE);
         Map<String, DataSource> map = dynamicDataSource.getDataSource();
         return map;
     }
@@ -114,7 +111,6 @@ public class DataSourceUtil {
      * @return
      */
     public static DataSource getDataSourceByAliasWithLoacl(String alias) {
-    	DynamicDataSource dynamicDataSource = (DynamicDataSource) AppUtil.getBean(DataSourceUtil.GLOBAL_DATASOURCE);
     	if (DataSourceUtil.GLOBAL_DATASOURCE.equals(alias)) {
 			return dynamicDataSource;
 		}

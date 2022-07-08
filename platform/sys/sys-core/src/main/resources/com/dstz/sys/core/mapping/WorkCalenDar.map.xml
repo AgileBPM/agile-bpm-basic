@@ -63,7 +63,7 @@
 		SELECT * FROM c_work_calendar 
 		WHERE 
 		day_ BETWEEN #{startDay,jdbcType=DATE} AND #{endDay,jdbcType=DATE}
-		AND system_="public"
+		AND system_='public'
 	</select>
 	
 	<select id="getByPeriodAndSystem" parameterType="java.util.Map" resultMap="WorkCalenDar">
@@ -86,20 +86,20 @@
 		select * 
         from c_work_calendar 
 		where day_ &gt;= #{startDay,jdbcType=DATE} 
-		AND system_ = "public"
-		and isWorkDay_ = "1" 
-		ORDER BY day_ limit #{days,jdbcType=INTEGER},1
+		AND system_ = 'public'
+		and isWorkDay_ = '1' 
+		ORDER BY day_ 
 	</select>
 	
 	<select id="getWorkDayByDaysAndSystem" parameterType="java.util.Map" resultMap="WorkCalenDar">
 		select * from c_work_calendar 
 		where day_ &gt;= #{startDay,jdbcType=DATE} 
-		AND system_ = #{system,jdbcType=VARCHAR} AND isWorkDay_ = "1" 
+		AND system_ = #{system,jdbcType=VARCHAR} AND isWorkDay_ = '1' 
         UNION SELECT * from c_work_calendar 
         WHERE day_ &gt;= #{startDay,jdbcType=DATE} AND day_ NOT IN (select day_ from c_work_calendar where day_ &gt;= #{startDay,jdbcType=DATE} AND system_ = #{system,jdbcType=VARCHAR}) 
-        AND system_ = "public" 
-        AND isWorkDay_ = "1" 
-        ORDER BY day_ limit #{days,jdbcType=INTEGER},1
+        AND system_ = 'public' 
+        AND isWorkDay_ = '1' 
+        ORDER BY day_ 
 	</select>
 	
 	<select id="getByDayAndSystem" parameterType="java.util.Map" resultMap="WorkCalenDar">

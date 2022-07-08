@@ -37,14 +37,14 @@ public interface UserService {
      * @param groupType 组织类型
      * @return
      */
-    List<IUser> getUserListByGroup(String groupType, String groupId);
+    List<? extends IUser> getUserListByGroup(String groupType, String groupId);
     
     /**
      * 获取用户的角色关系
      * @param userId
      * @return
      */
-	List<IUserRole> getUserRole(String userId);
+	List<? extends IUserRole> getUserRole(String userId);
 
 
 }

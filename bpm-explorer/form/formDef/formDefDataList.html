@@ -1,15 +1,28 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/gridList.css" rel="stylesheet">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../build/common/gridList.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/form/formDef/formDefDataListController.js"></script>
 <script type="text/javascript">
 	//编辑页
 	function edit(id) {
-		var url = "formDefPreview.html?key=" + $.getParameter("key");
+		var formType = $.getParam("formType");
+		var previewUrlMap = {
+			"pc" : 'formDefPreview.html',
+			"pc_vue" : 'vueFormDefPreview.html',
+			"mobile" : window.top.__ctx_mb + '/#/bpm/preview',
+			"pc_iview" : window.top.__ctx_pc_iview + '/bpm/form/preview',
+		};
+
+		if (!previewUrlMap[formType]) {
+			$.Dialog.alert(formType + "类型表单暂不支持预览");
+			return;
+		}
+
+		var url = previewUrlMap[formType] + "?key=" + $.getParameter("key");
 		if (id) {
 			url += "&id=" + id;
 		}
@@ -28,7 +41,7 @@
 				return;
 			}
 			var formKey = $.getParameter("key")
-			var url = __ctx + "/form/formDefData/removeData/"+formKey+"/"+id;
+			var url = __ctx + "/form/formDefData/removeData/" + formKey + "/" + id;
 			jQuery.post(url, {}, function(rlt) {
 				$.getResult(rlt, function() {
 					$("[ab-grid]").bootstrapTable("refresh");

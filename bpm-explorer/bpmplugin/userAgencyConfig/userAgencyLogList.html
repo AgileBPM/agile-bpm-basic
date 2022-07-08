@@ -1,0 +1,55 @@
+<html>
+<head>
+    <title>业务流程用户代理记录列表</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="../../build/common/base.css" rel="stylesheet">
+    <script type="text/javascript" src="../../build/common/base.js"></script>
+    <script type="text/javascript" src="../../build/common/gridList.js"></script>
+    <script type="text/javascript">
+        var configId = $.getParam("configId");
+        $.getQueryParam = function (params) {
+            params['bual.config_id_^VE'] = configId;
+            return params;
+        };
+    </script>
+</head>
+<body style="height: 85%;">
+
+<div class="panel panel-default search-panel">
+        <div class="panel-heading" data-toggle="collapse" toggle="true" data-target="#formSearch" >查询条件</div>
+        <div class="panel-body">
+            <form id="searchForm" class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-1" for="subject_^VLK">标题</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="subject_^VLK">
+                    </div>
+                    <div class="col-sm-4" style="text-align:left;">
+                    		<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+						<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>  
+
+<!-- 数据列表 ab-grid -->
+<table ab-grid data-id-field="id" data-url="/bpm/userAgencyLog/listJson">
+    <thead>
+    <tr>
+        <th data-checkbox="true">ID</th>
+        <th data-field="flowInstanceName">流程名称</th>
+        <th data-field="taskName" >代理节点</th>
+        <th data-field="approverName">代理人</th>
+        <th data-field="approveTime" data-formatter=dateTimeFormatter>审批时间</th>
+        <th data-field="approveStatus" data-formatter="labelFormatter" 
+              			data-value-style="awaiting_check-待处理-warn,agree-同意-primary,oppose-反对-default,reject-驳回-danger,signOppose-会签反对-danger,signPass-会签通过-success,turn-转办-info,">处理结果</th>
+        <th data-field="createTime" data-formatter=dateTimeFormatter>创建时间</th>
+        <th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
+            <a class='btn btn-outline btn-primary fa fa-image' qtip="流程图" opendialog="流程图" url="/bpm/instance/instanceImageDialog.html?instanceId={flowInstanceId}">流程图</a>
+        </th>
+    </tr>
+    </thead>
+</table>
+</body>
+</html>

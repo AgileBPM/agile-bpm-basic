@@ -14,7 +14,7 @@
 	</sql>
 
     <insert id="create" parameterType="com.dstz.sys.core.model.Script">
-        INSERT INTO SYS_SCRIPT
+        INSERT INTO sys_script
         (<include refid="columns"/>)
         VALUES
         (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{script,jdbcType=CLOB}, #{category,jdbcType=VARCHAR},
@@ -22,7 +22,7 @@
     </insert>
 
     <select id="query" parameterType="java.util.Map" resultMap="Script">
-        SELECT * FROM SYS_SCRIPT
+        SELECT * FROM sys_script
         <where>
             <if test="whereSql!=null">
                 ${whereSql}
@@ -37,19 +37,19 @@
     </select>
 
     <select id="get" parameterType="java.lang.String" resultMap="Script">
-		SELECT * FROM SYS_SCRIPT 
+		SELECT * FROM sys_script 
 		WHERE 
 		ID_=#{id}
 	</select>
 
     <delete id="remove" parameterType="java.lang.String">
-		DELETE FROM SYS_SCRIPT 
+		DELETE FROM sys_script 
 		WHERE
 		ID_=#{id}
 	</delete>
 
     <update id="update" parameterType="com.dstz.sys.core.model.Script">
-		UPDATE SYS_SCRIPT SET
+		UPDATE sys_script SET
 		NAME_=#{name,jdbcType=VARCHAR} , 
 		SCRIPT_=#{script,jdbcType=CLOB} , 
 		CATEGORY_=#{category,jdbcType=VARCHAR} , 
@@ -59,10 +59,10 @@
 	</update>
 
     <select id="getDistinctCategory" resultType="java.lang.String">
-		SELECT DISTINCT CATEGORY_ FROM SYS_SCRIPT 
+		SELECT DISTINCT CATEGORY_ FROM sys_script 
 	</select>
 
     <select id="isNameExists" resultType="int" parameterType="java.lang.String">
-		SELECT COUNT(*) FROM SYS_SCRIPT WHERE NAME_=#{name}
+		SELECT COUNT(*) FROM sys_script WHERE NAME_=#{name}
 	</select>
 </mapper>

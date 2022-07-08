@@ -1,17 +1,12 @@
 package com.dstz.org.api.constant;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * 组织常量。
- *
- * @author ray
+ * 系统支持的组类型
  */
 public enum GroupTypeConstant {
     ORG("org", "组织"),
-    ROLE("role", "角色"),
-    POSITION("post", "岗位");
+    POST("post", "岗位"),
+    ROLE("role", "角色");
     private String key;
     private String label;
 
@@ -27,13 +22,15 @@ public enum GroupTypeConstant {
     public String label() {
         return label;
     }
-
-    public static Map<String, String> getGroupTypes() {
-        Map<String, String> map = new HashMap<String, String>();
+ 
+    
+    public static GroupTypeConstant fromStr(String key) {
+    	
         for (GroupTypeConstant e : GroupTypeConstant.values()) {
-            map.put(e.key(), e.label());
+            if (key.equals(e.key)) return e;
         }
-        return map;
-    }
+        
+        return null;
+     }
 
 }

@@ -74,24 +74,6 @@
 //            'plugins/customquery.js',
 //            'plugins/cascadequery.js',
 //            'plugins/setreadonly.js',
-//            'plugins/flowchart.js',
-//           'plugins/picture.js',
-//            'plugins/importform.js',
-//            'plugins/exportform.js',
-//            'plugins/input.js',
-//            'plugins/mathfunction.js',
-//            'plugins/opinion.js',
-//            'plugins/subtable.js',
-//            'plugins/taskopinion.js',
-//            'plugins/numbervalidate.js',
-//            'plugins/international.js',
-//            'plugins/cutandpasteinput.js',
-//            'plugins/serialnum.js'
-//            'plugins/customButton/customButton.js',
-//            'plugins/opinion/opinion.js',
-//            'plugins/approvalHistory.js',
-//            'plugins/elementTool.js'
-      //    'plugins/gangedSetting/gangedSetting.js'
         ],
         baseURL = '../../assets/js/plugins/ueditor/';
     for (var i=0,pi;pi = paths[i++];) {

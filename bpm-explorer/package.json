@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --inline --hot",
+    "source": "webpack -w --mode development",
     "build": "webpack"
   },
   "author": "",

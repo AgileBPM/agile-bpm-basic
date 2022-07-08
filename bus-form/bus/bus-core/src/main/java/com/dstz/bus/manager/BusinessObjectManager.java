@@ -45,4 +45,8 @@ public interface BusinessObjectManager extends Manager<String, BusinessObject> {
 	 * @return
 	 */
 	BusinessObject getFilledByKey(String key);
+
+	void updateOverallArrangementByCode(String boCode, String overallArrangement);
+	
+	String getOverallArrangementByCode(String boCode);
 }

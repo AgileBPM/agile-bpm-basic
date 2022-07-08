@@ -1,7 +1,7 @@
 var app = angular.module('app',['base']);
 app.controller("indexCtrl",['$scope','baseService',function(scope,baseService){
 	scope.getUserMsg = function(){
-		var denfer = baseService.post(__ctx+"/userResource/userMsg",{});
+		var denfer = baseService.post(__ctx+"/org/userResource/userMsg",{});
 		denfer.then(
 			function(result){
 				if(!result.isOk && result.code==="401"){
@@ -11,8 +11,21 @@ app.controller("indexCtrl",['$scope','baseService',function(scope,baseService){
 					$.Toast.error(result.msg);
 				}
 				
-				scope.userMsg = result.data;
-				scope.userRes = scope.userMsg.resourceList;
+				scope.userMsg = FastJson.format(result).data;
+				scope.userRes = scope.userMsg.userMenuList;
+				
+				//将子系统url前缀添加至top中
+				top.subSystem = {};
+				for(var i=0,s;s=scope.userMsg.subsystemList[i++];){
+					top.subSystem[s.alias] = s;
+				}
+				
+				//将权限放到缓存中
+				if(window.localStorage){
+					 window.localStorage.setItem( 'buttonPermision', JSON.stringify(scope.userMsg.buttonPermision));
+					 console.info(window.localStorage.buttonPermision);
+				}
+				
 				var menuId = $.getCookie("default_menu");
 				var currentMenu=null ;
 				//获取cookie中的当前菜单
@@ -53,16 +66,14 @@ app.controller("indexCtrl",['$scope','baseService',function(scope,baseService){
 		},10)
 	}
 	scope.menuClick = function(menu,noReload){
-		if(!menu.defaultUrl){
-			menu.opened = !menu.opened;
-		}
 		if(!menu.url){
-			var url = menu.defaultUrl;
-			if(!url) return;
-			//if(url.indexOf("http")==-1)url = __ctx+url;
-			menu.url = url;
+			return;
 		}
-
+		
+		if(menu.url.indexOf("http")!= -1){
+			noReload = true; //跨域的都不支持reload
+		}
+		
 		var hasOpened = false;
 		for(var i=0,m;m=scope.openedMenu[i++];){
 			m.active = "";
@@ -122,12 +133,31 @@ app.controller("indexCtrl",['$scope','baseService',function(scope,baseService){
 		return "";
 	}
 	
-	scope.logout = function(){
+	scope.changeCurrentSystem = function(system){
+		if(system.url){
+			window.open(system.url,system.openType ||"_top");
+			return;
+		}
+		
+		var get = baseService.get(__ctx+"/userResource/changeSystem?systemAlias="+system.alias);
+		$.getResultData(get,function(){
+			window.location = "index.html";
+		})
+	}
+	scope.changeCurrentOrg = function(orgId){
+		var get = baseService.get(__ctx+"/userResource/changeOrg?orgId="+orgId);
+		$.getResultData(get,function(){
+			window.location = "index.html";
+		})
+	}
+	
+	scope.logout = function(systemId){
 		var get = baseService.get(__ctx+"/logout");
 		$.getResultData(get,function(){
 			window.location = "login.html";
 		})
 	}
+	
 	scope.closeAll = function(){
 		scope.openedMenu = [{id:"indexpage",active:"active",name:"首页",noclose:true,url:"sys/workbenchPanel/myWorkbench.html"}]; 
 	}
@@ -171,6 +201,36 @@ app.controller("indexCtrl",['$scope','baseService',function(scope,baseService){
 	window.setTimeout(function(){
 		$("#indexpageiframe").attr("src", "sys/workbenchPanel/myWorkbench.html");
 	},10)
+	var userInfoTab = {
+			id:"userInfo",
+			name:"个人信息",
+			icon: 'fa-user',
+			closable:true
+		};
+	scope.userInfo = function (){
+		userInfoTab.url = 'org/user/userDetail.html?id=' + scope.userMsg.user.id
+		scope.menuClick(userInfoTab);
+	}
+	var editPassworldTab =  {
+			id:"editPassworld",
+			name:"修改个人密码",
+			icon: 'fa-key',
+			closable:true
+		};
+	scope.editPassworld = function(){
+		editPassworldTab.url = 'org/user/userPasswordEdit.html?id=' + scope.userMsg.user.id
+		scope.menuClick(editPassworldTab);
+	}
+	var editUserInfoTab = {
+			id:"editUserInfo",
+			name:"个人信息编辑",
+			icon: 'fa-info',
+			closable:true
+		};
+	scope.editUserInfo = function(){
+		editUserInfoTab.url = 'org/user/userEditInformation.html?id=' + scope.userMsg.user.id
+		scope.menuClick(editUserInfoTab);
+	}
 }])
 var onlyOpenTitle = "首页";
 //当这个窗口出现在iframe里，表示其目前已经timeout，需要把外面的框架窗口也重定向登录页面
@@ -193,35 +253,6 @@ window.addTab = function(tab,fullTab){
 	}
 }
 
-
-
-window.userInfo = function (){
-	addTab({
-		id:"userInfo",
-		name:"个人信息",
-		defaultUrl: '/org/user/userGet?id='+currentUserId,
-		icon: 'fa-user',
-		closable:true
-	});
-}
-function editPassworld(){
-	addTab({
-		id:"editPassworld",
-		name:"修改个人密码",
-		defaultUrl: '/org/user/userPswEdit',
-		icon: 'fa-key',
-		closable:true
-	});
-}
-window.editUserInfo = function(){
-	addTab({
-		id:"editUserInfo",
-		name:"个人信息编辑",
-		defaultUrl: '/org/user/userInfoEdit',
-		icon: 'fa-info',
-		closable:true
-	});
-}
 
 function calSumWidth(elements) {
     var width = 0;

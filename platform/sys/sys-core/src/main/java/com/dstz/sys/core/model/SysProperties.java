@@ -18,11 +18,6 @@ import com.dstz.sys.api.constant.EnvironmentConstant;
 public class SysProperties extends BaseModel{
 
     /**
-     * 主键
-     */
-    protected String id;
-
-    /**
      * 参数名
      */
     protected String name;
@@ -141,15 +136,10 @@ public class SysProperties extends BaseModel{
      * 返回值时如果是加密情况，则将密码解密。
      *
      * @return
-     * @throws Exception
      */
     public String getRealVal() {
         if (this.encrypt == 1) {
-            try {
-                return EncryptUtil.decrypt(this.value);
-            } catch (Exception e) {
-                return "";
-            }
+            return EncryptUtil.decrypt(this.value);
         }
         return this.value;
     }

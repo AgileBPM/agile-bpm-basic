@@ -1,6 +1,7 @@
 package com.dstz.bus.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,6 +187,20 @@ public class BusinessData implements IBusinessData {
 		return map;
 	}
 
+	@Override
+	public List<IBusinessData> getChild(String subKey) {
+		Map<String, List<IBusinessData>> subDatas = this.getChilds();
+		if(subDatas.containsKey(subKey)){
+			return subDatas.get(subKey);
+		}
+		return Collections.emptyList();
+	}
+
+	public List<IBusinessData> getChildren(String subKey){
+		return this.getChild(subKey);
+	}
+
+
 	/**
 	 * 将当前bd 的initdata 设置进去
 	 */
@@ -195,7 +210,7 @@ public class BusinessData implements IBusinessData {
 			initData = new JSONObject();
 
 		JSONObject initTables = new JSONObject();
-		for (IBusTableRel rel : this.getBusTableRel().getChildren()) {
+		for (IBusTableRel rel : this.getBusTableRel().list()) {
 			initTables.put(rel.getTableKey(), getInitData(rel));
 		}
 		initData.put(this.getBusTableRel().getBusObj().getKey(), initTables);

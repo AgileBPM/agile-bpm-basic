@@ -1,0 +1,116 @@
+<!doctype html>
+<html ng-app="base">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
+<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+<script type="text/javascript">
+	var Controller = [ '$scope', 'baseService', function(scope, baseService) {
+		var instanceId = $.getParam("instanceId")
+		if (!instanceId) {
+			instanceId = window.passData.instanceId;
+		}
+		var defer = baseService.postForm(__ctx + "/bpm/instance/getInstanceOpinion", {
+			instId : instanceId
+		});
+		$.getResultData(defer, function(data) {
+			scope.opinionList = data;
+		})
+
+		ToolsController.getEnum("com.dstz.bpm.api.constant.OpinionStatus").then(function(data) {
+			scope.OpinionStatus = data;
+			scope.OpinionStatusKeyMap = {};
+			angular.forEach(data, function(val, key) {
+				scope.OpinionStatusKeyMap[val.key] = val.value;
+			});
+		});
+		
+		scope.assignInfo = function(info){
+			if(!info){
+				return "";
+			}
+			var msg = "";
+			angular.forEach(info.split(","),function(item){
+				if(!item){
+					return;
+				}
+				if(msg){
+					msg+="；";
+				}
+				var strs = item.split("-");
+				var typeName ="";
+				if(strs[0]==="user"){
+					typeName="[用户]";
+				}else if(strs[0]==="role"){
+					typeName="[角色]";
+				}else if(strs[0]==="group"){
+					typeName="[组]";
+				}else if(strs[0]==="org"){
+					typeName="[组织]";
+				}else if(strs[0]==="post"){
+					typeName="[岗位]";
+					if(strs[2]){
+						return msg += typeName + strs[1] + "-" + strs[2];
+					}
+				}else if(strs[0]==="job"){
+					typeName="[职称]";
+				}
+				msg += typeName + strs[1];
+			});
+			return msg;
+		};
+		scope.assignUser = function(taskId){
+			CustUtil.openCustDialog("userSelector",function(arrData,innerWindow){
+			    var param = {userId:arrData[0].id,userName:arrData[0].name,taskId:taskId+""};
+				
+				$.post(__ctx+"/bpm/task/assignTask",param,function(responseText){
+					var result	= eval('(' + responseText + ')');
+					if (result.isOk) {
+						$.Toast.success('指派成功！', function() {
+							window.location.reload();
+						});
+					} else {
+						$.Toast.error(result.msg);
+					}
+				})
+			    $.Dialog.close(innerWindow);
+			},null,{ multiple : false})
+		}
+	} ];
+
+ 
+</script>
+</head>
+<body class="panel success" ng-controller="Controller">
+	<table class="table table-striped" style="margin-top: 5px">
+		<tdead>
+		<tr>
+			<td></td>
+			<td style="widtd: 10%; min-widtd: 150px;">任务名称</td>
+			<td style="widtd: 10%; min-widtd: 130px;">任务创建时间</td>
+			<td style="widtd: 10%; min-widtd: 130px;">处理时间</td>
+			<td style="widtd: 30%;">待执行人</td>
+			<td style="widtd: 10%; min-widtd: 55px;">执行人</td>
+			<td style="widtd: 10%; min-widtd: 63px;">处理状态</td>
+			<td style="widtd: 12%; min-widtd: 130px;">备注/意见</td>
+			<td style="widtd: 12%; min-widtd: 130px;">管理</td>
+		</tr>
+		</tdead>
+		<tr ng-repeat="o in opinionList">
+			<td style="widtd: 26px;">{{$index+1}}</td>
+			<td style="widtd: 10%; min-widtd: 150px;">{{o.taskName}}</td>
+			<td style="widtd: 10%; min-widtd: 130px;">{{o.createTime | date:"yyyy-MM-dd HH:mm:ss"}}</td>
+			<td style="widtd: 10%; min-widtd: 130px;">{{o.approveTime | date:"yyyy-MM-dd HH:mm:ss"}}</td>
+			<td style="widtd: 30%;">{{assignInfo(o.assignInfo)}}</td>
+			<td style="widtd: 10%; min-widtd: 55px;">{{o.approverName}}</td>
+			<td style="widtd: 10%; min-widtd: 63px;">{{OpinionStatusKeyMap[o.status]}}</td>
+			<td style="widtd: 12%; min-widtd: 130px;">{{o.opinion}}</td>
+			<td style="widtd: 12%; min-widtd: 130px;">
+			<span ng-show="o.status ==='awaiting_check'" ng-click="assignUser(o.taskId)" class="fa-user btn btn-primary btn-sm">指派</span>
+			
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

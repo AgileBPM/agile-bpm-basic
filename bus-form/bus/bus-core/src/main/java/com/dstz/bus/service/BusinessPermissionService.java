@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
-import com.dstz.base.core.util.BeanUtils;
 import com.dstz.base.core.util.StringUtil;
+import com.dstz.base.core.util.ThreadMapUtil;
 import com.dstz.bus.api.constant.RightsType;
 import com.dstz.bus.api.service.IBusinessPermissionService;
 import com.dstz.bus.manager.BusinessObjectManager;
@@ -18,6 +18,9 @@ import com.dstz.bus.model.permission.BusColumnPermission;
 import com.dstz.bus.model.permission.BusObjPermission;
 import com.dstz.bus.model.permission.BusTablePermission;
 import com.dstz.sys.api.permission.PermissionCalculatorFactory;
+
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.map.MapUtil;
 
 @Service
 public class BusinessPermissionService implements IBusinessPermissionService {
@@ -52,7 +55,7 @@ public class BusinessPermissionService implements IBusinessPermissionService {
 			for (Entry<String, BusTablePermission> etry : busObjPermission.getTableMap().entrySet()) {
 				BusTablePermission busTablePermission = etry.getValue();
 				// 自身为空则设置为上级bo的权限
-				if (BeanUtils.isEmpty(busTablePermission.getRights())) {
+				if (CollectionUtil.isEmpty(busTablePermission.getRights())) {
 					busTablePermission.setResult(busObjPermission.getResult());
 				} else {
 					calculateResult(busTablePermission);
@@ -61,7 +64,7 @@ public class BusinessPermissionService implements IBusinessPermissionService {
 				for (Entry<String, BusColumnPermission> ery : busTablePermission.getColumnMap().entrySet()) {
 					BusColumnPermission busColumnPermission = ery.getValue();
 					// 自身为空则设置为上级table的权限
-					if (BeanUtils.isEmpty(busColumnPermission.getRights())) {
+					if (MapUtil.isEmpty(busColumnPermission.getRights())) {
 						busColumnPermission.setResult(busTablePermission.getResult());
 					} else {
 						calculateResult(busColumnPermission);
@@ -80,7 +83,6 @@ public class BusinessPermissionService implements IBusinessPermissionService {
 	 * @param permission
 	 */
 	private void calculateResult(AbstractPermission permission) {
-
 		for (RightsType rightsType : RightsType.values()) {
 			JSONArray jsonArray = permission.getRights().get(rightsType.getKey());
 			boolean b = PermissionCalculatorFactory.haveRights(jsonArray);
@@ -93,5 +95,8 @@ public class BusinessPermissionService implements IBusinessPermissionService {
 		if (StringUtil.isEmpty(permission.getResult())) {
 			permission.setResult(RightsType.values()[RightsType.values().length - 1].getKey());
 		}
+		
+		//清空权限使用到的线程变量
+		ThreadMapUtil.remove("com.dstz.sys.permission.impl.GroupPermission");
 	}
 }

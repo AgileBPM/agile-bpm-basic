@@ -1,7 +1,6 @@
 package com.dstz.sys.aop;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -22,7 +21,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.api.aop.annotion.CatchErr;
 import com.dstz.base.api.constant.BaseStatusCode;
 import com.dstz.base.api.constant.IStatusCode;
@@ -32,10 +30,8 @@ import com.dstz.base.api.exception.BusinessMessage;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.core.id.IdUtil;
 import com.dstz.base.core.util.AppUtil;
-import com.dstz.base.core.util.BeanUtils;
 import com.dstz.base.core.util.ExceptionUtil;
-import com.dstz.base.core.util.FileUtil;
-import com.dstz.base.rest.util.RequestContext;
+import com.dstz.base.core.util.RequestContext;
 import com.dstz.base.rest.util.RequestUtil;
 import com.dstz.org.api.model.IUser;
 import com.dstz.sys.api.constant.EnvironmentConstant;
@@ -77,34 +73,37 @@ public class ErrAspect {
             returnVal = point.proceed();
         } catch (Exception ex) {
             //如果非业务异常则记录日志
-            String error = ExceptionUtil.getRootErrorMseeage(ex);
+            String errorMessage = ExceptionUtil.getRootErrorMseeage(ex);
             String exception = ExceptionUtil.getExceptionMessage(ex);
 
             ResultMsg resultMsg = null;
             if (!(ex instanceof BusinessMessage)) {
                 LOGGER.error("操作出现异常     {}.{} ", point.getTarget().getClass(), point.getSignature().getName(), ex);
-                String errorId = logError(point, error, exception);
-                error = "errorCode[" + errorId + "] : " + error;
-                
-                // 假如是包装异常则获取具体异常码
                 IStatusCode errorCode = BaseStatusCode.SYSTEM_ERROR;
+                // 假如是包装异常则获取具体异常码，以及包装后的异常信息
                 if(ex instanceof BusinessException) {
                 	errorCode = ((BusinessException)ex).getStatusCode();
-                }
-                if(ex instanceof BusinessError) {
+                	errorMessage = ex.getMessage();
+                }else if(ex instanceof BusinessError) {
                 	errorCode = ((BusinessError)ex).getStatusCode();
+                	errorMessage = ex.getMessage();
                 }
+
+                
+                String errorId = logError(point, errorMessage, exception);
+                errorMessage = "errorCode[" + errorId + "] : " + errorMessage;
+                
                 // 生产环境 提示  系统异常，为了不暴露系统架构。而且提示具体异常会引起客户恐慌，增加用户不信任感。
                 if(AppUtil.getCtxEnvironment().contains(EnvironmentConstant.PROD.key())) {
                 	resultMsg = new ResultMsg(errorCode, errorCode.getDesc());
                 	//resultMsg.setCause(error);//可以通过控制台看到具体异常，方便快速定位。也可以删除，呵呵
                 }else {
-                	resultMsg = new ResultMsg(errorCode, error);
+                	resultMsg = new ResultMsg(errorCode, errorMessage);
                 }
             } else {
             	BusinessMessage busEx = (BusinessMessage) ex;
-                error = ex.getMessage();
-                resultMsg = new ResultMsg(busEx.getStatusCode(), error);
+                errorMessage = ex.getMessage();
+                resultMsg = new ResultMsg(busEx.getStatusCode(), errorMessage);
             }
 
 
@@ -164,7 +163,7 @@ public class ErrAspect {
 	    
         IUser sysUser = ContextUtil.getCurrentUser();
         String account = "未知用户";
-        if (BeanUtils.isNotEmpty(sysUser)) {
+        if (sysUser != null) {
             account = sysUser.getAccount();
         }
         String id = IdUtil.getSuid();

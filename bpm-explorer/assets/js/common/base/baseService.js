@@ -7,13 +7,13 @@ var base = angular.module("base", [])
 	    	  return config;
 	      },
 	      'response': function(response) {
-	    	  if(response.data && !response.data.isOk && response.data.code==="401" && window.location.href.indexOf("index") == -1 && !window.location.href.endWith("bpm-explorer/")){
+	    	  if(response.data && !response.data.isOk && response.data.code==="401" && window.location.href.indexOf("index") == -1 && (!window.location.href.endWith || !window.location.href.endWith("bpm-explorer/"))){
 	    		  jQuery.Toast.error("登录超时，请重新登录");
 	    		  console.info(response.data);
 	    		  console.info(window.location.href);
 			  }
 	    	  if(response.data && !response.data.isOk && response.data.code==="403" ){
-	    		  alert("访问受限! "+data.msg);
+	    		  jQuery.Toast.error("访问受限! "+response.data.msg);
 			  }
 	         return response;
 	      }
@@ -21,6 +21,14 @@ var base = angular.module("base", [])
 	});
 	$httpProvider.defaults.withCredentials = true;
 });
+
+// ifream 外链的时候 特殊处理
+base.filter('trustedAsResourceUrl', ['$sce', function ($sce) {
+    return function(url) {
+        return $sce.trustAsResourceUrl(url);
+    };
+}]);
+ 
 
 /**
  * 表单提交，将json转成 name=abc&age=19这种格式。

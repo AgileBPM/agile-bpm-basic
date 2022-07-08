@@ -5,24 +5,20 @@ import java.util.Map;
 
 import com.dstz.base.api.model.IBaseModel;
 
-/**
- * 描述：用户实体接口
- */
-public interface IUser extends IdentityType ,Serializable{
-    /**
-     * 男性=Male
-     */
-    public static final String SEX_MALE = "Male";
-    /**
-     * 女性=Female
-     */
-    public static final String SEX_FAMALE = "Female";
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * 用户实体接口
+ */
+@ApiModel(description="用户信息")
+public interface IUser extends Serializable{
     /**
      * 用户标识Id
      *
      * @return String
      */
+    @ApiModelProperty("用户ID")
     String getUserId();
 
     void setUserId(String userId);
@@ -32,6 +28,7 @@ public interface IUser extends IdentityType ,Serializable{
      *
      * @return String
      */
+    @ApiModelProperty("用户名")
     String getFullname();
 
     void setFullname(String fullName);
@@ -41,6 +38,7 @@ public interface IUser extends IdentityType ,Serializable{
      *
      * @return String
      */
+    @ApiModelProperty("账户")
     String getAccount();
 
     void setAccount(String account);
@@ -50,6 +48,7 @@ public interface IUser extends IdentityType ,Serializable{
      *
      * @return String
      */
+    @ApiModelProperty("密码")
     String getPassword();
 
     /**
@@ -57,6 +56,7 @@ public interface IUser extends IdentityType ,Serializable{
      *
      * @return String
      */
+    @ApiModelProperty("Email")
     String getEmail();
 
     /**
@@ -64,31 +64,13 @@ public interface IUser extends IdentityType ,Serializable{
      *
      * @return String
      */
+    @ApiModelProperty("手机号")
     String getMobile();
 
-    /**
-     * 设置用户其它属性
-     *
-     * @param map
-     */
-    void setAttributes(Map<String, String> map);
-
-    /**
-     * 获取用户其它属性
-     *
-     * @param map
-     */
-    Map<String, String> getAttributes();
-
-    /**
-     * 根据属性获取属性值。
-     *
-     * @param key
-     * @return
-     */
-    String getAttrbuite(String key);
-
+    @ApiModelProperty("微信号")
+    String getWeixin();
+    
+    @ApiModelProperty("是否启用 0/1")
     Integer getStatus();
 
-    String getWeixin();
 }

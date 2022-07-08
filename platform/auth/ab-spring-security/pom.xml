@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.dstz.agilebpm</groupId>
+        <artifactId>auth</artifactId>
+        <version>1.3.7</version>
+    </parent>
+    <artifactId>ab-spring-security</artifactId>
+    <name>security</name>
+    <description>spring-security 普通模式、jwt 模式两种</description>
+	
+	<dependencies>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>base-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>base-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>org-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>sys-api</artifactId>
+        </dependency>
+	</dependencies>
+</project>

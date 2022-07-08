@@ -72,16 +72,16 @@ public enum ColumnType {
 	public boolean equalsWithKey(String key) {
 		return this.key.equals(key);
 	}
-	
+
 	public static ColumnType getByKey(String key) {
 		for (ColumnType type : ColumnType.values()) {
-			if(type.getKey().equals(key)) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}
 		throw new BusinessException(String.format("找不到key为[%s]的字段类型", key));
 	}
-	
+
 	/**
 	 * <pre>
 	 * 根据数据库的字段类型获取type
@@ -92,15 +92,19 @@ public enum ColumnType {
 	 *            数据库的字段类型
 	 * @return
 	 */
-	public static ColumnType getByDbDataType(String dbDataType) {
+	public static ColumnType getByDbDataType(String dbDataType, String errMsgApp) {
 		for (ColumnType type : ColumnType.values()) {
-			for(String support:Arrays.asList(type.supports)) {
-				if(dbDataType.toLowerCase().contains(support.toLowerCase())) {
+			for (String support : Arrays.asList(type.supports)) {
+				if (dbDataType.toLowerCase().contains(support.toLowerCase())) {
 					return type;
 				}
 			}
-			
+
 		}
-		throw new BusinessException(String.format("数据库类型[%s]转换不了系统支持的类型", dbDataType));
+		throw new BusinessException(String.format("[%s]数据库类型[%s]转换不了系统支持的类型", errMsgApp, dbDataType));
+	}
+
+	public static ColumnType getByDbDataType(String dbDataType) {
+		return getByDbDataType(dbDataType, "");
 	}
 }

@@ -1,6 +1,8 @@
 package com.dstz.sys.simplemq.producer;
 
 import cn.hutool.core.collection.CollectionUtil;
+
+import com.alibaba.fastjson.JSON;
 import com.dstz.sys.api.jms.constants.JmsDestinationConstant;
 import com.dstz.sys.api.jms.model.JmsDTO;
 import com.dstz.sys.api.jms.producer.JmsProducer;
@@ -30,6 +32,7 @@ public class RedisMessageQueueProducer implements JmsProducer {
             LOGGER.info("传入参数为空, 跳过执行");
             return;
         }
+        LOGGER.debug(JSON.toJSONString(message));
         redisTemplate.boundListOps(JmsDestinationConstant.DEFAULT_NAME).rightPush(message);
     }
 
@@ -40,6 +43,7 @@ public class RedisMessageQueueProducer implements JmsProducer {
             LOGGER.info("传入参数为空, 跳过执行");
             return;
         }
+        LOGGER.debug(JSON.toJSONString(messages));
         redisTemplate.boundListOps(JmsDestinationConstant.DEFAULT_NAME).rightPushAll(messages.toArray());
     }
 }

@@ -25,7 +25,7 @@ public interface BusinessDataPersistenceService {
 	/**
 	 * <pre>
 	 * 保存businessData
-	 * 持久化操作
+	 * 持久化操作，过程中会赋值id
 	 * </pre>
 	 * 
 	 * @param businessData

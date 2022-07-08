@@ -13,7 +13,7 @@ var directive = angular.module("baseDirective", [ "base" ])
 		require : "ngModel",
 		link : function(scope, element, attr, ctrl) {
 			var validate = attr.abValidate;
-
+			
 			var  validateJson = eval('(' + validate + ')');
 			if(!ctrl.validateJson){
 				ctrl.validateJson = validateJson;
@@ -23,8 +23,12 @@ var directive = angular.module("baseDirective", [ "base" ])
 			
 
 			var customValidator = function(value) {
-				if (!validate)
-					return true;
+				if (!validate) return true;
+				// 在只读场景下只会搞一次、第一次数据还没有导致错误校验
+				if(value === undefined && ctrl.$modelValue){
+					value = ctrl.$modelValue;
+				}
+				
 				handlTargetValue(validateJson);
 				var validity = jQuery.fn.validRules(value, ctrl.validateJson, element);
 				ctrl.$setValidity("customValidate", validity);
@@ -312,7 +316,7 @@ var directive = angular.module("baseDirective", [ "base" ])
 					scope.$apply(function() {
 						ngModel.$setViewValue(editor.getContent());
 					});
-				}, 0);
+				}, 500);
 			});
 			
 			/**
@@ -333,6 +337,10 @@ var directive = angular.module("baseDirective", [ "base" ])
 					editor.setContent(ngModel.$viewValue);
 				}
 			};
+			
+			scope.$on("beforeSaveEvent", function(event, data) {
+				ngModel.$setViewValue(editor.getContent());
+			});
 		}
 	}
 })
@@ -675,14 +683,16 @@ var directive = angular.module("baseDirective", [ "base" ])
 					scope.initData();
 				});
 			};
-
-			// 初始化数据
+			
 			var hasInited = false;
+			// 初始化数据
 			scope.initData = function(id) {
 				if (!scope.treeObj) {
 					return;
 				}
-				hasInited = true;
+				if(scope.abCombo !== undefined){
+					hasInited = true;
+				}
 				
 				var nodes = scope.treeObj.getNodesByFilter(function(node) {
 					if(attrs.abCombox){//如果配置了Id的初始化逻辑
@@ -1058,5 +1068,30 @@ var directive = angular.module("baseDirective", [ "base" ])
 		if (!input)
 			return "";
 		return jQuery.convertCurrency(input);
+	};
+})
+/*
+ * 按钮权限  eg:判断是否拥有用户编辑权限 ab-btn-rights="userManager:edit"
+ */
+.directive('abBtnRights', function() {
+	return {
+		restrict : 'A',
+		link : function(scope, element, attrs) {
+			var btnRightsKey = attrs.abBtnRights;
+			if(!btnRightsKey)return;
+			 
+			if(window.localStorage){
+				var btnPermission = window.localStorage.getItem( 'buttonPermision' );
+				btnPermission = btnPermission ? JSON.parse( btnPermission ) : {};
+				 
+				if( btnPermission[btnRightsKey]){
+					return;
+				}
+				console.info(btnRightsKey +" no rights");
+				$(element).hide();
+			}else{
+				console.info("浏览器版本太低不支持按钮权限！");
+			}
+		}
 	};
 });

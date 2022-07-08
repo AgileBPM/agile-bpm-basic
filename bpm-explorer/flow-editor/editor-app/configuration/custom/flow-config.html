@@ -2,8 +2,8 @@
 
 	<div class="panel panel-primary">
 		<div class="panel-heading"> <div class="panel-title">全局表单设置</div> </div>
-		<div title="全局表单" type="global" bpm-form="bpmDefSetting.flow.globalForm" mobile-form="bpmDefSetting.flow.globalMobileForm"></div>
-		<div title="实例表单" type="instance" bpm-form="bpmDefSetting.flow.instForm" mobile-form="bpmDefSetting.flow.instMobileForm"></div>
+		<div   type="global" bpm-form="bpmDefSetting.flow.globalForm" mobile-form="bpmDefSetting.flow.globalMobileForm"></div>
+		<div   type="instance" bpm-form="bpmDefSetting.flow.instForm" mobile-form="bpmDefSetting.flow.instMobileForm"></div>
 	</div>
 	<div class="panel panel-primary">
 	  	<div class="panel-heading"> 流程数据模型绑定
@@ -16,7 +16,7 @@
 		  			<th>{{dataModel.name}}</th>
 		  			<td>{{dataModel.code}}</td>
 		  			<td><span class="btn btn-danger btn-sm glyphicon glyphicon-trash pull-right" 
-		  		ab-tip title="请注意！删除会影响流程配置中使用该数据模型的流程脚本、表单等" ng-click="ArrayTool.del($index,dataModelList)"></span></td>
+		  		title="请注意！删除会影响流程配置中使用该数据模型的流程脚本、表单等" ng-click="ArrayTool.del($index,dataModelList)"></span></td>
 		  		</tr>
 			</table>
 		 </div>
@@ -25,7 +25,7 @@
 		<div class="panel-heading"> <div class="panel-title">流程属性配置</div></div>
 		<div class="panel-body">
 			<div class="well">  
-					
+				<div ng-show="!properties" class="alert alert-danger row show-grid "></div>
 				<div class="form-inline">
 						<label class="control-label col-sm-3">属性设置:</label>  
 						<span  ab-boolean text="允许执行人为空/不允许执行人为空" ng-model="properties.allowExecutorEmpty" ab-tip title="任务执行人是否可以为空"></span>

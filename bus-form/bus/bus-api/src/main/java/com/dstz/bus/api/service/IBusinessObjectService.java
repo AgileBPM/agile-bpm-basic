@@ -38,4 +38,5 @@ public interface IBusinessObjectService {
 	
 	IBusinessObject getFilledByKey(String key);
 	
+	String getBoOverallArrangement(String key);
 }

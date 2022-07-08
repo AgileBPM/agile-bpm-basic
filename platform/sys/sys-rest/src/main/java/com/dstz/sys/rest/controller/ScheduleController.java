@@ -243,7 +243,7 @@ public class ScheduleController extends BaseController<Schedule>{
 				for(ScheduleParticipant participant : list) {
 					if(participant.getId().equals(participantId)) {
 						if(participant.getCompleteTime() != null && participant.getActualStartTime() != null && participant.getCompleteTime().getTime() <= participant.getActualStartTime().getTime()) {
-							throw new BusinessException("完成时间不能小于实际开始日期");
+							throw new BusinessMessage("完成时间不能小于实际开始日期");
 						}
 						rate = participant.getRateProgress();
 						participant.setUpdateTime(new Date());
@@ -276,7 +276,7 @@ public class ScheduleController extends BaseController<Schedule>{
 					mainRate += participant.getRateProgress();
 					if(participant.getId().equals(participantId)) {
 						if(participant.getCompleteTime() != null && participant.getActualStartTime() != null && participant.getCompleteTime().getTime() <= participant.getActualStartTime().getTime()) {
-							throw new BusinessException("完成时间不能小于实际开始日期");
+							throw new BusinessMessage("完成时间不能小于实际开始日期");
 						}
 						completeDate = participant.getCompleteTime();
 						if(participant.getRateProgress() >= 100 && completeDate == null) {

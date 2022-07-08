@@ -2,15 +2,16 @@
 <html ng-app="base">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript">
 
 var ztreeObject ;
 var roleId = $.getParam("roleId");
 function loadTree() {
-	var url = __ctx + "/sys/resRole/getTreeData";
-	var systemId = $("systemId").val() || "1";
+	var url = __ctx + "/org/resRole/getTreeData";
+	var systemId = $("#systemId").val() || "1";
 	var params = {systemId:systemId,roleId:roleId};
 	
 	var ztreeCreator = new ZtreeCreator('sysztreeObject',url)
@@ -20,13 +21,13 @@ function loadTree() {
 };
 
 function laodSystem(){
-	var url = __ctx + "/sys/subsystem/getUserSystem";
+	var url = __ctx + "/org/subsystem/getUserSystem";
 	
 	$.post(url, {}, function(result) {
 		var result = eval("("+result+")");
 		if (result.isOk) {//成功
 			for(var i =0,system;system= result.data[i++];){
-				$("#systemId").append("<option value="+system.id+" selected="+(system.isDefault==1?'true':'false')+">"+system.name+"</option>");
+				$("#systemId").append("<option value="+system.id+" "+(system.isDefault==1?'selected=true':'')+">"+system.name+"</option>");
 			}
 		} else {
 			$.Dialog.alert(result.msg,2);
@@ -36,7 +37,7 @@ function laodSystem(){
 
 function saveResRole(data){
 	var nodes = ztreeObject.getCheckedNodes();
-	var systemId = $("systemId").val() || "1";
+	var systemId = $("#systemId").val();
 	var resIds = [];
 	
 	for(var i=0,node;node=nodes[i++];){
@@ -45,7 +46,7 @@ function saveResRole(data){
 	
 	resIds = resIds.join(",");
 	var data = {resIds:resIds,roleId:roleId,systemId:systemId};
-	var url=__ctx +"/sys/resRole/save";
+	var url=__ctx +"/org/resRole/save";
 	$.post(url,data, function(result){
 		var result=JSON.parse(result);
 		if(result.isOk){

@@ -2,7 +2,8 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/form/formCustDialog/formCustDialogSettingDialogController.js"></script>
 <script type="text/javascript" src="../../build/common/easyLayout.js"></script>
@@ -166,8 +167,9 @@
 									<option value="">动态参数</option>
 									<option ng-if="field.dbType!='date'" value="inputText">单行文本框</option>
 									<option ng-if="field.dbType=='date'" value="inputDate">日期输入框</option>
-									<option value="formCustDialog">自定义对话框</option>
+									<!--option value="formCustDialog">自定义对话框</option-->
 								</select>
+								<input type="text" ng-if="field.value.ctrlType=='inputDate'" class="form-control" placeholder="日期格式，默认yyyy-MM-dd" ng-model="field.value.text"/>
 							</span>
 							<!-- 固定值 -->
 							<span ng-show="field.valueSource==FormCustDialogConditionFieldVALUESOURCE.FIXED_VALUE.key">

@@ -1,5 +1,6 @@
 package com.dstz.bus.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.mybatis.spring.annotation.MapperScan;
 
 import com.dstz.base.dao.BaseDao;
@@ -16,4 +17,8 @@ import com.dstz.bus.model.BusinessObject;
  */
 @MapperScan
 public interface BusinessObjectDao extends BaseDao<String, BusinessObject> {
+
+	String getOverallArrangementByCode(String boCode);
+	
+	void updateOverallArrangementByCode(@Param("boCode") String boCode,@Param("overallArrangement")  String overallArrangement);
 }

@@ -2,11 +2,17 @@
 <html ng-app="base">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript">
 	var Controller = [ '$scope', 'baseService', function(scope, baseService) {
 		var instanceId = $.getParam("instanceId")
+		var openedFlag = $.getParam("openedFlag");
+		if(openedFlag){
+			scope.canotOpen = true;
+		}
+		
 		if (!instanceId) {
 			instanceId = window.passData.instanceId;
 		}
@@ -14,7 +20,13 @@
 			instId : instanceId
 		});
 		$.getResultData(defer, function(data) {
-			scope.opinionList = data;
+			scope.opinionList = [];
+			angular.forEach(data, function(item) {
+				if (item.assignInfo == "所有会签用户" && !item.approveTime) {
+					return;
+				}
+				scope.opinionList.push(item);
+			});
 		})
 
 		ToolsController.getEnum("com.dstz.bpm.api.constant.OpinionStatus").then(function(data) {
@@ -29,33 +41,53 @@
 			if(!info){
 				return "";
 			}
-			
 			var msg = "";
 			angular.forEach(info.split(","),function(item){
 				if(!item){
 					return;
 				}
 				if(msg){
-					msg+=",";
+					msg+="；";
 				}
 				var strs = item.split("-");
+				var typeName ="";
 				if(strs[0]==="user"){
-					msg="[用户]";
+					typeName="[用户]";
 				}else if(strs[0]==="role"){
-					msg="[角色]";
+					typeName="[角色]";
 				}else if(strs[0]==="group"){
-					msg="[组]";
+					typeName="[组]";
 				}else if(strs[0]==="org"){
-					msg="[组织]";
+					typeName="[组织]";
 				}else if(strs[0]==="post"){
-					msg="[岗位]";
+					typeName="[岗位]";
+					if(strs[2]){
+						return msg += typeName + strs[1] + "-" + strs[2];
+					}
 				}else if(strs[0]==="job"){
-					msg="[职称]";
+					typeName="[职称]";
 				}
-				msg = msg + strs[1];
+				msg += typeName + strs[1];
 			});
 			return msg;
 		};
+		
+		 var defer = baseService.postForm(__ctx + "/bpm/instance/getInstanceAndChildren", {
+ 			id : instanceId
+ 		});
+ 		$.getResultData(defer, function(data) {
+ 			scope.bpmInstance = data.bpmInstance;
+ 			scope.bpmInstanceChildren = data.bpmInstanceChildren;
+ 		})
+ 		
+ 		scope.showOpinion = function(id,title){
+ 			
+ 			var conf = {title:title||"审批意见",url:"/bpm/instance/taskOpinionHistoryDialog.html?openedFlag=true&instanceId="+id,height:'95%',width:'80%',passData:null,topOpen:false};
+				conf.ok = function(index,innerWindow){
+					$.Dialog.close(innerWindow);
+				}
+				$.Dialog.open(conf);
+ 		}
 	} ];
 
 	function isValidate() {
@@ -65,28 +97,32 @@
 </script>
 </head>
 <body class="panel success" ng-controller="Controller">
+<button ng-hide="canotOpen" class="btn btn-primary fa fa-image btn-xs" ng-if="bpmInstance.parentInstId" ng-click="showOpinion(bpmInstance.parentInstId)"> 查看父流程意见</button>
+<button ng-hide="canotOpen" class="btn btn-primary fa fa-image btn-xs"  ng-repeat="instance in bpmInstanceChildren" ng-click="showOpinion(instance.id,instance.subject+'审批意见')">查看子流程{{instance.subject}} 审批意见</button>
+
+<br/>
 	<table class="form-table" style="margin-top: 5px">
 		<tdead>
 		<tr>
 			<td></td>
-			<td style="widtd: 10%; min-widtd: 150px;">任务名称</td>
-			<td style="widtd: 10%; min-widtd: 130px;">任务创建时间</td>
-			<td style="widtd: 10%; min-widtd: 130px;">处理时间</td>
-			<td style="widtd: 30%;">待执行人</td>
-			<td style="widtd: 10%; min-widtd: 55px;">执行人</td>
-			<td style="widtd: 10%; min-widtd: 63px;">处理状态</td>
-			<td style="widtd: 12%; min-widtd: 130px;">备注/意见</td>
+			<td style="width: 10%; min-width: 130px;">任务名称</td>
+			<td style="width: 10%; min-width: 130px;">任务创建时间</td>
+			<td style="width: 10%; min-width: 130px;">处理时间</td>
+			<td style="width: 20%; min-width: 55px;"" >待执行人</td>
+			<td style="width: 10%; min-width: 55px;">执行人</td>
+			<td style="width: 10%; min-width: 63px;">处理状态</td>
+			<td style="width: 22%; min-width: 130px;">备注/意见</td>
 		</tr>
 		</tdead>
 		<tr ng-repeat="o in opinionList">
-			<td style="widtd: 26px;">{{$index+1}}</td>
-			<td style="widtd: 10%; min-widtd: 150px;">{{o.taskName}}</td>
-			<td style="widtd: 10%; min-widtd: 130px;">{{o.createTime | date:"yyyy-MM-dd HH:mm:ss"}}</td>
-			<td style="widtd: 10%; min-widtd: 130px;">{{o.approveTime | date:"yyyy-MM-dd HH:mm:ss"}}</td>
-			<td style="widtd: 30%;">{{assignInfo(o.assignInfo)}}</td>
-			<td style="widtd: 10%; min-widtd: 55px;">{{o.approverName}}</td>
-			<td style="widtd: 10%; min-widtd: 63px;">{{OpinionStatusKeyMap[o.status]}}</td>
-			<td style="widtd: 12%; min-widtd: 130px;">{{o.opinion}}</td>
+			<td style="width: 26px;">{{$index+1}}</td>
+			<td style="width: 10%; min-width: 130px;">{{o.taskName}}</td>
+			<td style="width: 10%; min-width: 130px;">{{o.createTime | date:"yyyy-MM-dd HH:mm:ss"}}</td>
+			<td style="width: 10%; min-width: 130px;">{{o.approveTime | date:"yyyy-MM-dd HH:mm:ss"}}</td>
+			<td style="width: 20%;min-width: 55px;">{{assignInfo(o.assignInfo)}}</td>
+			<td style="width: 10%; min-width: 55px;">{{o.approverName}}</td>
+			<td style="width: 10%; min-width: 63px;">{{OpinionStatusKeyMap[o.status]}}</td>
+			<td style="width: 22%;" >{{o.opinion}}</td>
 		</tr>
 	</table>
 </body>

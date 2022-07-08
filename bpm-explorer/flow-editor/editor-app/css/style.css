@@ -154,6 +154,7 @@
 }
 
 .stencil-item {
+    font-size:60%;
     cursor: pointer;
     padding: 5px;
 }

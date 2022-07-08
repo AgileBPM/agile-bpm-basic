@@ -2075,7 +2075,7 @@ var domUtils = dom.domUtils = {
     inDoc:function (node, doc) {
         return domUtils.getPosition(node, doc) == 10;
     },
-    /**
+    /**get
      * 根据给定的过滤规则filterFn， 查找符合该过滤规则的node节点的第一个祖先节点，
      * 查找的起点是给定node节点的父节点。
      * @method findParent
@@ -7221,7 +7221,8 @@ var fillCharReg = new RegExp(domUtils.fillChar, 'g');
             var root = UE.htmlparser(me.body.innerHTML,ignoreBlank);
             me.filterOutputRule(root);
             me.fireEvent('aftergetcontent', cmd,root);
-            return  root.toHtml(formatter);
+            //return  root.toHtml(formatter);ab嵌入
+            return  this.body.innerHTML;
         },
 
         /**
@@ -7323,8 +7324,10 @@ var fillCharReg = new RegExp(domUtils.fillChar, 'g');
             me.fireEvent('beforesetcontent', html);
             var root = UE.htmlparser(html);
             me.filterInputRule(root);
-            html = root.toHtml();
-
+            
+            //html = root.toHtml(); ab嵌入
+            
+            
             me.body.innerHTML = (isAppendTo ? me.body.innerHTML : '') + html;
 
 
@@ -7681,6 +7684,12 @@ var fillCharReg = new RegExp(domUtils.fillChar, 'g');
                     }
                 }
             }
+            
+            //ab嵌入代码，只要有内容则认为是有内容的
+            if(this.body.innerHTML){
+            	return true;
+            }
+            
             return false;
         },
 
@@ -8670,6 +8679,7 @@ var filterWord = UE.filterWord = function () {
         })
     };
     function nodeToHtml(node, arr, formatter, current) {
+    	//console.info(node.type+":"+node.tagName+":"+node.getData())
         switch (node.type) {
             case 'root':
                 for (var i = 0, ci; ci = node.children[i++];) {
@@ -8821,6 +8831,7 @@ var filterWord = UE.filterWord = function () {
          * ```
          */
         toHtml:function (formatter) {
+        	
             var arr = [];
             nodeToHtml(this, arr, formatter, 0);
             return arr.join('')
@@ -16154,6 +16165,7 @@ UE.plugins['list'] = function () {
                     textarea.value = content;
                 },
                 getContent: function (){
+                	
                     return textarea.value;
                 },
                 select: function (){
@@ -16194,9 +16206,11 @@ UE.plugins['list'] = function () {
                     return codeEditor;
                 },
                 setContent: function (content){
+                	
                     codeEditor.setValue(content);
                 },
                 getContent: function (){
+                	
                     return codeEditor.getValue();
                 },
                 select: function (){
@@ -16259,6 +16273,7 @@ UE.plugins['list'] = function () {
 
                 sourceMode = !sourceMode;
                 if (sourceMode) {
+                	
                     bakAddress = me.selection.getRange().createAddress(false,true);
                     me.undoManger && me.undoManger.save(true);
                     if(browser.gecko){
@@ -16292,8 +16307,9 @@ UE.plugins['list'] = function () {
                     });
 
                     me.fireEvent('aftergetcontent');
-
-                    var content = root.toHtml(true);
+                    
+                    //var content = root.toHtml(true);ab嵌入
+                    var content = this.body.innerHTML;
 
                     sourceEditor = createSourceEditor(me.iframe.parentNode);
 
@@ -16327,12 +16343,12 @@ UE.plugins['list'] = function () {
                     me.iframe.style.cssText = bakCssText;
                     var cont = sourceEditor.getContent() || '<p>' + (browser.ie ? '' : '<br/>')+'</p>';
                     //处理掉block节点前后的空格,有可能会误命中，暂时不考虑
-                    cont = cont.replace(new RegExp('[\\r\\t\\n ]*<\/?(\\w+)\\s*(?:[^>]*)>','g'), function(a,b){
+                    /*cont = cont.replace(new RegExp('[\\r\\t\\n ]*<\/?(\\w+)\\s*(?:[^>]*)>','g'), function(a,b){
                         if(b && !dtd.$inlineWithA[b.toLowerCase()]){
                             return a.replace(/(^[\n\r\t ]*)|([\n\r\t ]*$)/g,'');
                         }
                         return a.replace(/(^[\n\r\t]*)|([\n\r\t]*$)/g,'')
-                    });
+                    });ab嵌入注解了这段代码*/
 
                     me.setContent = orgSetContent;
 
@@ -27603,6 +27619,7 @@ UE.ui = baidu.editor.ui = {};
             body.className = body.className.replace(/edui-message-type-[\w-]+/, 'edui-message-type-' + type);
         },
         getContent: function(){
+        	
             return this.getDom('content').innerHTML;
         },
         getType: function(){

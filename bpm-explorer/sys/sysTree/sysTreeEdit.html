@@ -1,7 +1,8 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../build/common/easyLayout.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/sys/sysTree/sysTreeEditController.js"></script>
@@ -77,13 +78,13 @@
 						<tr>
 							<th>名字</th>
 							<td>
-								<input ng-model="activeTreeNode.name" ab-validate="{required:true}" class="form-control" />
+								<input ng-model="activeTreeNode.name" class="form-control" />
 							</td>
 						</tr>
 						<tr>
 							<th>别名</th>
 							<td>
-								<input ng-model="activeTreeNode.key" ab-validate="{required:true}" class="form-control" ab-pinyin="activeTreeNode.name" />
+								<input ng-model="activeTreeNode.key" class="form-control" ab-pinyin="activeTreeNode.name" />
 							</td>
 						</tr>
 						<tr>

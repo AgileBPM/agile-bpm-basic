@@ -8,6 +8,7 @@ bpmModel.factory('bpmService', ['$rootScope','baseService','ArrayToolService', f
 	//存在任务则说明为处理流程任务
 	var taskId ="";
 	var bpmTask = null;
+	var flowKey = null;
 	var bpmService = {};
 	/**
 	 * 初始化流程数据
@@ -17,16 +18,18 @@ bpmModel.factory('bpmService', ['$rootScope','baseService','ArrayToolService', f
 		defId = param.defId;
 		instanceId = param.instanceId;
 		taskId = param.taskId;
+		flowKey = param.defKey;
 		
 		var dataUrl =__ctx + "/bpm/task/getTaskData?taskId=" + taskId;
 		if(!taskId){
-			dataUrl = __ctx + "/bpm/instance/getInstanceData?defId="+defId+"&instanceId="+instanceId+"&readonly="+param.readonly;
+			dataUrl = __ctx + "/bpm/instance/getInstanceData?defId="+defId+"&flowKey="+flowKey+"&instanceId="+instanceId+"&readonly="+param.readonly;
 		}
 		
 		var defer=baseService.get(dataUrl);
 		
 		$.getResultData(defer,function(data){
 			bpmTask = data.task;
+			if(data.defId){defId = data.defId};
 			scope.$emit('data:loaded',data)
 			jQuery.extend(scope, data);
 		},"alert");
@@ -150,7 +153,6 @@ bpmModel.factory('bpmService', ['$rootScope','baseService','ArrayToolService', f
 					layer.close(ii);
 					return;
 				}
-				
 				var flowData = {
 						defId: bpmService.getDefId(),
 						taskId: bpmService.getTaskId(),

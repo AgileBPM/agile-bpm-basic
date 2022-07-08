@@ -1,20 +1,22 @@
 package com.dstz.base.db.model.query;
 
-import com.dstz.base.api.Page;
-import com.dstz.base.api.query.FieldSort;
-import org.apache.ibatis.session.RowBounds;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.ibatis.session.RowBounds;
+
+import com.dstz.base.api.Page;
+import com.dstz.base.api.query.FieldSort;
+import com.dstz.base.core.util.ToStringUtil;
+
 /**
  * 分页查询对象
  */
 public class DefaultPage extends RowBounds implements Page, Serializable {
-    private static final long serialVersionUID = -1718110184113189225L;
-    public final static int NO_PAGE = 1;
+	private static final long serialVersionUID = 1500879478877475515L;
+	public final static int NO_PAGE = 1;
     /**
      * 页号
      */
@@ -26,51 +28,33 @@ public class DefaultPage extends RowBounds implements Page, Serializable {
     /**
      * 分页排序信息
      */
-    protected List<FieldSort> orders = new ArrayList<FieldSort>();
+    protected List<FieldSort> orders = new ArrayList<>();
+    
     /**
-     * 结果集是否包含TotalCount
+     * 是否显示总条数
      */
-    protected boolean containsTotalCount = true;
-
-    protected Boolean asyncTotalCount;
-
     private boolean isShowTotal = true;
 
     public DefaultPage() {
     }
 
     public DefaultPage(RowBounds rowBounds) {
-        if (rowBounds instanceof DefaultPage) {
-            DefaultPage pageBounds = (DefaultPage) rowBounds;
-            this.pageNo = pageBounds.pageNo;
-            this.pageSize = pageBounds.pageSize;
-            this.orders = pageBounds.orders;
-            this.containsTotalCount = pageBounds.containsTotalCount;
-            this.asyncTotalCount = pageBounds.asyncTotalCount;
-        } else {
-            this.pageNo = (rowBounds.getOffset() / rowBounds.getLimit()) + 1;
-            this.pageSize = rowBounds.getLimit();
-        }
-
+        this.pageNo = (rowBounds.getOffset() / rowBounds.getLimit()) + 1;
+        this.pageSize = rowBounds.getLimit();
     }
 
+    
     /**
-     * Query TOP N, default containsTotalCount = false
-     *
-     * @param limit
+     * 
+     * @param pageNo 页码
+     * @param pageSize 分页大小
      */
-    public DefaultPage(int limit) {
-        this.pageSize = limit;
-        this.containsTotalCount = false;
-    }
-
-    public DefaultPage(int page, int limit) {
-        this(page, limit, new ArrayList<FieldSort>(), true);
+    public DefaultPage(int pageNo, int pageSize) {
+        this(pageNo, pageSize, new ArrayList<FieldSort>(), true);
     }
 
     /**
      * Just sorting, default containsTotalCount = false
-     *
      * @param orders
      */
     public DefaultPage(List<FieldSort> orders) {
@@ -79,12 +63,11 @@ public class DefaultPage extends RowBounds implements Page, Serializable {
 
     /**
      * Just sorting, default containsTotalCount = false
-     *
      * @param order
      */
     public DefaultPage(FieldSort... order) {
         this(NO_PAGE, NO_ROW_LIMIT, order);
-        this.containsTotalCount = false;
+        this.isShowTotal = false;
     }
 
     public DefaultPage(int page, int limit, FieldSort... order) {
@@ -95,11 +78,11 @@ public class DefaultPage extends RowBounds implements Page, Serializable {
         this(page, limit, orders, true);
     }
 
-    public DefaultPage(int page, int limit, List<FieldSort> orders, boolean containsTotalCount) {
-        this.pageNo = page;
-        this.pageSize = limit;
+    public DefaultPage(int pageNo, int pageSize, List<FieldSort> orders, boolean isShowTotal) {
+        this.pageNo = pageSize;
+        this.pageSize = pageSize;
         this.orders = orders;
-        this.containsTotalCount = containsTotalCount;
+        this.isShowTotal = isShowTotal;
     }
 
 
@@ -119,14 +102,6 @@ public class DefaultPage extends RowBounds implements Page, Serializable {
         this.pageSize = limit;
     }
 
-    public boolean isContainsTotalCount() {
-        return containsTotalCount;
-    }
-
-    public void setContainsTotalCount(boolean containsTotalCount) {
-        this.containsTotalCount = containsTotalCount;
-    }
-
     public List<FieldSort> getOrders() {
         List<FieldSort> list = orders;
         return list;
@@ -134,14 +109,6 @@ public class DefaultPage extends RowBounds implements Page, Serializable {
 
     public void setOrders(List<FieldSort> orders) {
         this.orders = orders;
-    }
-
-    public Boolean getAsyncTotalCount() {
-        return asyncTotalCount;
-    }
-
-    public void setAsyncTotalCount(Boolean asyncTotalCount) {
-        this.asyncTotalCount = asyncTotalCount;
     }
 
     @Override
@@ -154,14 +121,7 @@ public class DefaultPage extends RowBounds implements Page, Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("PageBounds{");
-        sb.append("page=").append(pageNo);
-        sb.append(", limit=").append(pageSize);
-        sb.append(", orders=").append(orders);
-        sb.append(", containsTotalCount=").append(containsTotalCount);
-        sb.append(", asyncTotalCount=").append(asyncTotalCount);
-        sb.append('}');
-        return sb.toString();
+       return ToStringUtil.toString(this);
     }
 
 

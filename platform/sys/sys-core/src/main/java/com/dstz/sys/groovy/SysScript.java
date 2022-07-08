@@ -10,6 +10,7 @@ import com.dstz.org.api.model.IUser;
 import com.dstz.sys.api.groovy.IScript;
 import com.dstz.sys.api.service.SerialNoService;
 import com.dstz.sys.util.ContextUtil;
+import com.dstz.sys.util.SysPropertyUtil;
 
 /**
  * 系统脚本
@@ -29,15 +30,25 @@ public class SysScript implements IScript {
 		return serialNoService.genNextNo(alias);
 	}
 	
+	/**
+	 * 
+	 * @param 获取系统属性
+	 * @return
+	 */
+	public String getProperty(String key) {
+		return SysPropertyUtil.getByAlias(key);
+	}
+	
 	
 	public IUser getCurrentUser() {
-		return ContextUtil.getCurrentUser();
+		IUser user = ContextUtil.getCurrentUser();
+		return user;
 	}
 	
 	public String getCurrentGroupName() {
 		 IGroup iGroup =ContextUtil.getCurrentGroup();
-        if (BeanUtils.isNotEmpty(iGroup)) {
-            return iGroup.getName();
+        if (iGroup!= null) {
+            return iGroup.getGroupName();
         } else {
             return "";
         }

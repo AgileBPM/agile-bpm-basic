@@ -35,10 +35,16 @@
             <artifactId>base-rest</artifactId>
         </dependency>
         
+        <dependency>
+            <groupId>com.dstz.agilebpm</groupId>
+            <artifactId>bus-core</artifactId>
+            <version>${agilebpm.version}</version>
+        </dependency>
+        
       	<dependency>
 			<groupId>com.dstz.agilebpm</groupId>
 			<artifactId>wf-api</artifactId>
-			<version>1.3.6</version>
+			<version>1.5.3</version>
 		</dependency>
 		 
     </dependencies>

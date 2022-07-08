@@ -5,7 +5,8 @@ window.__ctx = "/agile-bpm-platform";
 
 //jQuery 跨域处理
 jQuery(function () {  //, headers: { 'x-requested-with': 'XMLHttpRequest' }
-    $.ajaxSetup({crossDomain: true, xhrFields: {withCredentials: true}});
+	jQuery.ajaxSetup({crossDomain: true, xhrFields: {withCredentials: true}});
+	jQuery.support.cors = true;
 }); 
 
 /**
@@ -22,7 +23,7 @@ window.getCtxUrl = function(url,replaceRequestParam){
 		url = __ctx + url;
 		
 		//如果URL含?且需要替换页面请求参数，则进行格式化
-		if(replaceRequestParam && url.indexOf("?")!=-1){
+		if(replaceRequestParam && url.indexOf("?")!=-1 && $.getParams){
 			url = url.format($.getParams());
 		}
 	}
@@ -34,7 +35,7 @@ window.getProjectUrl = function(url){
 		 var pathname =window.document.location.pathname;
 		 var projectPath = pathname.substring(0,pathname.substr(1).indexOf('/')+1);
 		 // 特殊处理下流程设计器
-		 if("/bus,/bpm,/sys,/org,/form,/flow-editor".indexOf(projectPath)!= -1){
+		 if("/bus,/bpm,/sys,/org,/form,/flow-editor,/bpmplugin".indexOf(projectPath)!= -1){
 			 return url;
 		 }
 		if(url.startWith(projectPath)){

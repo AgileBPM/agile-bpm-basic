@@ -20,7 +20,7 @@ import com.dstz.base.core.util.StringUtil;
 import com.dstz.base.dao.CommonDao;
 import com.dstz.base.db.datasource.DbContextHolder;
 import com.dstz.base.db.model.page.PageResult;
-import com.dstz.base.rest.GenericController;
+import com.dstz.base.rest.ControllerTools;
 import com.dstz.base.rest.util.RequestUtil;
 import com.dstz.bus.api.constant.BusinessPermissionObjType;
 import com.dstz.bus.api.model.IBusinessObject;
@@ -48,7 +48,7 @@ import com.dstz.sys.api.service.ISysDataSourceService;
  */
 @RestController
 @RequestMapping("/form/formDefData/")
-public class FormDefDataController extends GenericController {
+public class FormDefDataController extends ControllerTools {
 	@Autowired
 	FormDefDataService formDefDataService;
 	@Autowired
@@ -76,11 +76,11 @@ public class FormDefDataController extends GenericController {
 	 */
 	@RequestMapping("getData")
 	@CatchErr(write2response = true, value = "获取FormDefData异常")
-	public void getFormDefData(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ResultMsg<FormDefData> getFormDefData(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String key = RequestUtil.getString(request, "key");
-		String id = RequestUtil.getString(request, "id");
+		String id = RequestUtil.getString(request, "id", null);
 		FormDefData formDefData = formDefDataService.getByFormDefKey(key, id);
-		writeSuccessData(response, formDefData);
+		return getSuccessResult(formDefData);
 	}
 
 	/**
@@ -95,12 +95,12 @@ public class FormDefDataController extends GenericController {
 	 */
 	@RequestMapping("saveData")
 	@CatchErr(write2response = true, value = "保存formDef中的data数据异常")
-	public void saveData(HttpServletRequest request, HttpServletResponse response, @RequestBody JSONObject data) throws Exception {
+	public ResultMsg<String> saveData(HttpServletRequest request, HttpServletResponse response, @RequestBody JSONObject data) throws Exception {
 		String key = RequestUtil.getString(request, "key");
 		FormDef formDef = formDefManager.getByKey(key);
 		IBusinessPermission permission = businessPermissionService.getByObjTypeAndObjVal(BusinessPermissionObjType.FORM.getKey(), key, formDef.getBoKey(), true);
 		businessDataService.saveFormDefData(data, permission);
-		writeSuccessResult(response, "保存数据成功");
+		return getSuccessResult("保存数据成功");
 	}
 
 	/**
@@ -131,21 +131,21 @@ public class FormDefDataController extends GenericController {
 
 	@RequestMapping("removeData/{formKey}/{id}")
 	@CatchErr(write2response = true, value = "删除formDef中的data数据异常")
-	public ResultMsg removeData(@PathVariable(value = "formKey",required=false) String formKey,@PathVariable(value = "id",required=false) String id) throws Exception {
-		if(StringUtil.isEmpty(formKey)) {
-			throw new BusinessException("formKey 不能为空",FormStatusCode.PARAM_ILLEGAL);
+	public ResultMsg removeData(@PathVariable(value = "formKey", required = false) String formKey, @PathVariable(value = "id", required = false) String id) throws Exception {
+		if (StringUtil.isEmpty(formKey)) {
+			throw new BusinessException("formKey 不能为空", FormStatusCode.PARAM_ILLEGAL);
 		}
-		if(StringUtil.isEmpty(id)) {
-			throw new BusinessException("ID 不能为空",FormStatusCode.PARAM_ILLEGAL);
+		if (StringUtil.isEmpty(id)) {
+			throw new BusinessException("ID 不能为空", FormStatusCode.PARAM_ILLEGAL);
 		}
-		
+
 		FormDef formDef = formDefManager.getByKey(formKey);
 		String boKey = formDef.getBoKey();
-		
-		IBusinessPermission permission = businessPermissionService.getByObjTypeAndObjVal(BusinessPermissionObjType.FORM.getKey(), formKey,formDef.getBoKey(), true);
+
+		IBusinessPermission permission = businessPermissionService.getByObjTypeAndObjVal(BusinessPermissionObjType.FORM.getKey(), formKey, formDef.getBoKey(), true);
 		IBusinessObject businessObject = businessObjectService.getFilledByKey(boKey);
 		businessObject.setPermission(permission.getBusObj(boKey));
-		
+
 		businessDataService.removeData(businessObject, id);
 
 		return getSuccessResult("删除成功！");

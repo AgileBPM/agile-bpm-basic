@@ -39,7 +39,14 @@
                <!--  <value>DisableCircularReferenceDetect</value> 不关闭日后有循环索引会报错，用索引的话可以在前端操作一下就可以完成 -->
             </array>
         </property>
+        <property name="filters">
+            <list>
+            	<ref bean="abValueFilter"/>
+            </list>
+        </property>
     </bean>
+    
+    <bean id="abValueFilter" class="com.dstz.base.core.util.AbValueFilter"/> 
 
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

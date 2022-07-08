@@ -52,7 +52,7 @@ formServiceModule.directive('abSubAdd', [ function($compile) {
 					scope.$parent.subTempData = {};
 				}
 				scope.$apply(function() {
-					scope.$parent.subTempData[listName] = CloneUtil.list(ctrl.$viewValue[listName]);
+					scope.$parent.subTempData[listName] = CloneUtil.list(ctrl.$viewValue[listName]||[]);
 				});
 				var conf = {
 					height : 600,

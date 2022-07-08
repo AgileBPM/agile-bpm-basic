@@ -1,7 +1,8 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/bus/businessObject/businessObjectEditController.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/bus/businessObject/editAndDialogCommon.js"></script>
@@ -23,14 +24,14 @@
 				</td>
 				<th>持久化方式</th>
 				<td>
-					<select class="form-control" ng-model="data.persistenceType" ng-options="v.key as v.desc for (k,v) in BusinessObjectPersistenceType">
+					<select class="form-control" style="width: 150px;" ng-model="data.persistenceType" ng-change="data.perTypeConfig=null" ng-options="v.key as v.desc for (k,v) in BusinessObjectPersistenceType">
 					</select>
 				</td>
 			</tr>
 			<tr>
 				<th>名字</th>
 				<td>
-					<input ng-model="data.name" ab-validate="{required:true}" class="form-control" />
+					<input ng-model="data.name" ab-validate="{required:true,maxlength:30}" class="form-control" />
 				</td>
 				<th>对象名</th>
 				<td>
@@ -40,7 +41,7 @@
 			<tr>
 				<th>描述</th>
 				<td>
-					<textarea ng-model="data.desc" class="form-control"></textarea>
+					<textarea ng-model="data.desc" class="form-control"  ab-validate="{maxlength:80}" ></textarea>
 				</td>
 				<th>主业务表</th>
 				<td>
@@ -90,7 +91,6 @@
 				<td>
 					<a href="javaScript:void(0)" ng-click="ArrayTool.del($index,data.relation.children)" class="btn btn-outline btn-primary fa  fa-trash"></a>
 					<a href="javaScript:void(0)" ng-click="openChildrenDialog(child)" class="btn btn-sm btn-primary btn-outline fa-edit">配置子表</a>
-					<a href="javaScript:void(0)" onclick="javascript:alert('复制表的字段控件，控件可配置顺序，控件列表可插入换行符')" class="btn btn-sm btn-primary btn-outline fa-edit">配置控件与布局</a>
 				</td>
 			</tr>
 		</table>

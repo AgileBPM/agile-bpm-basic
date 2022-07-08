@@ -1,8 +1,8 @@
 package com.dstz.form.util;
 
-import com.dstz.base.core.util.FileUtil;
-
 import java.io.File;
+
+import cn.hutool.core.util.ClassUtil;
 
 /**
  * 表单实用函数。
@@ -17,7 +17,7 @@ public class FormUtil {
      * @throws Exception
      */
     public static String getDesignTemplatePath() throws Exception {
-        return FileUtil.getClassesPath() + "template" + File.separator + "design" + File.separator;
+        return ClassUtil.getClassPath() + "temp" + File.separator + "design" + File.separator;
     }
 
 }

@@ -1,7 +1,11 @@
 package com.dstz.form.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import org.mybatis.spring.annotation.MapperScan;
 
+import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.dao.BaseDao;
 import com.dstz.form.model.FormDef;
 
@@ -16,5 +20,6 @@ import com.dstz.form.model.FormDef;
 public interface FormDefDao extends BaseDao<String, FormDef> {
 
 	FormDef getByKey(String key);
-
+	
+	List<Map> queryWithBo(QueryFilter queryFilter);
 }

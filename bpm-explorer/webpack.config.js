@@ -3,6 +3,7 @@ var path = require("path");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 module.exports = {
 	entry: {
+		"common/base" : './assets/entry/common/base.js',
 		"home/index" : './assets/entry/home/index.js',  // css and js 也可以定义为数组、分开
 		"common/ngEdit" : './assets/entry/common/ngEdit.js',
 		"common/gridList" : './assets/entry/common/gridList.js', //list页面 
@@ -16,7 +17,13 @@ module.exports = {
 	module: {
 	    loaders: [
 	      //  {test: /\.css$/, loader: 'style-loader!css-loader'},
-	      	{test: /\.css$/, loader: ExtractTextPlugin.extract({fallback: "style-loader",use: "css-loader"})},
+	      	{test: /\.css$/, loader: ExtractTextPlugin.extract({fallback: "style-loader",use: [
+                {
+                    loader: "css-loader",
+                    options: {
+                        minimize: true
+                    }
+                }]})},
 	        {test: /\.(png|jpg|gif)$/,loader: 'url-loader?limit=8192&name=../images/[name]-[hash:8].[ext]'},
 	        { test: /\.(woff|woff2|ttf|eot|svg|)$/, loader: "url-loader?limit=5000&name=../font/[name].[ext]" },
 	        { test: require.resolve("jquery"), loader: "expose-loader?$!expose-loader?jQuery"}
@@ -28,7 +35,7 @@ module.exports = {
           new webpack.optimize.UglifyJsPlugin({
         	  exclude:/\.min\.js$/,
               compress: {warnings: false},
-              output: { comments: false },
+              output: {comments: false },
               sourceMap: true,
               mangle:false,
             }),

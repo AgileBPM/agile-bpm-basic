@@ -64,13 +64,13 @@ public interface CreateInfoModel {
 
     /**
      * <pre>
-     * 更新人ID
+     * 操作人
      * </pre>
      *
      * @return
      */
     public String getUpdateBy();
-
+ 
     /**
      * <pre>
      * 设置更新人ID
@@ -79,4 +79,5 @@ public interface CreateInfoModel {
      * @param updateBy
      */
     public void setUpdateBy(String updateBy);
+    
 }

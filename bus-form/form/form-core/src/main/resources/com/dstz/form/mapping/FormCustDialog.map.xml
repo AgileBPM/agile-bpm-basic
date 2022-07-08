@@ -85,5 +85,10 @@
 		id_=#{id}
 	</delete>
 
-
+    <select id="existsByKey" parameterType="string" resultType="boolean">
+        SELECT
+            IF(COUNT(id_) > 0, TRUE, FALSE) AS e
+        FROM form_cust_dialog
+        WHERE key_ = #{key,jdbcType=VARCHAR}
+    </select>
 </mapper>

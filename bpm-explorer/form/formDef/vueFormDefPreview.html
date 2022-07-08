@@ -1,0 +1,65 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
+	<script type="text/javascript" src="../../build/common/vueEdit.js"></script>
+</head>
+<body>
+	<div id="ctrl">
+		<div class="ibox-title">
+			<a class="btn btn-primary fa-save" href="javascript:void(0)" v-on:click="saveData">保存</a>
+			<a href="javascript:void(0)" class="btn btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);">取消</a>
+		</div>
+		<div v-if="loaded">
+			<ab-custom-form></ab-custom-form>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	var vm = new Vue({
+		el : "#ctrl",
+		data : function() {
+			return {
+				loaded : false
+			}
+		},
+		beforeCreate : function() {
+		},
+		methods : {
+			saveData : function() {
+				var errorMsg = Vue.formService.getValidateMsg(this.$children[0]);
+				if(errorMsg){
+					$.Dialog.alert("表单校验不通过！"+errorMsg,7);
+					return; 
+				}
+				var url = Vue.__ctx + "/form/formDefData/saveData?key="+$.getParam("key");
+				var post = Vue.baseService.post(url, this.$children[0].$data.data);
+				$.getResultMsg(post);
+			}
+		},
+		created : function() {
+			var url = Vue.__ctx + "/form/formDefData/getData";
+			var post = Vue.baseService.postForm(url, {
+				key : $.getParam("key"),
+				id : $.getParam("id")
+			});
+			var that = this;
+			$.getResultData(post, function(data) {
+
+				window.custFormComponentMixin = {};
+				var html = data.html;
+				if (window.passData) {// 前端html传过来
+					html = window.passData.html;
+				}
+				
+				Vue.formService.initCustFormFu(html, data);
+				that.$data.loaded = true;
+			});
+		},
+		watch : {
+
+		}
+	});
+</script>
+</html>

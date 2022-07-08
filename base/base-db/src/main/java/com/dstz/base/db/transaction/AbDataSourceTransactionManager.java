@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.ConnectionHolder;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.CannotCreateTransactionException;
@@ -21,7 +22,6 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.ResourceTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.dstz.base.core.util.AppUtil;
 import com.dstz.base.db.datasource.DataSourceUtil;
 import com.dstz.base.db.datasource.DbContextHolder;
 import com.dstz.base.db.datasource.DynamicDataSource;
@@ -29,7 +29,6 @@ import com.dstz.base.db.datasource.DynamicDataSource;
 /**
  * <pre>
  * 描述：ab 结合sys多数据源操作 专门为bo db实例化做的事务管理器
- * 在该事务管理器只支持PROPAGATION_REQUIRED 的
  * 作者:aschs
  * 邮箱:aschs@qq.com
  * 日期:2018年10月10日
@@ -58,6 +57,9 @@ public class AbDataSourceTransactionManager extends AbstractPlatformTransactionM
 	 */
 	private boolean enforceReadOnly = false;
 
+	private static DynamicDataSource dynamicDataSource;
+	private static AbDataSourceTransactionManager abDataSourceTransactionManager;
+
 	public AbDataSourceTransactionManager() {
 		setNestedTransactionAllowed(true);
 	}
@@ -77,7 +79,7 @@ public class AbDataSourceTransactionManager extends AbstractPlatformTransactionM
 
 	@Override
 	public Object getResourceFactory() {
-		return DataSourceUtil.getDataSourceByAlias(DataSourceUtil.GLOBAL_DATASOURCE);
+		return dynamicDataSource;
 	}
 
 	/**
@@ -126,7 +128,6 @@ public class AbDataSourceTransactionManager extends AbstractPlatformTransactionM
 		}
 		abTxObject.setDefinition(definition);
 		// 先把本地数据源加入管理中
-		DynamicDataSource dynamicDataSource = (DynamicDataSource) AppUtil.getBean(DataSourceUtil.GLOBAL_DATASOURCE);
 		addGlobalDataSource(DataSourceUtil.GLOBAL_DATASOURCE, dynamicDataSource, abTxObject);
 		transactionActive.set(true);// 标记线程已开启了事务
 	}
@@ -142,6 +143,10 @@ public class AbDataSourceTransactionManager extends AbstractPlatformTransactionM
 	 */
 	private static void addGlobalDataSource(String dsKey, DataSource dataSource, AbDataSourceTransactionObject abTxObject) {
 		try {
+			if (dataSource == null) {
+				System.out.println();
+			}
+
 			// 拿出dsKey的资源 txObject
 			DataSourceTransactionObject txObject = abTxObject.getDsTxObj(dsKey);
 			if (txObject == null) {
@@ -195,6 +200,7 @@ public class AbDataSourceTransactionManager extends AbstractPlatformTransactionM
 				TransactionSynchronizationManager.bindResource(dataSource, txObject.getConnectionHolder());
 			}
 		} catch (Throwable ex) {
+			ex.printStackTrace();
 			DataSourceTransactionObject txObject = abTxObject.getDsTxObj(dsKey);
 			// 释放和关闭这次事务的相关资源
 			if (txObject != null && txObject.isNewConnectionHolder()) {
@@ -218,7 +224,6 @@ public class AbDataSourceTransactionManager extends AbstractPlatformTransactionM
 	 */
 	public static void addDataSource(String dsKey, DataSource dataSource) {
 		// 系统数据源去重
-		DynamicDataSource dynamicDataSource = (DynamicDataSource) AppUtil.getBean(DataSourceUtil.GLOBAL_DATASOURCE);
 		if (dataSource == dynamicDataSource) {
 			return;
 		}
@@ -247,7 +252,6 @@ public class AbDataSourceTransactionManager extends AbstractPlatformTransactionM
 	 */
 	@Override
 	protected Object doSuspend(Object transaction) {
-		DynamicDataSource dynamicDataSource = (DynamicDataSource) AppUtil.getBean(DataSourceUtil.GLOBAL_DATASOURCE);
 		return TransactionSynchronizationManager.unbindResource(dynamicDataSource);
 	}
 
@@ -258,7 +262,6 @@ public class AbDataSourceTransactionManager extends AbstractPlatformTransactionM
 	 */
 	@Override
 	protected void doResume(Object transaction, Object suspendedResources) {
-		DynamicDataSource dynamicDataSource = (DynamicDataSource) AppUtil.getBean(DataSourceUtil.GLOBAL_DATASOURCE);
 		TransactionSynchronizationManager.bindResource(dynamicDataSource, suspendedResources);
 	}
 
@@ -382,7 +385,7 @@ public class AbDataSourceTransactionManager extends AbstractPlatformTransactionM
 	 * @throws SQLException
 	 */
 	private static void prepareTransactionalConnection(Connection con, TransactionDefinition definition) throws SQLException {
-		boolean isEnforceReadOnly = AppUtil.getBean(AbDataSourceTransactionManager.class).isEnforceReadOnly();
+		boolean isEnforceReadOnly = abDataSourceTransactionManager.isEnforceReadOnly();
 		if (isEnforceReadOnly && definition.isReadOnly()) {
 			Statement stmt = con.createStatement();
 			try {
@@ -405,8 +408,14 @@ public class AbDataSourceTransactionManager extends AbstractPlatformTransactionM
 		if (definition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
 			return definition.getTimeout();
 		}
-		AbDataSourceTransactionManager abTransactionManager = (AbDataSourceTransactionManager) AppUtil.getBean("abTransactionManager");
-		return abTransactionManager.getDefaultTimeout();
+		return abDataSourceTransactionManager.getDefaultTimeout();
 	}
-	
+
+	@Autowired
+	public void setDynamicDataSource(DynamicDataSource dynamicDataSource) {
+		AbDataSourceTransactionManager.dynamicDataSource = dynamicDataSource;
+		AbDataSourceTransactionManager.abDataSourceTransactionManager = this;
+		DataSourceUtil.dynamicDataSource = dynamicDataSource;
+	}
+
 }

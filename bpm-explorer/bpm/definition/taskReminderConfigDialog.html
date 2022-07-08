@@ -1,0 +1,236 @@
+<html ng-app="app">
+<head>
+<title>节点消息</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../build/common/base.css" rel="stylesheet">
+<link href="../../build/common/codeMirror.css" rel="stylesheet">
+
+<script type="text/javascript" src="../../build/common/ngEdit-ori.js"></script>
+<script type="text/javascript" src="../../build/common/codeMirror.js"></script>
+<script type="text/javascript" src="../../build/common/uedtor.js"></script>
+
+<script type="text/javascript">
+
+	var app = angular.module('app', [ 'baseDirective', 'ui.codemirror']);
+	app.controller("ctrl", [ '$scope', 'baseService','ArrayToolService',  function(scope, baseService,ArrayToolService) {
+		scope.ArrayTool = ArrayToolService;
+	var varTree;
+	var defId = $.getParam("defId");
+	scope.insetCode = function(str) {
+		scope.$broadcast(scope.CodeMirrorBroadcast, function(CodeMirror) {
+			CodeMirror.replaceSelection(str);
+		});
+	};
+
+	scope.selectScript = function(key){
+		CustUtil.openCustDialog("scriptSelector",function(data,innerWindow){
+            scope.CodeMirrorBroadcast = key;
+			scope.insetCode(data[0].script);
+			$.Dialog.close(innerWindow);
+		});
+	}
+	scope.getBoStr = function(node){
+		var parentNode = node.getParentNode();
+		if( !parentNode)return;
+		
+		// 主表字段
+		if(node.nodeType == 'column' && parentNode.parentId=="0"){
+			return parentNode.alias+".get('"+node.key+"')";
+		}
+		// 子表
+		if(node.nodeType == 'table' && parentNode.parentId=="0"){
+			return "/* "+parentNode.alias+".getChildren('"+node.key+"')  获取子表： List<IBusinessData> */";
+		}
+		// 子表的字段
+		if(node.nodeType == 'column' && parentNode.getParentNode().parentId=="0"){
+			return "/* "+parentNode.getParentNode().alias+".getChildren('"+parentNode.key+"')  获取子表数据： List<IBusinessData> 子表字段：”"+node.key+"“ 请根据实际情况获取子表数据*/";
+		}
+		
+	}
+	scope.setVariable = function (event, treeId, node) {
+
+		var keyStr = node.name;
+		// 流程变量
+		if (node.nodeType == 'var'){
+			keyStr = "variableScope.getVariable('"+node.name+"')";
+		}// 业务对象取值
+		else {
+			 keyStr = scope.getBoStr(node);
+		}
+		
+		if(!keyStr)return;
+		
+		varTree.hideMenu();
+		scope.insetCode(keyStr);
+	}
+	scope.initTree = function(){
+		varTree = new ZtreeCreator('tempTree', __ctx+"/bpm/processDef/variablesTree").setDataKey({
+			name : 'name'
+		}).setCallback({
+			onClick : scope.setVariable
+		}).makeCombTree("varTree",300).initZtree({defId:defId}, 2);  
+
+        $(".varTree").bind("click", function(){
+            var broadcast = $(this).attr("broadcast")
+            scope.CodeMirrorBroadcast = broadcast;
+            varTree.showMenu($(this));
+        });
+	}
+	
+	scope.initTree();
+	if(!window.passData) window.passData={};
+	scope.reminder = window.passData.reminder;
+	scope.nodeList = window.passData.nodeList;
+	if(!scope.reminder || !scope.reminder.desc){
+		//初始化阐述
+		scope.reminder = {
+				timeLimit:60 * 24 * 3,
+				maxReminderTimes:1,
+				reminderCycle: 60 * 24 * 1,
+				isCalcWorkDay:true,
+				isUrgent:true,
+				msgType:"email",
+				htmlTemplate:"您好，请您尽快处理任务：${bpmInstance.subject} ！",
+				textTemplate:"您好，请您尽快处理任务：${bpmInstance.subject} ！"
+		};
+	}
+	
+} ]);
+	
+	app.directive('abTimes', [ function() {
+		return {
+			restrict : 'A',
+			scope:true,
+			require : "ngModel",
+			link : function(scope,element,attrs,ctrl){
+				scope.hourArr = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+				scope.minuteArr = [0,1,2,3,4,5,10,15,20,30,40,50];
+				ctrl.$formatters.push(function(time) {
+					if(typeof time =='undefined' || Number.isNaN(time))return;
+					
+					 scope.day = Math.floor(time / (60 * 24));
+					 scope.hour = Math.floor((time -scope.day * (60 * 24)) / 60) ;
+					 scope.minute = time - scope.day * (60 * 24) - scope.hour * 60;
+				});
+				
+				$("[ng-model]",element).change(function(){
+					var modelValue = 0;
+					modelValue += parseInt(60 * 24 * scope.day);
+					modelValue += parseInt(60 * scope.hour);
+					modelValue += parseInt(scope.minute);
+					if(modelValue==0)modelValue="";
+					ctrl.$setViewValue(modelValue);
+					ctrl.$render();
+				})
+				
+				scope.reset = function(){
+					scope.day=0;
+					scope.hour=0;
+					scope.minute =0;
+				}
+				scope.reset();
+			},
+			template:'	<input type="text" ng-model="day" class="form-control" style="width: 80px;" placeholder="天数" ht-validate="{number:true}"/><label>天</label>\
+						<select ng-model="hour" class="form-control" style="width: 100px;" ng-options="hour as (hour+\'小时\') for hour in hourArr">\
+						</select>小时\
+						<select ng-model="minute" class="form-control" style="width: 80px;" ng-options="minute as (minute+\'分\') for minute in minuteArr">\
+						</select>分\
+					  '
+		};
+	}]);
+	 
+	function getData(){
+		if (!AngularUtil.getScope().form.$valid){
+			$.Dialog.warning("表单校验未通过！");
+			return false;
+		}
+		
+		var reminder = AngularUtil.getScope().reminder;
+		return reminder;
+	}
+</script>
+</head>
+<body ng-controller="ctrl">
+<form name="form">
+		<table class="form-table">
+			<tr>
+				<th>催办标题: <span class="required">*</span></th>
+				<td><input type="text" ng-model="reminder.desc" class="form-control" ab-validate="{required:true,maxlength:220}"/></td>
+			</tr>
+			<tr>
+				<th>催办任务节点<span class="fa fa-question-circle text-info" ab-tip title="若不选择默认该流程所有节点任务均执行该催办"></span></th>
+				<td>
+					<select ng-model="reminder.nodeId" ng-disable="disable" class="form-control"  
+					ng-options="node.nodeId as node.nodeName for node in nodeList" >
+						<option value="">所有节点</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>条件脚本<span class="fa fa-question-circle text-info" ab-tip title="特殊条件配置groovy脚本，可以使用插件变量。 return false 则不执行催办"></span></th>
+				<td style="max-width: 300px">
+					<div>
+						<a class="btn btn-primary btn-xs" ng-click="selectScript('conditionScript')">常用脚本</a>
+					    <a id="varTree" class="btn btn-primary btn-xs varTree"  broadcast="conditionScript">流程变量</a>
+						
+						<div id="tempTree"></div>
+					</div>
+   					<textarea ng-model="reminder.conditionScript" ui-codemirror="" height="60px" broadcast="conditionScript"></textarea>
+				</td>
+			</tr>
+			<tr> 
+				<th>任务限时</th>
+				<td>
+					 <span ab-times ng-model="reminder.timeLimit"></span>
+				</td>
+			</tr>
+			<tr>
+				<th>催办次数<span class="fa fa-question-circle text-info" ab-tip title="催办几次后不再进行催办"></span></th>
+				<td>
+					 <input type="text" class="form-control" ab-validate="{'number':true}" ng-model="reminder.maxReminderTimes">
+				</td>
+			</tr>
+			<tr ng-show="reminder.maxReminderTimes>1">
+				<th>催办周期<span class="fa fa-question-circle text-info" ab-tip title="间隔多久进行下一次催办"></span></th>
+				<td>
+					 <span ab-times ng-model="reminder.reminderCycle"></span> 
+				</td>
+			</tr>
+			<tr>
+				<th>催办属性</th>
+				<td>
+					<span ab-boolean text="工作日模式/日历日模式" ng-model="reminder.isCalcWorkDay" ab-tip title="工作日，催办计算周期会以工作日模式计算（自动跳过周末、节假日）"></span>
+					<span ab-boolean text="催办时加急任务/不加急任务" ng-model="reminder.isUrgent" ab-tip title="若加急，催办时候会默认将任务紧急程度增加1，默认是50，任务列表会通过紧急程度排序"></span>
+				</td>
+			</tr>
+			<tr>
+				<th>催办前置脚本:</th>
+				<td style="max-width: 300px">
+					<div>
+						<a class="btn btn-primary btn-xs" ng-click="selectScript('beforeScript')">常用脚本</a>
+						<a class="btn btn-primary btn-xs varTree" broadcast="beforeScript">流程变量表单字段选择</a>
+						<span class="fa fa-question-circle text-info" ab-tip 
+						title="催办执行前置脚本，return false 则取消本次催办（下一周期还会继续催办）<br/>
+								也可以调用流程终止接口，任务完成接口，可以使用到催办次数变量  reminderTimes"></span>
+					</div>
+   					<textarea ng-model="reminder.beforeScript" ui-codemirror="" height="60px"  broadcast="beforeScript"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th>催办消息类型: <span class="required">*</span></th>
+				<td  ng-model="msgList" ab-load="sys/tools/getInterFaceImpls?classPath=com.dstz.sys.simplemq.handler.msg.AbsNotifyMessageHandler" simple-data="true" > 
+					<label ng-repeat="msg in msgList" ><input type="checkbox" ab-checkbox ng-model="reminder.msgType" value="{{msg.type}}" ab-validate="{required:true}"/>{{msg.title}}</label>
+				</td>
+			</tr>
+			<tr>
+				<th>富文本模板: <span class="required">*</span></th>
+				<td><textarea type="text" ab-editor ng-model="reminder.htmlTemplate" style="width: 600px;height: 300px" /></textarea></td>
+			</tr>
+			<tr>
+				<th>普通文本模板: <span class="required">*</span></th>
+				<td> <textarea rows="3"  class="form-control" ng-model="reminder.textTemplate" style="width: 600px;"></textarea></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

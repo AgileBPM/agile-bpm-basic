@@ -1,8 +1,9 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>流程定义</title>
-	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<title>我有权限发起的流程</title>
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/gridList.js"></script>
 </head>
 <body class="panel-body">
@@ -30,14 +31,14 @@
 			<thead>
 				<tr>
 					<th data-checkbox="true">序号</th>
-					<th data-field="name">名称</th>
-					<th data-field="key">KEY</th>
+					<th data-field="name">流程名称</th>
+					<th data-field="key">流程KEY</th>
 					<th data-field="status" data-formatter="labelFormatter"
 						data-value-style="deploy-发布-primary,forbidden-禁用-warning,draft-草稿-info,">状态</th>
 					<th data-field="version">版本</th>
 					<th data-field="desc">描述</th>
 					<th data-field="id" data-formatter="innerHtmlFormatter" data-title="管理">
-						<span class="fa-send btn btn-outline btn-primary btn-sm" qtip='启动' openDialog="启动" top="true" url="bpm/definition/start.html?defId={id}"></span>
+						<span class="fa-send btn btn-outline btn-primary btn-sm" qtip='启动' openDialog="发起申请【{name}】" top="true" url="bpm/definition/start.html?defId={id}"></span>
 					</th>
 				</tr>
 			</thead>

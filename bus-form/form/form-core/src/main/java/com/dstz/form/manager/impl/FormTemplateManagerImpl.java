@@ -8,6 +8,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,21 +17,26 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.dstz.base.api.exception.BusinessError;
 import com.dstz.base.api.exception.BusinessException;
 import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.api.query.QueryOP;
 import com.dstz.base.core.id.IdUtil;
-import com.dstz.base.core.util.Dom4jUtil;
-import com.dstz.base.core.util.FileUtil;
+import com.dstz.base.core.util.StringUtil;
 import com.dstz.base.db.model.query.DefaultQueryFilter;
 import com.dstz.base.manager.impl.BaseManager;
 import com.dstz.bus.api.constant.BusTableRelType;
 import com.dstz.bus.api.model.IBusTableRel;
 import com.dstz.bus.api.model.IBusinessObject;
 import com.dstz.bus.api.service.IBusinessObjectService;
+import com.dstz.form.api.constant.FormTemplateType;
+import com.dstz.form.api.model.FormType;
 import com.dstz.form.dao.FormTemplateDao;
 import com.dstz.form.manager.FormTemplateManager;
 import com.dstz.form.model.FormTemplate;
+
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ClassUtil;
 
 /**
  * <pre>
@@ -55,7 +62,7 @@ public class FormTemplateManagerImpl extends BaseManager<String, FormTemplate> i
 	 */
 	public static String getFormTemplatePath() {
 		try {
-			return FileUtil.getClassesPath() + File.separator + "template" + File.separator + "form" + File.separator;
+			return ClassUtil.getClassPath() + File.separator + "template" + File.separator + "form" + File.separator;
 		} catch (Exception e) {
 			throw new BusinessException(e);
 		}
@@ -64,6 +71,8 @@ public class FormTemplateManagerImpl extends BaseManager<String, FormTemplate> i
 
 	@Override
 	public FormTemplate getByKey(String key) {
+		if(StringUtil.isEmpty(key))return null;
+		
 		QueryFilter filter = new DefaultQueryFilter();
 		filter.addFilter("key_", key, QueryOP.EQUAL);
 		return this.queryOne(filter);
@@ -74,6 +83,7 @@ public class FormTemplateManagerImpl extends BaseManager<String, FormTemplate> i
 		// 删除不可编辑的（其实就是系统的）
 		QueryFilter filter = new DefaultQueryFilter();
 		filter.addFilter("editable_", false, QueryOP.EQUAL);
+		filter.setPage(null);
 		for (FormTemplate template : this.query(filter)) {
 			this.remove(template.getId());
 		}
@@ -95,7 +105,7 @@ public class FormTemplateManagerImpl extends BaseManager<String, FormTemplate> i
 			String templatePath = "/template/formDef/";
 			InputStream instream = this.getClass().getResourceAsStream(templatePath+"templates.xml");
 			String xml = IOUtils.toString(instream,"UTF-8");
-			Document document = Dom4jUtil.loadXml(xml);
+			Document document = DocumentHelper.parseText(xml);
 			Element root = document.getRootElement();
 			List<Element> list = root.elements();
 			for (Element element : list) {
@@ -106,6 +116,7 @@ public class FormTemplateManagerImpl extends BaseManager<String, FormTemplate> i
 				String dir = element.attributeValue("dir");
 
 				String fileName = templatePath + dir + "/" + key + ".ftl";
+				System.out.println(fileName);
 				String html = IOUtils.toString(this.getClass().getResourceAsStream(fileName),"UTF-8");
 
 				FormTemplate formTemplate = new FormTemplate();
@@ -143,9 +154,13 @@ public class FormTemplateManagerImpl extends BaseManager<String, FormTemplate> i
 		String templatePath = getFormTemplatePath();
 
 		String xmlPath = templatePath + "templates.xml";
-		String xml = FileUtil.readFile(xmlPath);
-
-		Document document = Dom4jUtil.loadXml(xml);
+		String xml = FileUtil.readUtf8String(xmlPath);
+		Document document = null;
+		try {
+			document = DocumentHelper.parseText(xml);
+		} catch (DocumentException e) {
+			throw new BusinessError("解析文件出错",e);
+		}
 		Element root = document.getRootElement();
 
 		Element e = root.addElement("template");
@@ -154,27 +169,39 @@ public class FormTemplateManagerImpl extends BaseManager<String, FormTemplate> i
 		e.addAttribute("type", type);
 		e.addAttribute("templateDesc", desc);
 		String content = document.asXML();
-
-		FileUtil.writeFile(xmlPath, content);
-		FileUtil.writeFile(templatePath + alias + ".ftl", html);
+		
+		FileUtil.writeUtf8String(content, xmlPath);
+		FileUtil.writeUtf8String(html, templatePath + alias + ".ftl");
 
 		formTemplate.setEditable(false);
 		formTemplateDao.update(formTemplate);
 	}
 
-	public List<FormTemplate> getByType(String type, String formType) {
+	public List<FormTemplate> getByType(String type, String formType,Boolean hasDesignForm) {
 		QueryFilter filter = new DefaultQueryFilter();
-		filter.addFilter("type_", type, QueryOP.IN);
+		filter.setPage(null);
+		filter.addFilter("type_", type, QueryOP.EQUAL);
 		filter.addFilter("form_type_", formType, QueryOP.EQUAL);
+		if(hasDesignForm) {
+			filter.addFilter("type_", type.concat("FormOverallArrangement"), QueryOP.EQUAL);
+		}
 		return this.query(filter);
 	}
 	
 	@Override
 	public JSONArray templateData(String boKey,String type) {
 		IBusinessObject bo = businessObjectService.getByKey(boKey);
+		if(bo == null) {
+			throw new BusinessException(String.format("业务对象丢失，请检查业务对象：%s", boKey));
+		}
+		boolean hasDesignForm = false;
+		if(StringUtil.isNotEmpty(businessObjectService.getBoOverallArrangement(boKey)) && !FormType.MOBILE.value().equals(type)) {
+			hasDesignForm = true;
+		}
+		
 		List<IBusTableRel> rels = (List<IBusTableRel>) bo.getRelation().list();
-		List<FormTemplate> mainTemplates = getByType("main",type);
-		List<FormTemplate> subTableTemplates = getByType("subTable",type);
+		List<FormTemplate> mainTemplates = getByType(FormTemplateType.MAIN.getKey(),type,hasDesignForm);
+		List<FormTemplate> subTableTemplates = getByType(FormTemplateType.SUB_TABLE.getKey(),type,hasDesignForm);
 		for (FormTemplate template : mainTemplates) {
 			template.setHtml(null);
 		}

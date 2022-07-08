@@ -1,5 +1,5 @@
 <div ng-controller="StencilController" class="easy-layout" style="width: 100%; height: 100%">
-	<div data-options="region:'north'" style="height: 62px">
+	<div data-options="region:'north'" style="height: 52px">
 		<div class="editor-toolbar subheader">
 			<div class="btn-group">
 				<div class="btn-toolbar pull-left" ng-controller="ToolbarController" ng-cloak>
@@ -10,21 +10,38 @@
 					<button id="" title="" ng-switch="" on="item.type" class="btn btn-inverse ng-scope separator" class="separator" disabled="disabled">
 						<div class="ng-scope toolbar-separator"></div>
 					</button>
-					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-shrink-E')">
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-shrink-W')">
 						<i class="glyphicon glyphicon-chevron-left" data-toggle="tooltip" title="向左扩展画幕"></i>
 					</button>
-					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-grow-E')">
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-shrink-E')">
 						<i class="glyphicon glyphicon-chevron-right" data-toggle="tooltip" title="向右扩展画幕"></i>
 					</button>
 					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-shrink-N')">
 						<i class="glyphicon glyphicon-chevron-up" data-toggle="tooltip" title="向上扩展画幕"></i>
 					</button>
-					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-grow-N')">
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-shrink-S')">
 						<i class="glyphicon glyphicon-chevron-down" data-toggle="tooltip" title="向下扩展画幕"></i>
 					</button>
+					<button id="" title="" ng-switch="" on="item.type" class="btn btn-inverse ng-scope separator" class="separator" disabled="disabled">
+						<div class="ng-scope toolbar-separator"></div>
+					</button>
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-grow-W')">
+						<i class="glyphicon glyphicon-arrow-left" data-toggle="tooltip" title="向左收缩画幕"></i>
+					</button>
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-grow-E')">
+						<i class="glyphicon glyphicon-arrow-right" data-toggle="tooltip" title="向右收缩画幕"></i>
+					</button>
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-grow-N')">
+						<i class="glyphicon glyphicon-arrow-up" data-toggle="tooltip" title="向上收缩画幕"></i>
+					</button>
+					<button title="扩展画幕" class="btn btn-inverse ng-scope" ng-click="canvasResize('canvas-grow-S')">
+						<i class="glyphicon glyphicon-arrow-down" data-toggle="tooltip" title="向下收缩画幕"></i>
+					</button>
+					
+ 
 				</div>
 			</div>
-			<div class="btn-group pull-right" ng-show="!secondaryItems.length">
+			<div class="btn-group pull-right" ng-show="false && !secondaryItems.length">
 				<div class="btn-toolbar pull-right" ng-controller="ToolbarController">
 					<button title="{{item.title | translate}}" ng-repeat="item in secondaryItems" ng-switch on="item.type" class="btn btn-inverse" ng-class="{'separator': item.type == 'separator'}" ng-disabled="item.type == 'separator'" ng-click="toolbarSecondaryButtonClicked($index)" id="{{item.id}}">
 						<i ng-switch-when="button" ng-class="item.cssClass" class="toolbar-button" data-toggle="tooltip" title="{{item.title | translate}}"></i>
@@ -50,13 +67,13 @@
 					</div>
 				</div>
 			</div>
-			
-			<div data-options="region:'south',split:true,border:true,collapse:'south'" title="流程插件配置" style="height: 300px">
+			<div ng-model="permissionPlugins" ab-load="sys/tools/getInterFaceImpls?classPath=com.dstz.bpm.engine.plugin.context.AbstractBpmPluginContext" simple-data="true" ></div>
+			<div data-options="region:'south',split:true,border:true,collapse:'south'" title="流程插件配置" style="height: 240px">
 				<ng-include src="'editor-app/configuration/custom/flow-config-extend.html'" style="height:100%"  ng-if="selectedItem.nodeType=='Global'"></ng-include>
 				<ng-include src="'editor-app/configuration/custom/flow-plugins.html'" style="height:100%"></ng-include>
 			</div>
 			
-			<div data-options="region:'west',split:true,border:true" title="流程节点" style="width:200px;">
+			<div data-options="region:'west',split:true,border:true" title="流程节点" style="width:160px;">
 				<div class="stencils" id="paletteSection">
 					<div ng-if="stencilItemGroups.length > 1">
 						<div ng-repeat="group in stencilItemGroups">
@@ -83,21 +100,35 @@
 		</div>
 	</div>
 
-	<div data-options="region:'east'" title="属性配置" style="width: 436px;">
+	<div data-options="region:'east'" title="属性配置" style="width: 380px;">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<label style="font-size: 23px;" class="control-label" ng-show="selectedItem.title != undefined && selectedItem.title != null && selectedItem.title.length > 0">节点：{{selectedItem.title}}</label>
-				<label style="font-size: 23px;" class="control-label" ng-show="!selectedItem || selectedItem.title == undefined || selectedItem.title == null || selectedItem.title.length == 0">流程：{{modelData.name}}</label>
+				<label style="font-size: 23px;" class="control-label" ng-show="selectedItem.nodeType!='Global'">节点：{{selectedItem.title}}</label>
+				<label style="font-size: 23px;" class="control-label" ng-show="selectedItem.nodeType=='Global'">流程：{{bpmDefSetting.bpmDefinition.name}}</label>
 			</div>
 			<div class="panel-body" style="padding-top: 5px;">
 				<div class="form-horizontal" style="width: 95%">
+					<div ng-if="selectedItem.nodeType!='Global'">
 					<div class="form-group" ng-repeat="property in selectedItem.properties" ng-show="'oryx-documentation,oryx-process_id,oryx-name,oryx-overrideid,oryx-namepackage,oryx-name'.indexOf(property.key)!=-1" ng-click="propertyClicked($index)">
 						<label class="col-sm-3 control-label title">{{ property.title }}</label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control" ng-if="property.key!=='oryx-name'" ng-blur="updatePropertyInModel(property,null,selectedItem.nodeId)" ng-model="property.value" ng-disabled="!property.hasReadWriteMode">
 							<input type="text" class="form-control" ng-if="property.key==='oryx-name'" ng-change="updatePropertyInModel(property,null,selectedItem.nodeId)" ng-model="property.value" ng-disabled="!property.hasReadWriteMode">
-							
-					
+						</div>
+					</div>
+					</div>
+					<div ng-if="selectedItem.nodeType=='Global'">
+						<div class="form-group">
+							<label class="col-sm-3 control-label title">名字</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control"  ng-model="bpmDefSetting.bpmDefinition.name">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label title">描述</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control"  ng-model="bpmDefSetting.bpmDefinition.desc">
+							</div>
 						</div>
 					</div>
 				</div>

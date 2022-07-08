@@ -6,5 +6,5 @@
 			      <a href="#" ng-click="removePanel(panel.custLayOutId,panel.id)"><i class="fa fa-times"></i></a>
 			</div>
 		</div>
-		<iframe id='{{panel.alias}}' src='{{url}}' style='height:90%;width:100%;border:none;'></iframe>
+		<iframe id='{{panel.alias}}' ng-src="{{url}}" style='height:90%;width:100%;border:none;'></iframe>
 	</div>

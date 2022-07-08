@@ -16,7 +16,8 @@
 			<#list relation.table.columnsWithOutHidden as column>
 				<td>${generator.getColumn(column,relation)} </td>
 			</#list>
-			<td>${getOne2ManyChild(relation)}<a class="btn btn-danger btn-sm fa fa-delete" ng-click="ArrayTool.del($index,${generator.getScopePath(relation)})" ab-edit-permission="tablePermission.${relation.busObj.key}.${relation.tableKey}"> </a></td>
+			<td>${getOne2ManyChild(relation)}
+			<a class="btn btn-danger btn-sm fa fa-delete" ng-click="ArrayTool.del($index,${generator.getScopePath(relation)})" ab-edit-permission="tablePermission.${relation.busObj.key}.${relation.tableKey}"> </a></td>
 			</tr>
 		</table>
 	</div>

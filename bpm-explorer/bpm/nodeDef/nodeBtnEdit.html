@@ -1,6 +1,7 @@
 <html ng-app="btnApp">
 	<head>
-		<link href="../../build/common/ngEdit.css" rel="stylesheet">
+		<link href="../../build/common/base.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/base.js"></script>
 		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 		<script type="text/javascript" src="../../build/common/easyLayout.js"></script>
 		<script type="text/javascript" src="../../assets/js/platform/bpm/nodeDef/nodeDefBtnEdit.js"></script>
@@ -62,11 +63,11 @@
 						<td><textarea ng-model="btn.beforeScript" cols="30" rows="5" class="form-control" ></textarea> 
 						</td>
 					</tr>
-					<tr>
+					<!-- <tr>
 						<th>后置脚本:<span class="fa bigger-120 fa-info-circle" ab-tip title="javascript脚本,在返回后前做些处理<br>参数:data(responseData)<br>返回:true/false<br>返回false时可以控制不关闭当前窗口。<br>非系统预定义按钮忽略后置脚本"></span> </th>
 						<td><textarea  ng-model="btn.afterScript" cols="30" rows="3" class="form-control"></textarea>
 						</td>
-					</tr>
+					</tr> -->
 					<tr >
 						<th>groovy脚本:<span class="fa  fa-info-circle" ab-tip title="java脚本，控制按钮是否显示，返回 false不显示，返回 true显示。<br>上下文变量：<br>1.流程变量<br>2.BO数据<br>返回:true/false。"></span> </th>
 						<td><textarea  ng-model="btn.groovyScript" cols="30" rows="5" class="form-control"></textarea>

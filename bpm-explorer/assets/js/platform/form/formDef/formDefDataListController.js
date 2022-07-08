@@ -27,7 +27,8 @@ app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 		girdConf.pagination = true;
 		girdConf.pageSize = 10;
 		girdConf.singleSelect = true;
-
+		girdConf.height = window.innerHeight*0.9;
+		
 		// 列 默认一个选择列
 		girdConf.columns = [ {
 			checkbox : true

@@ -58,7 +58,7 @@ UE.registerUI('custDialog', function(editor, uiName) {
 				var data = innerWindow.getData();
 				var elm = "";
 				if (data.mapList.length > 0) {
-					elm = $('<ab-cust-dialog class="weui-btn weui-btn_mini weui-btn_primary fa fa-search" href="#">' + data.dialogName + '</ab-cust-dialog>');
+					elm = $('<ab-cust-dialog class="weui-btn weui-btn_mini weui-btn_primary fa fa-search" href="javascript:void(0)">' + data.dialogName + '</ab-cust-dialog>');
 					elm.attr("dialog-key", data.dialogKey);
 					elm.attr(":model",data.targetNgModelPath);
 					elm.attr(":param",JSON.stringify(data.dialogParam));

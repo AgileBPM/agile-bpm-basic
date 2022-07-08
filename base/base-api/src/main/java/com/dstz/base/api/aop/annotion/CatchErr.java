@@ -16,6 +16,10 @@ import java.lang.annotation.*;
 @Documented
 public @interface CatchErr {
     String value() default "";
-
+    /**
+     * 目前全部都是 RestController 请确认是否需要写入 response 形式
+     * @Deprecated
+     * @return
+     */
     boolean write2response() default false;
 }

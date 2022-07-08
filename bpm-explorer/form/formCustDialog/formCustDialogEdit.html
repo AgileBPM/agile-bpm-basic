@@ -2,7 +2,8 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/form/formCustDialog/formCustDialogEditController.js"></script>
 </head>
@@ -22,7 +23,7 @@
 
 				<th>别名</th>
 				<td>
-					<input type="text" ab-pinyin="data.name" ng-model="data.key" class="form-control" ab-validate="{required:true}" />
+					<input type="text" ab-pinyin="data.name" ng-readonly="data.system" ng-model="data.key" class="form-control" ab-validate="{required:true}" />
 				</td>
 			</tr>
 			<tr>

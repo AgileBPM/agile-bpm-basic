@@ -1,15 +1,12 @@
 package com.dstz.org.api.constant;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 组织级别
  */
 public enum GroupGradeConstant {
-    GROUP(0, "GROUP"),
-    COMPANY(1, "公司"),
-    DEPARTMENT(3, "部门");
+    GROUP(0, "0-集团"),
+    COMPANY(1, "1-分公司"),
+    DEPARTMENT(3, "3-部门"); 
 
 
     private int key;
@@ -27,13 +24,6 @@ public enum GroupGradeConstant {
     public String label() {
         return label;
     }
-
-    public static Map<Integer, String> getGroupTypes() {
-        Map<Integer, String> map = new HashMap<>();
-        for (GroupGradeConstant e : GroupGradeConstant.values()) {
-            map.put(e.key(), e.label());
-        }
-        return map;
-    }
+ 
 
 }

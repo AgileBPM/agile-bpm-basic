@@ -60,7 +60,7 @@ public class BusinessTableController extends BaseController<BusinessTable> {
 	 */
 	@RequestMapping("getObject")
 	@CatchErr(write2response = true, value = "获取BusinessTable异常")
-	public void getObject(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ResultMsg<BusinessTable> getObject(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String id = RequestUtil.getString(request, "id");
 		String key = RequestUtil.getString(request, "key");
 		boolean fill = RequestUtil.getBoolean(request, "fill");// 是否要填充table
@@ -73,8 +73,8 @@ public class BusinessTableController extends BaseController<BusinessTable> {
 		if (fill && table != null) {
 			table = businessTableManager.getFilledByKey(table.getKey());
 		}
-		
-		writeSuccessData(response, table);
+
+		return getSuccessResult(table);
 	}
 
 
@@ -89,7 +89,7 @@ public class BusinessTableController extends BaseController<BusinessTable> {
 	 */
 	@RequestMapping("createTable")
 	@CatchErr(write2response = true, value = "建表失败")
-	public void createTable(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ResultMsg<String> createTable(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String id = RequestUtil.getString(request, "id");
 		BusinessTable businessTable = businessTableManager.get(id);
 		businessTable = businessTableManager.getFilledByKey(businessTable.getKey());
@@ -97,9 +97,25 @@ public class BusinessTableController extends BaseController<BusinessTable> {
 		tableOperator.createTable();
 		businessTable.setCreatedTable(true);
 		BusinessTableCacheUtil.put(businessTable);//入缓存
-		writeSuccessResult(response, "建表成功");
+		return getSuccessResult("建表成功");
 	}
-
+	
+	/**
+	 * <pre>
+	 * 清空业务表缓存
+	 * </pre>
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("cleanCache")
+	@CatchErr(write2response = true, value = "清空缓存失败")
+	public ResultMsg<String> cleanCache(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		BusinessTableCacheUtil.clean();
+		return getSuccessResult("建表成功");
+	}
+	
 	@Override
 	protected String getModelDesc() {
 		return "业务表";

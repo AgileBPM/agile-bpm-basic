@@ -9,7 +9,7 @@ public interface Page {
     /**
      * 默认每页显示的记录数
      */
-    public static final int DEFAULT_PAGE_SIZE = 20;
+    public static final int DEFAULT_PAGE_SIZE = 10;
 
     /**
      * 返回每页大小

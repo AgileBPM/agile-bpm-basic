@@ -60,4 +60,11 @@ public interface FormCustDialogManager extends Manager<String, FormCustDialog> {
      */
     List<?> data(FormCustDialog formCustDialog, QueryFilter queryFilter);
 
+
+    /**
+     * 键是否存在
+     * @param key 键
+     * @return 是否存在
+     */
+    boolean existsByKey(String key);
 }

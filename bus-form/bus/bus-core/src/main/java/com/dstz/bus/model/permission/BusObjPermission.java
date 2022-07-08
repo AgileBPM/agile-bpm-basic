@@ -2,8 +2,13 @@ package com.dstz.bus.model.permission;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import com.alibaba.fastjson.JSONObject;
+import com.dstz.bus.api.constant.RightsType;
+import com.dstz.bus.api.model.permission.IBusColumnPermission;
 import com.dstz.bus.api.model.permission.IBusObjPermission;
+import com.dstz.bus.api.model.permission.IBusTablePermission;
 
 /**
  * <pre>
@@ -14,7 +19,7 @@ import com.dstz.bus.api.model.permission.IBusObjPermission;
  * 版权:summer
  * </pre>
  */
-public class BusObjPermission extends AbstractPermission implements IBusObjPermission{
+public class BusObjPermission extends AbstractPermission implements IBusObjPermission {
 	/**
 	 * boKey
 	 */
@@ -32,7 +37,7 @@ public class BusObjPermission extends AbstractPermission implements IBusObjPermi
 	 * </pre>
 	 */
 	private Map<String, BusTablePermission> tableMap = new HashMap<>();
-	
+
 	public String getKey() {
 		return key;
 	}
@@ -56,5 +61,31 @@ public class BusObjPermission extends AbstractPermission implements IBusObjPermi
 	public void setTableMap(Map<String, BusTablePermission> tableMap) {
 		this.tableMap = tableMap;
 	}
+	
+	@Override
+	public void handlePermission(JSONObject tablePermission, JSONObject permission, Boolean isReadonly) {
+		permission.put(this.getKey(), new JSONObject());
+		tablePermission.put(this.getKey(), new JSONObject());
+		for (Entry<String, ? extends IBusTablePermission> etry : this.getTableMap().entrySet()) {
+			IBusTablePermission busTablePermission = etry.getValue();
+			permission.getJSONObject(this.getKey()).put(busTablePermission.getKey(), new JSONObject());
+			tablePermission.getJSONObject(this.getKey()).put(busTablePermission.getKey(), handleReadonlyResult(busTablePermission.getResult(), isReadonly));
 
+			for (Entry<String, ? extends IBusColumnPermission> ery : busTablePermission.getColumnMap().entrySet()) {
+				IBusColumnPermission busColumnPermission = ery.getValue();
+				permission.getJSONObject(this.getKey()).getJSONObject(busTablePermission.getKey()).put(busColumnPermission.getKey(), handleReadonlyResult(busColumnPermission.getResult(), isReadonly));
+			}
+		}
+	}
+
+	private String handleReadonlyResult(String result, Boolean isReadonly) {
+		if (!isReadonly)
+			return result;
+
+		if (RightsType.REQUIRED.getKey().equals(result) || RightsType.WRITE.getKey().equals(result)) {
+			return RightsType.READ.getKey();
+		}
+
+		return result;
+	}
 }

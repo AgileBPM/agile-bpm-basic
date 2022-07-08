@@ -1,11 +1,18 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/gridList.css" rel="stylesheet">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../build/common/gridList.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/form/formCustDialog/formCustDialogShowListController.js"></script>
+<style type="text/css">
+.innerbox {
+	padding-left: 5px;
+	padding-right: 0px;
+	overflow-x: auto;
+}
+</style>
 <script type="text/javascript">
 	//返回数据
 	function getData() {
@@ -16,7 +23,7 @@
 </head>
 <body ng-controller="ctrl" ng-init="init()" ab-load="/form/formCustDialog/getObject?key={key}" ng-model="data">
 	<!-- 顶部查询操作 -->
-	<div class="panel panel-default search-panel">
+	<div class="panel panel-default search-panel" ng-show="isShowSearch()">
 		<div class="panel-heading">
 			查询条件
 			<a 　href="javascript:void(0)" class="pull-right">
@@ -26,13 +33,22 @@
 		<div class="panel-body">
 			<form id="searchForm" class="form-horizontal">
 				<div class="form-group">
-					<span ng-repeat="field in data.conditionFields | filter:{valueSource:'param'}:true">
-						<label class="control-label col-sm-1" for="{{getId(field)}}">{{field.showName}}</label>
+					<span ng-repeat="field in data.conditionFields | filter:{valueSource:'param'}:true" ng-show="field.value.ctrlType">
+						<label ng-if="field.condition!='BT'" class="control-label col-sm-1" for="{{getId(field)}}">{{field.showName}}</label>
+						<label ng-if="field.condition=='BT'" class="control-label col-sm-1" for="{{getId(field)}}">{{field.showName+"大于"}}</label>
 						<div class="col-sm-2">
-							<input type="text" class="form-control" id="{{getId(field)}}">
+							<input ng-if="field.value.ctrlType!='inputDate'" type="text" class="form-control" ng-model="p[$index]" id="{{getId(field)}}">
+							<input ng-if="field.value.ctrlType=='inputDate'" type="text" class="form-control" ab-date="{{field.value.text}}" ng-model="p[$index]" id="{{getId(field)}}">
+						</div>
+						<div ng-if="field.condition=='BT'">
+							<label class="control-label col-sm-1" for="{{getId(field,true)}}">{{field.showName+"小于"}}</label>
+							<div class="col-sm-2">
+								<input ng-if="field.value.ctrlType!='inputDate'" type="text" class="form-control" ng-model="p[$index]" id="{{getId(field,true)}}">
+								<input ng-if="field.value.ctrlType=='inputDate'" type="text" class="form-control" ab-date="{{field.value.text}}" ng-model="p[$index]" id="{{getId(field,true)}}">
+							</div>
 						</div>
 					</span>
-					<div class="col-sm-3" style="text-align: left;">
+					<div class=" col-sm-3" style="text-align: left;">
 						<button type="button" class="btn btn-primary fa-search">查询</button>
 						<button type="button" class="btn btn-primary fa-rotate-left">重置</button>
 					</div>
@@ -41,12 +57,12 @@
 		</div>
 	</div>
 	<!-- 列表 -->
-	<div ng-class="{true:'col-sm-10',false:''}[data.multiple]" style="padding-left: 0px; padding-right: 0px">
+	<div ng-class="{true:'col-sm-9',false:''}[data.multiple]" style="padding-left: 0px; padding-right: 0px">
 		<table ab-grid></table>
 	</div>
 	<!-- 已选列表 -->
-	<div ng-if="data.multiple" class="col-sm-2" style="padding-left: 5px; padding-right: 0px">
-		<table style="float: right;" class="table table-bordered table-hover" cellspacing="0">
+	<div ng-if="data.multiple" class="col-sm-3 innerbox">
+		<table class="table table-bordered table-hover" cellspacing="0">
 			<tr>
 				<th>{{data.displayFields[0].showName}}</th>
 				<th>
@@ -57,7 +73,7 @@
 			<tr ng-repeat="item in selectedList track by $index">
 				<td>{{item[data.displayFields[0].columnName]}}</td>
 				<td>
-					<a href="javascript:javaScript:void(0)" ng-click="ArrayTool.del($index,selectedList)" class="btn btn-sm btn-default fa-delete"></a>
+					<a href="javascript:javaScript:void(0)" ng-click="del($index)" class="btn btn-sm btn-default fa-delete"></a>
 				</td>
 			</tr>
 		</table>

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dstz.bus.api.model.permission.IBusObjPermission;
 
 public interface IBusinessData extends Serializable{
 
@@ -32,6 +31,30 @@ public interface IBusinessData extends Serializable{
 	 * @return
 	 */
 	Map<String, List<IBusinessData>> getChilds();
+
+	/**
+	 * 获取子表集合
+	 * @param boCode
+	 * @return
+	 */
+	List<IBusinessData> getChild(String boCode);
+
+	/**
+	 * 添加一个子表集合
+	 * @param subList
+	 * @param boCode
+	 * @return
+
+	void addChilds(List<IBusinessData> subList, String boCode);
+
+	*
+	 * 添加一个子表数据
+	 * @param subData
+	 * @param boCode
+	 * @return
+	 *
+	void addChild(IBusinessData subData, String boCode);
+*/
 	
 	JSONObject fullBusDataInitData(JSONObject initData);
 }

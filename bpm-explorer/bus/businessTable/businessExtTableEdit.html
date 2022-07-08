@@ -1,7 +1,8 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/bus/businessTable/businessExtTableEditController.js"></script>
 <script type="text/javascript">
@@ -61,7 +62,7 @@
 				</td>
 				<th>描述</th>
 				<td>
-					<input ng-model="data.comment" class="form-control" />
+					<input ng-model="data.comment" class="form-control" ab-validate="{required:true}" />
 				</td>
 				<th>实体名</th>
 				<td>
@@ -83,7 +84,6 @@
 				<th style="width: 10%">字段控件</th>
 				<th style="width: 15%">控件配置</th>
 				<th style="width: 10%">字段校验</th>
-				<th style="width: 5%">操作</th>
 			</tr>
 			<tr ng-repeat="column in data.columns">
 				<!-- 注释 -->

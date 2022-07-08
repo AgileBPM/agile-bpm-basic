@@ -1,0 +1,70 @@
+<html ng-app="app">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="../../build/common/base.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/base.js"></script>
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+		
+		<script type="text/javascript">
+			var app = angular.module('app', ['baseDirective']);
+			app.controller("ctrl", [ '$scope', 'baseService' ,function($scope, baseService) {
+				 
+				$scope.test = function(){
+					if (!$scope.form.$valid) return;
+					
+					 var defer = baseService.post(__ctx+"/calendar/holidayConf/test",$scope.data);
+					$.getResultData(defer,function(data){
+						$.Dialog.alert(data,1);
+					});
+				}
+			}]);
+		</script>
+
+	</head>
+	
+	
+	
+	
+	
+	
+	<body ng-controller="ctrl">
+			<!-- 顶部按钮 -->
+			<div class="panel-heading">
+				<div class="buttons">	      
+					<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回</a>	
+					<a class="btn btn-primary fa-cog" ng-click="test()">测试</a>
+				</div>
+			</div>
+			<form name="form">
+			<table class="form-table">
+				<tr>								
+					<th>开始日期:<span class="required">*</span></th>
+					<td>
+			   			 <input class="form-control" type="text" ng-model="data.startDay" ab-date  ab-validate="{required:true}"  />
+					</td>								
+				</tr>
+				
+				<!-- <tr>								
+					<th>结束日期:<span class="required">*</span></th>
+					<td>
+			    		<input class="form-control" type="text" ng-model="data.endDay" ab-date  ab-validate="{required:false}"  />
+					</td>								
+				</tr> -->
+				
+				<tr>								
+					<th>天数:<span class="required">*</span></th>
+					<td>
+			  			 <input class="form-control" type="text" ng-model="data.year"  ab-validate="{number:true,required:true}"  />
+					</td>								
+				</tr>
+				
+				<tr>								
+					<td colspan="2">
+						<p class="text-success">获取指定工作日，N 天后的日期</p>
+				<!-- 	<p class="text-success">【不输入结束日期】计算从开始日期指定天数工作日后的日期</p>
+					<p class="text-success">【不输入天数】计算从开始日期到结束日期  有多少个工作日</p> -->
+					</td>								
+				</tr>
+			</table>
+	</body>
+</html>

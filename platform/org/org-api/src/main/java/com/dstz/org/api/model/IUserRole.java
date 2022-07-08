@@ -1,13 +1,18 @@
 package com.dstz.org.api.model;
 
-public interface IUserRole {
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+@ApiModel(description="用户角色新 ")
+public interface IUserRole {
+	
+	@ApiModelProperty("角色标识")
 	String getAlias();
 
-
+	@ApiModelProperty("用户名")
 	String getFullname();
 
-
+	@ApiModelProperty("角色名")
 	String getRoleName();
 
 
@@ -16,6 +21,7 @@ public interface IUserRole {
 	 *
 	 * @return
 	 */
+	@ApiModelProperty("角色ID")
 	String getRoleId();
 
 
@@ -24,7 +30,8 @@ public interface IUserRole {
 	 *
 	 * @return
 	 */
+	@ApiModelProperty("用户ID")
 	String getUserId();
-
+	@ApiModelProperty("用户账户")
 	String getAccount();
 }

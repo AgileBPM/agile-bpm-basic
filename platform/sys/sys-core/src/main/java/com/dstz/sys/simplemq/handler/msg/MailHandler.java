@@ -36,7 +36,12 @@ public class MailHandler extends AbsNotifyMessageHandler<NotifyMessage> {
     public String getTitle() {
         return "邮件";
     }
-
+    
+    @Override
+    public boolean getIsDefault() {
+    	return true;
+    }
+  
 
     @Override
     public boolean getSupportHtml() {
@@ -45,7 +50,7 @@ public class MailHandler extends AbsNotifyMessageHandler<NotifyMessage> {
 
     @Override
     public boolean sendMessage(NotifyMessage notifMessage) {
-        List<IUser> recievers = sysIdentityConvert.convert2Users(notifMessage.getReceivers());
+        List<? extends IUser> recievers = sysIdentityConvert.convert2Users(notifMessage.getReceivers());
         for (IUser reciver : recievers) {
             String email = reciver.getEmail();
             if (StringUtil.isEmpty(email)) {

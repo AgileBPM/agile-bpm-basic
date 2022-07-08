@@ -1,0 +1,107 @@
+<html ng-app="baseDirective">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+</head>
+<body class="panel success">
+	<!-- 顶部按钮 -->
+	<div class="panel-heading">
+		<a class="btn btn-primary fa-save" ng-model="data" use-default-after-save-event="true" ab-save="/org/user/save"> 保存 </a>
+	</div>
+	<form name="form" method="post" ab-load="/org/user/get?id={id}"  ng-model="data">
+		<table class="form-table" cellspacing="0">
+			<tr>
+				<th>
+					<span>姓名:</span>
+					<span class="required">*</span>
+				</th>
+				<td>
+					<input class="form-control" type="text" ng-model="data.fullname" ab-validate="{required:true,maxlength:765}" />
+				</td>
+
+			</tr>
+			<tr>
+				<th>
+					<span>账号:</span>
+					<span class="required">*</span>
+				</th>
+				<td>
+					<input class="form-control" disabled="disabled" type="text" ng-model="data.account" id="account" ab-validate="{required:true,maxlength:20}" />
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<span>邮箱:</span>
+				</th>
+				<td>
+					<input class="form-control" type="text" ng-model="data.email" ab-validate="{required:false,maxlength:192,email:true}" />
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>手机号码:</span>
+				</th>
+				<td>
+					<input class="form-control" type="text" ng-model="data.mobile" ab-validate="{maxlength:96,phonenumber:true}" />
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>微信号:</span>
+				</th>
+				<td>
+					<input class="form-control" type="text" ng-model="data.weixin" ab-validate="{maxlength:192}" />
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>地址:</span>
+				</th>
+				<td>
+					<input class="form-control" type="text" ng-model="data.address" ab-validate="{required:false}" />
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<span>性别：</span>
+				</th>
+				<td>
+					<select class="form-control" ng-model="data.sex">
+						<option value="未知">未知</option>
+						<option value="男">男</option>
+						<option value="女">女</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>角色:</span>
+					<span class="required">*</span>
+				</th>
+				<td>
+					<span ng-repeat="relation in data.orgRelationList |filter:{type:'userRole'}" style="margin-right: 10px" class="label label-danger"> {{relation.roleName}}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>组织:</span>
+					<span class="required">*</span>
+				</th>
+				<td>
+					<span ng-repeat="relation in data.orgRelationList|filter:{type:'groupUser'}" style="margin-right: 10px" class="label label-danger"> {{relation.groupName}}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>创建时间:</span>
+				</th>
+				<td>{{data.createTime | date :'yyyy-MM-dd'}}</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

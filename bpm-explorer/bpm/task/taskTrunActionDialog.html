@@ -2,8 +2,9 @@
 <html ng-app="baseDirective">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<link href="../../build/common/ngEdit.css" rel="stylesheet">
-		<script type="text/javascript" src="../../build/common/ngEdit-ori.js"></script>
+		<link href="../../build/common/base.css" rel="stylesheet">
+		<script type="text/javascript" src="../../build/common/base.js"></script>
+		<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 		<script type="text/javascript">
 			var ComplateController = ['$scope','baseService',function(scope,baseService){
 				scope.flowParam = window.passData;
@@ -23,18 +24,18 @@
 								scope.userSet = scope.flowParam.nodeUsers[scope.flowParam.nodeId][0] = newUser;
 							});
 						});
-					}, null, null, true);
+					}, null, {multiple:false}, true);
 				}
 			}];
 			
 			function isValidate(){
 				var flowParam = AngularUtil.getScope().flowParam;
 				if (!flowParam.opinion) {
-					$.Toast.warning("请填写意见！");
+					$.Toast.warning("请填写意见！",null,window);
 					return false;
 				}
 				if(!flowParam.nodeUsers[flowParam.nodeId][0].name){
-					$.Toast.warning("请选择一位转交人！");
+					$.Toast.warning("请选择一位转交人！",null,window);
 					return false;
 				}
 				return true;

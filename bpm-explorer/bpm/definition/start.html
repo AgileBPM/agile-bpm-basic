@@ -2,14 +2,15 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>启动流程</title>
-	<link href="../../build/common/ngEdit.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 	<script type="text/javascript" src="../../assets/js/common/bpmForm/bpmService.js"></script>
 	<script type="text/javascript" src="../../build/common/custForm.js"></script>
 	<style media="print">.print-hidden{display:none}</style>
 	<script type="text/javascript">
 		var StartController = ['$scope','baseService',function($scope,baseService){
-			$scope.bpmInitParam = {"defId":$.getParam("defId"),instanceId:$.getParam("instanceId")};
+			$scope.bpmInitParam = {"defId":$.getParam("defId"),"defKey":$.getParam("defKey"),instanceId:$.getParam("instanceId")};
 		}];
 		</script>
 </head>

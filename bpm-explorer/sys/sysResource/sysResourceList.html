@@ -2,7 +2,8 @@
 <head>
 <title>子系统资源</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/gridList.js"></script>
 	
 	<script type="text/javascript" src="../../assets/js/plugins/easyui-layout/jquery.layout.js"></script>
@@ -21,15 +22,8 @@
 		</div>
 	</div>
 	<div class="hidden">
-			<div id="hasChildMenu" class="easyui-menu" data-options="onClick:menuHandler" style="width: 120px;">
+			<div id="childMenu" class="easyui-menu" data-options="onClick:menuHandler" style="width: 120px;">
 				 <div data-options="name:'add'" class="menu-item">添加资源</div>
-				 <div data-options="name:'edit'"  class="menu-item">编辑资源</div> 
-				 <div data-options="name:'remove'"  class="menu-item">删除资源</div> 
-				 <div data-options="name:'move'"  class="menu-item">移动资源</div> 
-				 <div data-options="name:'fresh'"  class="menu-item">刷新</div>
-			</div>
-			
-			<div id="noChildMenu" class="easyui-menu" data-options="onClick:menuHandler" style="width: 120px;">
 				 <div data-options="name:'edit'"  class="menu-item">编辑资源</div> 
 				 <div data-options="name:'remove'"  class="menu-item">删除资源</div> 
 				 <div data-options="name:'move'"  class="menu-item">移动资源</div> 
@@ -41,12 +35,13 @@
 <script>
 var ztreeObject ;
 function loadTree() {
-	var url = __ctx + "/sys/sysResource/getTreeData";
-	var params = {systemId:"1"};
+	 var systemId = $("#systemId").val()||1;
+	var url = __ctx + "/org/sysResource/getTreeData";
+	var params = {systemId:systemId};
 	
 	var ztreeCreator = new ZtreeCreator('sysztreeObject',url)
 		.setCallback({onClick:zTreeOnLeftClick,onRightClick:zTreeOnRightClick})
-		.initZtree(params,function(treeObj){ztreeObject=treeObj});
+		.initZtree(params,2,function(treeObj){ztreeObject=treeObj});
 };
 
 //左击
@@ -66,12 +61,11 @@ function zTreeOnRightClick(e, treeId, treeNode) {
 	if (treeNode) {
 		ztreeObject.selectNode(treeNode);
 		curSelectNode=treeNode;
-		var hasChild = treeNode.hasChildren;
 		var h = $(window).height();
 		var w = $(window).width();
 		var menuWidth = 120;
 		var menuHeight = 75;
-		var menu = hasChild?$('#hasChildMenu'):$('#noChildMenu');
+		var menu = $('#childMenu');
 
 		var x = e.pageX, y = e.pageY;
 		if (e.pageY + menuHeight > h) {
@@ -123,7 +117,7 @@ function moveNode() {
 			var callback = function(rtn){
 				if (!rtn) return;
 				
-				var url = __ctx + "/sys/sysResource/moveResource";
+				var url = __ctx + "/org/sysResource/moveResource";
 				var params = {
 					id : nodeId,
 					parentId : parentId
@@ -166,7 +160,7 @@ function editNode(type) {
 function appendNode(node){
 	var nodeId = curSelectNode.id;
 	if ( nodeId == "0"){
-		ztreeObject.addNodes(null, node);
+		loadTree();
 	}
 	else{
 		ztreeObject.addNodes(curSelectNode, node);
@@ -188,9 +182,8 @@ function delNode() {
 		return;
 	} 
  
-
 	$.Dialog.confirm('提示信息', '确定删除？', function(){
-		var url = __ctx + "/sys/sysResource/remove";
+		var url = __ctx + "/org/sysResource/remove";
 		var params = {
 			id : nodeId
 		};
@@ -215,13 +208,12 @@ function getSelectNode() {
 };
 
 function laodSystem(){
-	var url = __ctx + "/sys/subsystem/getUserSystem";
-	
+	var url = __ctx + "/org/subsystem/getUserSystem";
 	$.post(url, {}, function(result) {
 		var result = eval("("+result+")");
 		if (result.isOk) {//成功
 			for(var i =0,system;system= result.data[i++];){
-				$("#systemId").append("<option value="+system.id+" selected="+(system.isDefault==1?'true':'false')+">"+system.name+"</option>");
+				$("#systemId").append("<option value="+system.id+" "+(system.isDefault===1?'selected=true':'')+">"+system.name+"</option>");
 			}
 		} else {
 			$.Dialog.alert(result.msg,2);
@@ -229,12 +221,12 @@ function laodSystem(){
 	});
 	
 }
-
 </script>
 <script>
 	$(function() {
 		laodSystem();
 		loadTree();
+		$("#systemId").change(loadTree);
 	});
 
 </script>

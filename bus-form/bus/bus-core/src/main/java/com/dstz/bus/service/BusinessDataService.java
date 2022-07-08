@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.core.executor.ExecutorFactory;
-import com.dstz.base.core.util.BeanUtils;
 import com.dstz.bus.api.constant.BusTableRelType;
 import com.dstz.bus.api.model.IBusinessData;
 import com.dstz.bus.api.model.IBusinessObject;
@@ -45,11 +44,7 @@ public class BusinessDataService implements IBusinessDataService {
 
 	@Override
 	public JSONObject getFormDefData(IBusinessObject businessObject, Object id) {
-		BusinessData businessData = BusinessDataPersistenceServiceFactory.loadData((BusinessObject) businessObject, id);
-		if (BeanUtils.isEmpty(id)) {// id为空时需要初始化数据
-			initFormDefData(businessData);
-		}
-
+		BusinessData businessData = (BusinessData) loadData((BusinessObject) businessObject, id, true);
 		JSONObject data = new JSONObject();
 
 		assemblyFormDefData(data, businessData);
@@ -97,22 +92,25 @@ public class BusinessDataService implements IBusinessDataService {
 	 */
 	private void assemblyFormDefData(JSONObject data, IBusinessData ibusinessData) {
 		BusinessData businessData = (BusinessData) ibusinessData;
-		
+
 		AssemblyValParam param = new AssemblyValParam(data, businessData);
 		ExecutorFactory.execute(AssemblyValExecuteChain.class, param);
-		
+
 		// 处理子表
 		for (Entry<String, List<BusinessData>> entry : businessData.getChildren().entrySet()) {
 			String tableKey = entry.getKey();
 			List<BusinessData> children = entry.getValue();
 			if (BusTableRelType.ONE_TO_ONE.equalsWithKey(children.get(0).getBusTableRel().getType())) {
 				JSONObject cData = new JSONObject();
+				if (!children.isEmpty()) {
+					cData = new JSONObject(children.get(0).getData());
+				}
 				assemblyFormDefData(cData, children.get(0));
 				data.put(tableKey, cData);
 			} else {// 下面要是数组类型
 				JSONArray dataList = new JSONArray();
 				for (BusinessData bd : children) {
-					JSONObject cData = new JSONObject();
+					JSONObject cData = new JSONObject(bd.getData());
 					assemblyFormDefData(cData, bd);
 					dataList.add(cData);
 				}
@@ -176,7 +174,16 @@ public class BusinessDataService implements IBusinessDataService {
 
 	@Override
 	public IBusinessData loadData(IBusinessObject businessObject, Object id) {
-		return BusinessDataPersistenceServiceFactory.loadData((BusinessObject) businessObject, id);
+		return loadData(businessObject, id, false);
+	}
+
+	@Override
+	public IBusinessData loadData(IBusinessObject businessObject, Object id, boolean init) {
+		BusinessData businessData = BusinessDataPersistenceServiceFactory.loadData((BusinessObject) businessObject, id);
+		if (id == null && init) {
+			initFormDefData(businessData);
+		}
+		return businessData;
 	}
 
 	@Override

@@ -1,10 +1,13 @@
 package com.dstz.sys.service.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.dstz.base.api.aop.annotion.CatchErr;
@@ -15,6 +18,8 @@ import com.dstz.sys.api.model.calendar.WorkCalenDar;
 import com.dstz.sys.api.service.CalendarService;
 import com.dstz.sys.core.manager.WorkCalenDarManager;
 
+import cn.hutool.core.math.MathUtil;
+
 /**
  * 日历服务接口
  * @author Administrator
@@ -22,6 +27,7 @@ import com.dstz.sys.core.manager.WorkCalenDarManager;
  */
 @Service
 public class DefaultCalendarService implements CalendarService{ 
+	protected Logger LOG = LoggerFactory.getLogger(this.getClass());
 	@Resource
 	private WorkCalenDarManager workCalenDarManager;
 
@@ -77,7 +83,6 @@ public class DefaultCalendarService implements CalendarService{
 	 */
 	@CatchErr
 	public ResultMsg<Date> getEndWorkDay(Date startDay,int days){
-		
 		Date date = workCalenDarManager.getWorkDayByDays(startDay, days);
 		return new ResultMsg<Date>(date);
 	}
@@ -88,5 +93,56 @@ public class DefaultCalendarService implements CalendarService{
 		Date date = workCalenDarManager.getWorkDayByDays(startDay, days, system);
 		return new ResultMsg<Date>(date);
 	}
+
+	@Override
+	public ResultMsg<Date> getEndWorkDayByMinute(Date startDay, int minute) {
+		if(minute <1) throw new BusinessMessage("minute  canot be null ");
 		
+		Calendar startDayHours =Calendar.getInstance(); 
+		startDayHours.setTime(startDay);
+		// 把 startDay 的时分 也计算进去
+		minute = minute +   startDayHours.get(Calendar.HOUR_OF_DAY) * 60;
+		minute = minute + startDayHours.get(Calendar.MINUTE) ;
+		
+		// 计算出 天数 
+		int days =new Double(Math.floor(minute/(60*24))).intValue() ;
+		int hours  =new Double(Math.floor(  (minute - days * (60 * 24)) / 60)).intValue();
+		int minutes  =	minute - days * (60 * 24) - hours * 60;
+
+		Date calcDate = workCalenDarManager.getWorkDayByDays(startDay, days);
+		if(calcDate == null) {
+			LOG.warn("日期计算异常！ getEndWorkDayByMinute  {} {} ",startDay,minute);
+			return new ResultMsg<Date>(null);
+		}
+		
+		Calendar calcCalendar =Calendar.getInstance(); 
+		calcCalendar.setTime(calcDate);
+		calcCalendar.set(Calendar.HOUR_OF_DAY, hours);
+		calcCalendar.set(Calendar.MINUTE, minutes);
+		
+		return new ResultMsg<Date>(calcCalendar.getTime());
+	}
+		
+	public static void main(String[] args) {
+		Calendar startDayHours =Calendar.getInstance();//  startDay.getHours();
+		startDayHours.setTime(new Date());
+		int a = startDayHours.get(Calendar.MINUTE);
+		
+		System.out.println(a);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

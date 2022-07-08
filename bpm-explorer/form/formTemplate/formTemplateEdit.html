@@ -2,7 +2,8 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <link href="../../build/common/codeMirror.css" rel="stylesheet">
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../build/common/codeMirror.js"></script>
@@ -32,15 +33,26 @@
 					<select ng-disabled="!data.editable" class="form-control" ng-model="data.type" ng-options="v.key as v.desc for (k,v) in FormTemplateType">
 					</select>
 				</td>
-				<th>描述</th>
+				<th>表单类型</th>
 				<td>
+				<select ng-disabled="!data.editable" class="form-control" ng-model="data.formType" >
+					<option key="pc_iview">pc_iview</option>
+					<option key="mobile">mobile</option>
+					<option key="pc_vue">pc_vue</option>
+					<option key="pc">pc</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>描述</th>
+				<td style="max-width: 1000px" colspan="3">
 					<textarea ng-disabled="!data.editable" ng-model="data.desc" class="form-control"></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th>内容</th>
-				<td>
-					<textarea ng-disabled="!data.editable" ui-codemirror="" height="210px" broadcast="script" ng-model="data.html"></textarea>
+				<td style="max-width: 1000px" colspan="3">
+					<textarea ng-disabled="!data.editable"  ui-codemirror="" broadcast="script" ng-model="data.html"></textarea>
 				</td>
 			</tr>
 		</table>

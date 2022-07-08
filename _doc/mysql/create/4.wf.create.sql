@@ -5,12 +5,11 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ---------------- Activiti table create --------------------
-
 -- ----------------------------
 -- Table structure for act_evt_log
 -- ----------------------------
-DROP TABLE IF EXISTS `act_evt_log`;
-CREATE TABLE `act_evt_log` (
+DROP TABLE IF EXISTS `ACT_EVT_LOG`;
+CREATE TABLE `ACT_EVT_LOG` (
   `LOG_NR_` bigint(20) NOT NULL AUTO_INCREMENT,
   `TYPE_` varchar(64)  DEFAULT NULL,
   `PROC_DEF_ID_` varchar(64)  DEFAULT NULL,
@@ -29,8 +28,8 @@ CREATE TABLE `act_evt_log` (
 -- ----------------------------
 -- Table structure for act_ge_bytearray
 -- ----------------------------
-DROP TABLE IF EXISTS `act_ge_bytearray`;
-CREATE TABLE `act_ge_bytearray` (
+DROP TABLE IF EXISTS `ACT_GE_BYTEARRAY`;
+CREATE TABLE `ACT_GE_BYTEARRAY` (
   `ID_` varchar(64) NOT NULL,
   `REV_` int(11) DEFAULT NULL,
   `NAME_` varchar(255) DEFAULT NULL,
@@ -45,8 +44,8 @@ CREATE TABLE `act_ge_bytearray` (
 -- ----------------------------
 -- Table structure for act_ge_property
 -- ----------------------------
-DROP TABLE IF EXISTS `act_ge_property`;
-CREATE TABLE `act_ge_property` (
+DROP TABLE IF EXISTS `ACT_GE_PROPERTY`;
+CREATE TABLE `ACT_GE_PROPERTY` (
   `NAME_` varchar(64) NOT NULL,
   `VALUE_` varchar(300) DEFAULT NULL,
   `REV_` int(11) DEFAULT NULL,
@@ -54,8 +53,8 @@ CREATE TABLE `act_ge_property` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;
 
 
-DROP TABLE IF EXISTS `act_procdef_info`;
-CREATE TABLE `act_procdef_info` (
+DROP TABLE IF EXISTS `ACT_PROCDEF_INFO`;
+CREATE TABLE `ACT_PROCDEF_INFO` (
   `ID_` varchar(64)  NOT NULL,
   `PROC_DEF_ID_` varchar(64)  NOT NULL,
   `REV_` int(11) DEFAULT NULL,
@@ -68,8 +67,8 @@ CREATE TABLE `act_procdef_info` (
 -- ----------------------------
 -- Table structure for act_re_deployment
 -- ----------------------------
-DROP TABLE IF EXISTS `act_re_deployment`;
-CREATE TABLE `act_re_deployment` (
+DROP TABLE IF EXISTS `ACT_RE_DEPLOYMENT`;
+CREATE TABLE `ACT_RE_DEPLOYMENT` (
   `ID_` varchar(64) NOT NULL,
   `NAME_` varchar(255) DEFAULT NULL,
   `CATEGORY_` varchar(255) DEFAULT NULL,
@@ -81,8 +80,8 @@ CREATE TABLE `act_re_deployment` (
 -- ----------------------------
 -- Table structure for act_re_model
 -- ----------------------------
-DROP TABLE IF EXISTS `act_re_model`;
-CREATE TABLE `act_re_model` (
+DROP TABLE IF EXISTS `ACT_RE_MODEL`;
+CREATE TABLE `ACT_RE_MODEL` (
   `ID_` varchar(64) NOT NULL,
   `REV_` int(11) DEFAULT NULL,
   `NAME_` varchar(255) DEFAULT NULL,
@@ -102,8 +101,8 @@ CREATE TABLE `act_re_model` (
 -- ----------------------------
 -- Table structure for act_re_procdef
 -- ----------------------------
-DROP TABLE IF EXISTS `act_re_procdef`;
-CREATE TABLE `act_re_procdef` (
+DROP TABLE IF EXISTS `ACT_RE_PROCDEF`;
+CREATE TABLE `ACT_RE_PROCDEF` (
   `ID_` varchar(64) NOT NULL,
   `REV_` int(11) DEFAULT NULL,
   `CATEGORY_` varchar(255) DEFAULT NULL,
@@ -126,8 +125,8 @@ CREATE TABLE `act_re_procdef` (
 -- ----------------------------
 -- Table structure for act_ru_identitylink
 -- ----------------------------
-DROP TABLE IF EXISTS `act_ru_identitylink`;
-CREATE TABLE `act_ru_identitylink` (
+DROP TABLE IF EXISTS `ACT_RU_IDENTITYLINK`;
+CREATE TABLE `ACT_RU_IDENTITYLINK` (
   `ID_` varchar(64) NOT NULL,
   `REV_` int(11) DEFAULT NULL,
   `GROUP_ID_` varchar(255) DEFAULT NULL,
@@ -151,8 +150,8 @@ CREATE TABLE `act_ru_identitylink` (
 -- ----------------------------
 -- Table structure for act_ru_job
 -- ----------------------------
-DROP TABLE IF EXISTS `act_ru_job`;
-CREATE TABLE `act_ru_job` (
+DROP TABLE IF EXISTS `ACT_RU_JOB`;
+CREATE TABLE `ACT_RU_JOB` (
   `ID_` varchar(64) NOT NULL,
   `REV_` int(11) DEFAULT NULL,
   `TYPE_` varchar(255) NOT NULL,
@@ -178,8 +177,8 @@ CREATE TABLE `act_ru_job` (
 -- ----------------------------
 -- Table structure for act_ru_event_subscr
 -- ----------------------------
-DROP TABLE IF EXISTS `act_ru_event_subscr`;
-CREATE TABLE `act_ru_event_subscr` (
+DROP TABLE IF EXISTS `ACT_RU_EVENT_SUBSCR`;
+CREATE TABLE `ACT_RU_EVENT_SUBSCR` (
   `ID_` varchar(64) NOT NULL,
   `REV_` int(11) DEFAULT NULL,
   `EVENT_TYPE_` varchar(255) NOT NULL,
@@ -198,8 +197,8 @@ CREATE TABLE `act_ru_event_subscr` (
 -- ----------------------------
 -- Table structure for act_ru_execution
 -- ----------------------------
-DROP TABLE IF EXISTS `act_ru_execution`;
-CREATE TABLE `act_ru_execution` (
+DROP TABLE IF EXISTS `ACT_RU_EXECUTION`;
+CREATE TABLE `ACT_RU_EXECUTION` (
   `ID_` varchar(64) NOT NULL,
   `REV_` int(11) DEFAULT NULL,
   `PROC_INST_ID_` varchar(64) DEFAULT NULL,
@@ -228,8 +227,8 @@ CREATE TABLE `act_ru_execution` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;
 
 
-DROP TABLE IF EXISTS `act_ru_task`;
-CREATE TABLE `act_ru_task` (
+DROP TABLE IF EXISTS `ACT_RU_TASK`;
+CREATE TABLE `ACT_RU_TASK` (
   `ID_` varchar(64) NOT NULL,
   `REV_` int(11) DEFAULT NULL,
   `EXECUTION_ID_` varchar(64) DEFAULT NULL,
@@ -261,8 +260,8 @@ CREATE TABLE `act_ru_task` (
 -- ----------------------------
 -- Table structure for act_ru_variable
 -- ----------------------------
-DROP TABLE IF EXISTS `act_ru_variable`;
-CREATE TABLE `act_ru_variable` (
+DROP TABLE IF EXISTS `ACT_RU_VARIABLE`;
+CREATE TABLE `ACT_RU_VARIABLE` (
   `ID_` varchar(64) NOT NULL,
   `REV_` int(11) DEFAULT NULL,
   `TYPE_` varchar(255) NOT NULL,
@@ -298,10 +297,14 @@ CREATE TABLE `bpm_bus_link` (
   `inst_id_` varchar(64) DEFAULT NULL COMMENT '流程实例ID',
   `biz_id_` varchar(64) DEFAULT NULL COMMENT '业务主键',
   `biz_code_` varchar(64) NOT NULL COMMENT 'bo_code',
-  PRIMARY KEY (`id_`,`biz_code_`)
-) ENGINE=InnoDB COMMENT='流程实例与业务数据关系表'
+  PRIMARY KEY (`id_`,`biz_code_`),
+  KEY `link_inst_id_idx` (`inst_id_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='流程实例与业务数据关系表'
 /*!50500 PARTITION BY LIST  COLUMNS(biz_code_)
 (PARTITION p01 VALUES IN ('unknown') ENGINE = InnoDB) */;
+
+
+
 
 -- ----------------------------
 -- Table structure for bpm_definition
@@ -410,7 +413,7 @@ CREATE TABLE `bpm_task_identitylink` (
   `inst_id_` varchar(64) DEFAULT NULL,
   `type_` varchar(20) DEFAULT NULL COMMENT '候选人类型',
   `identity_name_` varchar(64) DEFAULT NULL COMMENT '名字',
-  `identity_` varchar(20) DEFAULT NULL COMMENT 'ID',
+  `identity_` varchar(64) DEFAULT NULL COMMENT 'ID',
   `permission_code_` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id_`),
   KEY `idx_taskcandidate_taskid` (`task_id_`) USING BTREE,
@@ -478,4 +481,80 @@ CREATE TABLE `bpm_submit_data_log` (
   `extendConf` varchar(500) DEFAULT NULL COMMENT '特殊配置',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='业务对象数据提交日志';
+
+
+-- 催办相关表
+CREATE TABLE `bpm_plugin_reminder_trigger` (
+  `id_` varchar(20) NOT NULL COMMENT 'ID',
+  `task_id_` varchar(20) NOT NULL COMMENT '任务ID',
+  `reminder_desc_` varchar(255) DEFAULT NULL COMMENT '催办的描述',
+  `before_script_` varchar(500) DEFAULT NULL COMMENT '催办前置脚本',
+  `msg_type_` varchar(10) DEFAULT NULL COMMENT '催办消息类型',
+  `html_msg_` varchar(1000) DEFAULT NULL COMMENT 'html消息',
+  `text_msg_` varchar(500) DEFAULT NULL COMMENT '普通消息',
+  `is_calc_workday_` int(1) DEFAULT NULL COMMENT '是否工作日计算',
+  `is_urgent_` int(1) DEFAULT NULL COMMENT '是否加急任务',
+  `max_reminder_times` int(10) DEFAULT NULL COMMENT '最多催办次数',
+  `reminder_times_` int(10) DEFAULT NULL COMMENT '催办次数',
+  `reminder_cycle_` int(12) DEFAULT NULL COMMENT '催办周期',
+  `duedate_` datetime NOT NULL COMMENT '到期时间',
+  PRIMARY KEY (`id_`),
+  KEY `task_id_` (`task_id_`) USING BTREE,
+  KEY `duedate_` (`duedate_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='流程催办触发';
+
+
+
+CREATE TABLE `bpm_plugin_reminder_log` (
+  `id_` varchar(20) NOT NULL COMMENT 'ID',
+  `instance_id_` varchar(20) DEFAULT NULL COMMENT '实例ID',
+  `reminder_title_` varchar(255) DEFAULT NULL COMMENT '催办标题',
+  `subject_` varchar(500) DEFAULT NULL COMMENT '流程标题',
+  `node_id_` varchar(64) DEFAULT NULL COMMENT '节点ID',
+  `msg_type_` varchar(64) DEFAULT NULL COMMENT '催办消息类型',
+  `reminder_users_` varchar(500) DEFAULT NULL COMMENT '催办人',
+  `reminder_userids_` varchar(500) DEFAULT NULL COMMENT '催办人ID',
+  `reminder_date_` datetime DEFAULT NULL COMMENT '催办时间',
+  `extend_` varchar(500) DEFAULT NULL COMMENT '其他说明',
+  PRIMARY KEY (`id_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='流程催办日志';
+
+
+CREATE TABLE `bpm_user_agency_config` (
+  `id_` varchar(64) NOT NULL COMMENT '配置ID',
+  `start_datetime_` datetime NOT NULL COMMENT '起始时间',
+  `end_datetime_` datetime NOT NULL COMMENT '结束时间',
+  `agency_flow_key_` varchar(1000) NOT NULL COMMENT '代理流程编码，多个中间逗号分隔(,)',
+  `agency_flow_name_` varchar(5000) NOT NULL COMMENT '代理流程名称，多个中间逗号分隔(,)',
+  `config_user_id_` varchar(64) NOT NULL COMMENT '配置用户编码',
+  `target_user_id_` varchar(1000) NOT NULL COMMENT '目标用户编码，多个中间逗号分隔(,)',
+  `target_user_name_` varchar(1000) NOT NULL COMMENT '目标用户姓名，多个中间逗哥分隔(,)',
+  `enable_` tinyint(1) NOT NULL DEFAULT '1' COMMENT '启用/未启用(1/0)',
+  `create_by_` varchar(64) DEFAULT NULL COMMENT '创建人ID',
+  `create_time_` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_org_id_` varchar(64) DEFAULT NULL COMMENT '创建者所属组织ID',
+  `update_by_` varchar(64) DEFAULT NULL COMMENT '更新人ID',
+  `update_time_` datetime DEFAULT NULL COMMENT '更新时间',
+  `rev_` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_`),
+  KEY `config_user_id_` (`config_user_id_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='业务流程用户代理配置';
+
+CREATE TABLE `bpm_user_agency_log` (
+  `id_` varchar(64) NOT NULL COMMENT '日志ID',
+  `config_id_` varchar(64) NOT NULL COMMENT '配置ID',
+  `flow_instance_id_` varchar(64) NOT NULL COMMENT '流程实例编号',
+  `task_id_` varchar(64) NOT NULL COMMENT '代理任务编号',
+  `task_node_id_` varchar(64) NOT NULL COMMENT '代理任务节点',
+  `task_node_name_` varchar(64) NOT NULL COMMENT '代理任务节点名称',
+  `create_by_` varchar(64) DEFAULT NULL COMMENT '创建人ID',
+  `create_time_` datetime DEFAULT NULL COMMENT '创建时间',
+  `create_org_id_` varchar(64) DEFAULT NULL COMMENT '创建者所属组织ID',
+  `update_by_` varchar(64) DEFAULT NULL COMMENT '更新人ID',
+  `update_time_` datetime DEFAULT NULL COMMENT '更新时间',
+  `rev_` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_`),
+  KEY `config_id_` (`config_id_`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='业务流程用户代理日志';
+
 

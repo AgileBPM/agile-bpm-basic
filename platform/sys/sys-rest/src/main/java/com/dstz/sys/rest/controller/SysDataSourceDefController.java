@@ -3,6 +3,8 @@ package com.dstz.sys.rest.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dstz.base.api.response.impl.ResultMsg;
+import com.dstz.sys.core.model.def.SysDataSourceDefAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +15,8 @@ import com.dstz.base.rest.BaseController;
 import com.dstz.base.rest.util.RequestUtil;
 import com.dstz.sys.core.manager.SysDataSourceDefManager;
 import com.dstz.sys.core.model.SysDataSourceDef;
+
+import java.util.List;
 
 /**
  * <pre>
@@ -40,9 +44,9 @@ public class SysDataSourceDefController extends BaseController<SysDataSourceDef>
      */
     @RequestMapping("initAttributes")
     @CatchErr(write2response = true, value = "初始化属性异常")
-    public void initAttributes(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResultMsg<List<SysDataSourceDefAttribute>> initAttributes(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String classPath = RequestUtil.getString(request, "classPath");
-        writeSuccessData(response, sysDataSourceDefManager.initAttributes(classPath));
+        return getSuccessResult(sysDataSourceDefManager.initAttributes(classPath));
     }
 
     /**
@@ -58,13 +62,13 @@ public class SysDataSourceDefController extends BaseController<SysDataSourceDef>
      */
     @RequestMapping("getObject")
     @CatchErr(write2response = true, value = "获取sysDataSourceDef异常")
-    public void getObject(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResultMsg<SysDataSourceDef> getObject(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String id = RequestUtil.getString(request, "id");
         SysDataSourceDef sysDataSourceDef = null;
         if (StringUtil.isNotEmpty(id)) {
             sysDataSourceDef = sysDataSourceDefManager.get(id);
         }
-        writeSuccessData(response, sysDataSourceDef);
+        return getSuccessResult(sysDataSourceDef);
     }
 
 	@Override

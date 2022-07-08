@@ -1,5 +1,6 @@
 package com.dstz.base.dao.baseinterceptor;
 
+import com.dstz.base.api.context.ICurrentContext;
 import com.dstz.base.api.model.CreateInfoModel;
 import com.dstz.base.api.model.IBaseModel;
 import com.dstz.base.api.model.IDModel;
@@ -7,13 +8,18 @@ import com.dstz.base.core.id.IdUtil;
 import com.dstz.base.core.model.BaseModel;
 import com.dstz.base.core.util.BeanUtils;
 
+import cn.hutool.core.util.ArrayUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.Properties;
+
+import javax.annotation.Resource;
 
 /**
  * 更新设置更新人
@@ -24,11 +30,13 @@ import java.util.Properties;
 	        @Signature(type= Executor.class,method = "update",args = {MappedStatement.class,Object.class})
 })
 public class SaveInterceptor  implements Interceptor{
+@Autowired 
+ICurrentContext currentContext;
 
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		Object[] args = invocation.getArgs();
-		if(BeanUtils.isEmpty(args) || args.length < 2) {
+		if(ArrayUtil.isEmpty(args) || args.length < 2) {
 			 return invocation.proceed();
 		}
 		
@@ -37,12 +45,10 @@ public class SaveInterceptor  implements Interceptor{
 		
 		// 更新逻辑
 		if(statement.getId().endsWith(".update")) {
-			
 			 if (param instanceof CreateInfoModel) {
 				 CreateInfoModel model = (CreateInfoModel) param;
-	            if (model.getUpdateTime() == null) {
-	                model.setUpdateTime(new Date());
-	            }
+                 model.setUpdateTime(new Date());
+                 model.setUpdateBy(currentContext.getCurrentUserId());
 	            if(param instanceof BaseModel) {
 	            	BaseModel baseModel = (BaseModel) param;
 	            	baseModel.setVersion(baseModel.getVersion() + 1);
@@ -64,9 +70,11 @@ public class SaveInterceptor  implements Interceptor{
 				CreateInfoModel model = (CreateInfoModel) param;
 	            if (model.getCreateTime() == null) {
 	                model.setCreateTime(new java.util.Date());
+	                model.setCreateBy(currentContext.getCurrentUserId());
 	            }
 	            if(model.getUpdateTime() == null){
 	            	model.setUpdateTime(new Date());
+	            	model.setUpdateBy(currentContext.getCurrentUserId());
 				}
 			}
 		}

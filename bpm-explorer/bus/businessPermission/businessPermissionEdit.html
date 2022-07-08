@@ -1,7 +1,8 @@
 <html ng-app="app">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript" src="../../assets/js/platform/bus/businessPermission/businessPermissionEditController.js"></script>
 <script type="text/javascript">
@@ -23,68 +24,64 @@
 				<td>{{data.objVal}}</td>
 			</tr>
 		</table>
-
-		<table class="form-table">
-			<tr>
-				<th style="width: 8%">对象</th>
-				<th ng-repeat="item in RightsTypeList">{{item.desc}}</th>
-			</tr>
-			<!-- 遍历boMap -->
-			<tr ng-repeat="(boKey,bo) in boMap">
-				<td colspan="{{RightsTypeList.length+1}}">
-					<table class="form-table">
-						<tr>
-							<th colspan="{{RightsTypeList.length+1}}" style="text-align: center; font-size: large;">{{bo.name}}({{bo.key}})</th>
-						</tr>
-
-						<tr>
-							<th>
-								<span style="color: red;">(业务对象)</span>
-								{{bo.name}}({{bo.key}})
-							</th>
-							<td ng-repeat="item in RightsTypeList">
-								{{getRightsDesc(data.busObjMap[boKey].rights[item.key])}}
-								<a style="float: right;" class="btn btn-sm btn-default btn-mini fa-edit" ng-click="openRightsDialog(data.busObjMap[boKey].rights,item.key)" />
-								<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-group" ng-click="setRights(data.busObjMap[boKey].rights,item.key,'everyone')"></a>
-								<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-remove" ng-click="setRights(data.busObjMap[boKey].rights,item.key,'none')"></a>
-							</td>
-						</tr>
-
-						<tr>
-							<td colspan="{{RightsTypeList.length+1}}">
-								<table class="form-table" ng-repeat="relation in bo.allRelations">
-									<tr>
-										<th>
-											<span style="color: red;">({{BusTableRelTypeKeyMap[relation.type].desc}})</span>
-											{{relation.tableComment}}({{relation.tableKey}})
-										</th>
-										<td ng-repeat="item in RightsTypeList">
-											{{getRightsDesc(data.busObjMap[boKey].tableMap[relation.tableKey].rights[item.key])}}
-											<a style="float: right;" class="btn btn-sm btn-default btn-mini fa-edit" ng-click="openRightsDialog(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key)" />
-											<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-group" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key,'everyone')"></a>
-											<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-remove" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key,'none')"></a>
-										</td>
-									</tr>
-									<!-- 字段 -->
-									<tr ng-repeat="column in relation.table.columnsWithoutPk">
-										<th>
-											<span style="color: red;">(字段)</span>
-											{{column.comment}}({{column.key}})
-										</th>
-										<td ng-repeat="item in RightsTypeList">
-											{{getRightsDesc(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights[item.key])}}
-											<a style="float: right;" class="btn btn-sm btn-default btn-mini fa-edit" ng-click="openRightsDialog(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key)" />
-											<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-group" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key,'everyone')"></a>
-											<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-remove" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key,'none')"></a>
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
+		<div class="panel panel-info" ng-repeat="(boKey,bo) in boMap">
+			<div class="panel-heading">
+			<div class="row">
+			  <div class="col-xs-3"> <h3>业务对象全局授权</h3></div>
+			  <div class="col-xs-3" ng-repeat="item in RightsTypeList"><h3>{{item.desc}}</h3></div>
+			</div>
+			</div>
+			<div class="row well " style="    margin-bottom: 2px;">
+				   <div class="col-xs-3"><span class="label label-info">BO</span>　<strong>{{bo.name}}({{bo.key}})</strong> </div>
+					<div ng-repeat="item in RightsTypeList" class="col-xs-3">
+							{{getRightsDesc(data.busObjMap[boKey].rights[item.key])}}
+							<a style="float: right;" class="btn btn-sm btn-default btn-mini fa-edit" ng-click="openRightsDialog(data.busObjMap[boKey].rights,item.key)" ng-disabled="isDisable(data.busObjMap[boKey].rights,item.key)"/>
+							<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-group" ng-click="setRights(data.busObjMap[boKey].rights,item.key,'everyone')" ng-disabled="isDisable(data.busObjMap[boKey].rights,item.key)"></a>
+							<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-remove" ng-click="setRights(data.busObjMap[boKey].rights,item.key,'none')" ng-disabled="isDisable(data.busObjMap[boKey].rights,item.key)"></a>
+					</div>
+				</div>
+			<div class="panel-body">
+				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"  ng-repeat="relation in bo.allRelations">
+				  <div class="panel panel-default">
+				    <div class="panel-heading" role="tab" id="headingOne">
+				    	<div class="panel-title row" >
+					        <div class="col-xs-3">
+								<span class="label label-success">{{BusTableRelTypeKeyMap[relation.type].desc}}</span>　{{relation.tableComment}}[{{relation.tableKey}}] 
+								<a ng-click="collapse[relation.tableKey]=''" ng-show="collapse[relation.tableKey]=='in'"  class="pull-right btn-outline btn btn-primary fa fa-angle-double-up" ></a>
+								<a ng-click="collapse[relation.tableKey]='in'" ng-show="collapse[relation.tableKey]!='in'" class="pull-right btn-outline btn btn-primary fa fa-angle-double-down"></a>
+							</div>
+							<div ng-repeat="item in RightsTypeList" class="col-xs-3">
+								{{getRightsDesc(data.busObjMap[boKey].tableMap[relation.tableKey].rights[item.key])}}
+								<a style="float: right;" class="btn btn-sm btn-default btn-mini fa-edit" ng-click="openRightsDialog(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key)"  ng-disabled="isDisable(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key)"/>
+								<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-group" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key,'everyone')" ng-disabled="isDisable(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key)"></a>
+								<a style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-remove" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key,'none')" ng-disabled="isDisable(data.busObjMap[boKey].tableMap[relation.tableKey].rights,item.key)"></a>
+							</div>
+						</div>
+				    </div>
+				    <div class="panel-collapse collapse {{collapse[relation.tableKey]}} " id="relation.tableKey">
+				      <div class="panel-body" >
+				      	<ul class="list-group" >
+						  <li class="list-group-item row" ng-repeat="column in relation.table.columnsWithoutPk">
+								<div class="col-xs-3"><span class="label label-default">字段</span>　{{column.comment}}[{{column.key}}]</div>
+								<div class="col-xs-3" ng-repeat="item in RightsTypeList">
+									{{getRightsDesc(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights[item.key])}}
+									<button type="button"  style="float: right;" class="btn btn-sm btn-default btn-mini fa-edit" ng-click="openRightsDialog(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key)" ng-disabled="isDisable(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key)" />
+									<button type="button"  style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-group" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key,'everyone')" ng-disabled="isDisable(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key)" />
+									<button type="button"  style="float: right; margin-right: 10px" class="btn btn-sm btn-default btn-mini fa-remove" ng-click="setRights(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key,'none')" ng-disabled="isDisable(data.busObjMap[boKey].tableMap[relation.tableKey].columnMap[column.key].rights,item.key)"/>
+								</div>
+							</li>
+						</ul>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			</div>
+		</div>
+		<p class="text-muted">权限配置的 计算优先级为：【 必填 > 编辑 > 只读  】 如果用户有必填权限则 字段为必填权限，若无必填权限则继续判断是否有编辑权限，若无只读权限则字段隐藏，
+				<br/>tips: 1. 若未配置，则默认继承上级。  [字段] 继承 [表]， [表] 权限 继承 [业务对象]。
+				<br/> tips:2. 流程表单 不同节点建议单独配置表单、权限， 建议全部配置 成 “无”/“所有人”即可，因为只有有权限的人员才能处理任务,所以一般情况没有必要单独指定角色
+				<br/> tips:3. 表单权限在 AgileBPM 中是前后端控制的，所以希望您尽量在不同流程节点，对不需要的 表数据 设置成 无权限，这样后台可以减少查询，也能保护数据不被更新
+				</p>
 	</form>
 </body>
 </html>

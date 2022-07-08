@@ -1,0 +1,108 @@
+<html ng-app="baseDirective">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
+	<script type="text/javascript" src="../../build/common/ngEdit.js"></script>
+</head>
+<body class="panel success">
+	<!-- 顶部按钮 -->
+		<div class="panel-heading">
+		<a href="javascript:void(0)" class="btn btn-sm btn-primary fa-reply" onclick="javascript:$.Dialog.close(window);"> 返回 </a>
+	</div>
+	<form name="form" method="post" ab-load="/org/user/get?id={id}"  ng-model="data">
+		<table class="form-table" cellspacing="0">
+			<tr>
+				<th>
+					<span>姓名:</span>
+				</th>
+				<td>
+					{{data.fullname}}
+				</td>
+
+			</tr>
+			<tr>
+				<th>
+					<span>账号:</span>
+				</th>
+				<td>
+					{{data.account}}
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<span>邮箱:</span>
+				</th>
+				<td>
+					{{data.email}}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>手机号码:</span>
+				</th>
+				<td>
+					{{data.mobile}}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>微信号:</span>
+				</th>
+				<td>
+					{{data.weixin}}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>地址:</span>
+				</th>
+				<td>
+					{{data.address}}
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<span>性别：</span>
+				</th>
+				<td>
+					{{data.sex}}
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<span>角色:</span>
+				</th>
+				<td>
+					<span ng-repeat="relation in data.orgRelationList |filter:{type:'userRole'}" style="margin-right: 10px" class="label label-danger"> {{relation.roleName}}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>组织:</span>
+				</th>
+				<td>
+					<span ng-repeat="relation in data.orgRelationList" ng-show="relation.type==='groupUser'"  style="margin-right: 10px" class="label label-danger"> {{relation.groupName}}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>岗位:</span>
+				</th>
+				<td>
+					<span ng-repeat="relation in data.orgRelationList" ng-show="relation.type==='groupUserRole'" style="margin-right: 10px" class="label label-danger">{{relation.postName}}
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<span>创建时间:</span>
+				</th>
+				<td>{{data.createTime | date :'yyyy-MM-dd'}}</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

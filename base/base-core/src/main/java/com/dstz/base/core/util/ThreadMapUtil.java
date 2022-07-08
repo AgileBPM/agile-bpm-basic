@@ -1,7 +1,7 @@
 package com.dstz.base.core.util;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
@@ -24,7 +24,7 @@ public class ThreadMapUtil {
 	private static Map<String, Object> map() {
 		Map<String, Object> map = threadLocalMap.get();
 		if (map == null) {
-			threadLocalMap.set(new HashMap<String, Object>());
+			threadLocalMap.set(new ConcurrentHashMap<String, Object>());
 			map = threadLocalMap.get();
 		}
 		return map;

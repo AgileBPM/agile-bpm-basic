@@ -1,56 +1,71 @@
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>流程实例</title>
-	<link href="../../build/common/gridList.css" rel="stylesheet">
-	<script type="text/javascript" src="../../build/common/gridList.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>流程实例</title>
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
+<script type="text/javascript" src="../../build/common/gridList.js"></script>
+<script type="text/javascript">
+$(function(){
+	window.setTimeout(function(){
+		if($.getParam("type")==='iview'){
+			$("[iview]").attr("qtip","查看详情请移步只门户平台 （切换子系统）");
+		}
+	},1000);
+})
+</script>
 </head>
 <body>
-<div class="panel-body" style="padding-bottom:0px;">
-     <div class="panel panel-default search-panel">
-         <div class="panel-heading" data-toggle="collapse" toggle="true" data-target="#formSearch" >查询条件</div>
-         <div class="panel-body">
-             <form id="searchForm" class="form-horizontal">
-                 <div class="form-group">
-                     <label class="control-label col-sm-1" for="def_name_^VLK">名字</label>
-                     <div class="col-sm-3">
-                         <input type="text" class="form-control" id="def_name_^VLK">
-                     </div>
-                     <label class="control-label col-sm-1" for="subject_^VLK">标题</label>
-                     <div class="col-sm-3">
-                         <input type="text" class="form-control" id="subject_^VLK">
-                     </div>
-                     <div class="col-sm-4" style="text-align:left;">
-                     		<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
+	<div class="panel-body" style="padding-bottom: 0px;">
+		<div class="panel panel-default search-panel">
+			<div class="panel-heading" data-toggle="collapse" toggle="true" data-target="#formSearch">查询条件</div>
+			<div class="panel-body">
+				<form id="searchForm" class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-sm-1" for="subject_^VLK">流程标题</label>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="subject_^VLK">
+						</div>
+						<label class="control-label col-sm-1" for="def_name_^VLK">流程名字</label>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" id="def_name_^VLK">
+						</div>
+						<div class="col-sm-4" style="text-align: left;">
+							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
 							<button type="button" style="margin-left: 50px" class="btn btn-primary fa-rotate-left">重置</button>
-                     </div>
-                 </div>
-             </form>
-         </div>
-     </div>       
-      <table ab-grid data-id-field="id" data-url="/bpm/instance/listJson">
-          <thead>
-          <tr>
-              <th data-checkbox="true">ID</th>
-              <th data-field="subject">标题</th>
-              <th data-field="defName">名称</th>
-              <th data-field="defKey">流程KEY</th>
-              <th data-field="isForbidden" data-formatter="labelFormatter" data-value-style="0-正常-primary,1-禁止-danger,">是否禁止</th>
-              <th data-field="status" data-formatter="labelFormatter" 
-              			data-value-style="running-运行中-primary,draft-草稿-warninginfo,end-终止-default,manualend-人工终止-danger,back-驳回-danger,revoke-撤销-danger,">状态</th>
-              <th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">创建时间</th>
-              <th data-field="creator">创建人</th>
-              <th data-field="endTime" data-formatter=dateTimeFormatter data-sort-name="end_time_" data-sortable="true">完成时间</th>
-              <th data-field="duration" data-formatter="$.timeLag">持续时间</th>
-              
-              <th data-formatter="innerHtmlFormatter" data-title="管理">
-					<a class="fa-detail btn btn-outline btn-primary btn-sm" openDialog='详情' qtip='详情' url='instanceDetail.html?id={id}' ></a>
-					<span if="{isForbidden}===0" class="fa-ban btn btn-outline btn-primary btn-sm" qtip='挂起' sendAction="挂起" url="/bpm/instance/toForbidden?id={id}&forbidden=true"></span>
-					<span if="{isForbidden}===1" class="fa-undo btn btn-outline btn-primary btn-sm" qtip='取消挂起' sendAction="取消挂起" url="/bpm/instance/toForbidden?id={id}&forbidden=false"></span>
-			  </th>
-          </tr>
-          </thead>
-      </table>
-    </div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!--grid区域  -->
+		<div class="btn-group toolbar">
+			<a class="btn btn-outline btn-primary fa-remove" href="javascript:void(0)" tips="删除实例（警告！实例对应的业务数据，连同关联所有实例（父子实例）一并删除）" url='/bpm/instance/delete'>删除 </a>
+		</div>
+		<table ab-grid data-id-field="id" data-url="/bpm/instance/listJson">
+			<thead>
+				<tr>
+					<th data-checkbox="true">ID</th>
+					<th data-field="subject">流程标题</th>
+					<th data-field="defName">流程名称</th>
+					<th data-field="defKey">流程KEY</th>
+					<th data-field="isForbidden" data-formatter="labelFormatter" data-value-style="0-正常-primary,1-挂起-danger,">是否挂起</th>
+					<th data-field="status" data-formatter="labelFormatter" data-value-style="running-运行中-primary,draft-草稿-warninginfo,end-终止-default,manualend-人工终止-danger,back-驳回-danger,revoke-撤销-danger,">状态</th>
+					<th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">创建时间</th>
+					<th data-field="creator">创建人</th>
+					<th data-field="endTime" data-formatter=dateTimeFormatter data-sort-name="end_time_" data-sortable="true">完成时间</th>
+					<th data-field="duration" data-formatter="$.timeLag">持续时间</th>
+
+					<th data-formatter="innerHtmlFormatter" data-title="管理">
+						<a class="fa-detail btn btn-outline btn-primary btn-sm" iview="标记" openDialog='流程实例详情 【{subject}】' qtip='详情' url='/bpm/instance/instanceDetail.html?id={id}'></a>
+						<span class="fa-cogs btn btn-outline btn-primary btn-sm" openDialog='流程实例任务情况【{subject}】' qtip="任务情况" url="/bpm/instance/taskOpinionHistory.html?instanceId={id}"></span>
+						<span class='btn btn-outline btn-primary fa-trash' sendAction='删除实例（警告！实例对应的业务数据，连同关联所有实例（父子实例）一并删除）' qtip='删除实例' url='/bpm/instance/delete?id={id}'></span>
+						<span if="{isForbidden}===0 && '{status}' != 'end' && '{status}' != 'manualend'" class="fa-ban btn btn-outline btn-primary btn-sm" qtip='挂起' sendAction="挂起" url="/bpm/instance/toForbidden?id={id}&forbidden=true"></span>
+						<span if="{isForbidden}===1" class="fa-undo btn btn-outline btn-primary btn-sm" qtip='取消挂起' sendAction="取消挂起" url="/bpm/instance/toForbidden?id={id}&forbidden=false"></span>
+					</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
 </body>
 </html>

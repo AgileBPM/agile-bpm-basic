@@ -33,33 +33,33 @@ public class OracleTableOperator extends TableOperator {
 	@Override
 	public void createTable() {
 		if (isTableCreated()) {
-			logger.debug("表[" + table.getName() + "(" + table.getComment() + ")]已存在数据库中，无需再次生成");
+			logger.debug("表[" + table.getName().toUpperCase() + "(" + table.getComment() + ")]已存在数据库中，无需再次生成");
 			return;
 		}
 
 		// 建表语句
 		StringBuilder sql = new StringBuilder();
-		sql.append("CREATE TABLE \"" + table.getName() + "\" (" + "\n");
+		sql.append("CREATE TABLE \"" + table.getName().toUpperCase() + "\" (" + "\n");
 		for (Column column : table.getColumns()) {
 			sql.append(columnToSql(column) + ",\n");
 		}
-		sql.append("PRIMARY KEY (\"" + table.getPkColumn().getName() + "\")" + "\n)");
+		sql.append("PRIMARY KEY (\"" + table.getPkColumn().getName().toUpperCase() + "\")" + "\n)");
 		// 建表结束
 		jdbcTemplate.execute(sql.toString());
-		
+
 		// 开始处理注释
-		if(StringUtil.isNotEmpty(table.getComment())) {
-			String str = "COMMENT ON TABLE \"" + table.getName() + "\" IS '" + table.getComment() + "'";
+		if (StringUtil.isNotEmpty(table.getComment())) {
+			String str = "COMMENT ON TABLE \"" + table.getName().toUpperCase() + "\" IS '" + table.getComment() + "'";
 			jdbcTemplate.execute(str);// 表注解
 		}
-		
+
 		// 字段注解
 		for (int i = 0; i < table.getColumns().size(); i++) {
 			Column column = table.getColumns().get(i);
-			if(StringUtil.isEmpty(column.getComment())) {
+			if (StringUtil.isEmpty(column.getComment())) {
 				continue;
 			}
-			String str = "COMMENT ON COLUMN \"" + table.getName() + "\".\"" + column.getName() + "\"  IS '" + column.getComment()+"'";
+			String str = "COMMENT ON COLUMN \"" + table.getName().toUpperCase() + "\".\"" + column.getName().toUpperCase() + "\"  IS '" + column.getComment() + "'";
 			jdbcTemplate.execute(str);
 		}
 	}
@@ -67,28 +67,28 @@ public class OracleTableOperator extends TableOperator {
 	@Override
 	public boolean isTableCreated() {
 		String sql = "select count(1) from user_tables t where table_name =?";
-		return jdbcTemplate.queryForObject(sql, Integer.class, table.getName()) > 0 ? true : false;
+		return jdbcTemplate.queryForObject(sql, Integer.class, table.getName().toUpperCase()) > 0 ? true : false;
 	}
 
 	@Override
 	public void addColumn(Column column) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("ALTER TABLE \"" + table.getName() + "\"");
+		sql.append("ALTER TABLE \"" + table.getName().toUpperCase() + "\"");
 		sql.append(" ADD ( " + columnToSql(column) + " )");
 		jdbcTemplate.execute(sql.toString());
-		
-		//注解
-		if(StringUtil.isEmpty(column.getComment())) {
+
+		// 注解
+		if (StringUtil.isEmpty(column.getComment())) {
 			return;
 		}
-		String str = "COMMENT ON COLUMN \"" + table.getName() + "\".\"" + column.getName() + "\"  IS '" + column.getComment()+"'";
+		String str = "COMMENT ON COLUMN \"" + table.getName().toUpperCase() + "\".\"" + column.getName().toUpperCase() + "\"  IS '" + column.getComment() + "'";
 		jdbcTemplate.execute(str);
 	}
 
 	@Override
 	public void updateColumn(Column column) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("ALTER TABLE \"" + table.getName() + "\"");
+		sql.append("ALTER TABLE \"" + table.getName().toUpperCase() + "\"");
 		sql.append(" MODIFY( " + columnToSql(column) + " )");
 		jdbcTemplate.execute(sql.toString());
 	}
@@ -96,7 +96,7 @@ public class OracleTableOperator extends TableOperator {
 	@Override
 	public void dropColumn(String columnName) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("ALTER TABLE \"" + table.getName() + "\"");
+		sql.append("ALTER TABLE \"" + table.getName().toUpperCase() + "\"");
 		sql.append(" DROP(\"" + columnName + "\")");
 		jdbcTemplate.execute(sql.toString());
 	}
@@ -111,7 +111,7 @@ public class OracleTableOperator extends TableOperator {
 	 */
 	private String columnToSql(Column column) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("\"" + column.getName() + "\"");
+		sb.append("\"" + column.getName().toUpperCase() + "\"");
 		if (ColumnType.CLOB.equalsWithKey(column.getType())) {
 			sb.append(" CLOB");
 		} else if (ColumnType.DATE.equalsWithKey(column.getType())) {
@@ -124,6 +124,8 @@ public class OracleTableOperator extends TableOperator {
 
 		if (column.isRequired() || column.isPrimary()) {
 			sb.append(" NOT NULL");
+		}else {
+			sb.append(" NULL");
 		}
 		return sb.toString();
 	}

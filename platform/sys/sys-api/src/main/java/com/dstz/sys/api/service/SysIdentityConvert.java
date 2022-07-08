@@ -14,8 +14,8 @@ public interface SysIdentityConvert {
 	 */
 	public IUser convert2User(SysIdentity identity);
 	
-	public List<IUser> convert2Users(SysIdentity identity);
+	public List<? extends IUser> convert2Users(SysIdentity identity);
 	
-	public List<IUser> convert2Users(List<SysIdentity> identity);
+	public List<? extends IUser> convert2Users(List<SysIdentity> identity);
 	
 }

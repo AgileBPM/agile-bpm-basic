@@ -8,11 +8,11 @@ import java.util.Date;
 import org.springframework.stereotype.Service;
 
 import com.dstz.base.api.exception.BusinessException;
-import com.dstz.base.core.util.FileUtil;
 import com.dstz.base.core.util.PropertyUtil;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
 
 /**
  * <pre>
@@ -35,8 +35,7 @@ public class OrdinaryUploader extends AbstractUploader {
 
 	@Override
 	public String upload(InputStream is, String name) {
-		FileUtil.createFolderFile(getPath(name));
-		FileUtil.writeFile(getPath(name), is);
+		FileUtil.writeFromStream(is, getPath(name));
 		return getPath(name);
 	}
 
@@ -51,7 +50,7 @@ public class OrdinaryUploader extends AbstractUploader {
 
 	@Override
 	public void remove(String path) {
-		FileUtil.deleteFile(path);
+		FileUtil.del(path);
 	}
 
 	private String getPath(String name) {

@@ -1,4 +1,4 @@
-@import url(../../../../../build/common/ngEdit.css);
+@import url(../../../../../build/common/base.css);
 
 
 .input-div{
@@ -17,3 +17,8 @@
     height: 34px;
 }
 
+ 
+/* 编辑模式下设置展示 */
+.tab-content>.tab-pane {
+    display: block;
+}

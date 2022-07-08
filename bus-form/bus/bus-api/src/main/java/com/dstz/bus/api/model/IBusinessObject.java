@@ -118,4 +118,12 @@ public interface IBusinessObject {
 	 * @return
 	 */
 	Set<String> calDataSourceKeys();
+	
+	/**
+	 * <pre>
+	 * 持久化类型的配置项（根据不同类型会存放不同内容）
+	 * </pre>	
+	 * @return
+	 */
+	String getPerTypeConfig();
 }

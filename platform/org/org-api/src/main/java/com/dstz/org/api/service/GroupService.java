@@ -3,7 +3,6 @@ package com.dstz.org.api.service;
 import java.util.List;
 import java.util.Map;
 
-import com.dstz.org.api.model.GroupType;
 import com.dstz.org.api.model.IGroup;
 
 /**
@@ -21,7 +20,7 @@ public interface GroupService {
      * @param userId    用户ID
      * @return
      */
-    List<IGroup> getGroupsByGroupTypeUserId(String groupType, String userId);
+    List<? extends IGroup> getGroupsByGroupTypeUserId(String groupType, String userId);
 
     /**
      * 根据用户账号获取用户当前所在的组。
@@ -29,7 +28,7 @@ public interface GroupService {
      * @param account 用户帐号
      * @return 返回一个Map，键为维度类型，值为组列表。
      */
-    Map<String, List<IGroup>> getAllGroupByAccount(String account);
+    Map<String, List<? extends IGroup>> getAllGroupByAccount(String account);
 
 
     /**
@@ -38,7 +37,7 @@ public interface GroupService {
      * @param userId 用户ID
      * @return 返回一个Map，键为维度类型，值为组列表。
      */
-    Map<String, List<IGroup>> getAllGroupByUserId(String userId);
+    Map<String, List<? extends IGroup>> getAllGroupByUserId(String userId);
 
 
     /**
@@ -47,7 +46,7 @@ public interface GroupService {
      * @param userId
      * @return
      */
-    List<IGroup> getGroupsByUserId(String userId);
+    List<? extends IGroup> getGroupsByUserId(String userId);
 
 
     /**
@@ -68,13 +67,6 @@ public interface GroupService {
      * @return
      */
     IGroup getByCode(String groupType, String code);
-
-    /**
-     * 返回当前的组织类型。
-     *
-     * @return
-     */
-    List<GroupType> getGroupTypes();
 
 
     IGroup getMainGroup(String userId);

@@ -2,34 +2,13 @@
 <html ng-app="app">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="../../build/common/ngEdit.css" rel="stylesheet">
+<link href="../../build/common/base.css" rel="stylesheet">
+<script type="text/javascript" src="../../build/common/base.js"></script>
 <script type="text/javascript" src="../../build/common/ngEdit.js"></script>
 <script type="text/javascript">
 	var app = angular.module('app', [ 'baseDirective']);
 	app.controller("ctrl", [ '$scope', 'baseService', 'ArrayToolService', function($scope, baseService, ArrayTool) {
 		$scope.ArrayTool = ArrayTool;
- 
-		$scope.add = function() {
-			var obj = {
-				'name' : '',
-				'resUrl' : ''
-			};
-			$scope.data.relResources.push(obj);
-		}
-
-		$scope.setDefaultUrl = function(url) {
-			$scope.data.defaultUrl = url;
-		}
-
-		$scope.remove = function(item) {
-			var aryUrl = $scope.data.relResources;
-			for (var i = 0; i < aryUrl.length; i++) {
-				var obj = aryUrl[i];
-				if (obj == item) {
-					ArrayTool.del(i);
-				}
-			}
-		}
 		
 		$scope.$on("afterSaveEvent",function(event,data){
 			if(!$scope.data.id){
@@ -41,116 +20,85 @@
 			}
 			
 		});
+		$scope.$on("afterLoadEvent",function(event,data){
+			if(!$scope.data || !$scope.data.id){
+			//	$scope.data.type ='menu';
+				$scope.data.enable= 1;
+				$scope.data.opened =1;
+				$scope.data.sn =1;
+			}
+		});
+		
+		
 	} ]);
 </script>
 </head>
 <body ng-controller="ctrl" class="panel success">
 	<div class="panel-heading">
-		<a class="btn btn-sm btn-primary fa-save" ng-model="data" ab-save="/sys/sysResource/save">
+		<a class="btn btn-sm btn-primary fa-save" ng-model="data" ab-save="/org/sysResource/save">
 			<span>保存</span>
 		</a>
 	</div>
-	<form name="form" method="post" ab-load="/sys/sysResource/getJson?id={id}&systemId={systemId}&parentId={parentId}" ng-model="data">
+	<form name="form" method="post" ab-load="/org/sysResource/getJson?id={id}&systemId={systemId}&parentId={parentId}" ng-model="data">
 		<table class="form-table" cellspacing="0">
 			<tr>
 				<th>资源名:</th>
 				<td>
-					<input class="form-control" type="text" ng-model="data.name" ab-validate="{required:true,maxlength:150}" />
+					<input class="form-control" type="text" ng-model="data.name" ab-validate="{required:true,maxlength:60}" />
 				</td>
 			</tr>
 			<tr>
 				<th>别名:</th>
 				<td>
-					<input class="form-control" type="text" ng-model="data.alias" ab-validate="{required:true,maxlength:150}" />
+					<input class="form-control" type="text" placeholder="资源别名，全局唯一" ng-model="data.alias" ab-validate="{required:true,maxlength:60}" />
 				</td>
 			</tr>
 			<tr>
-				<th>默认地址:</th>
+				<th>请求地址:</th>
 				<td>
-					<input class="form-control input-width-80" type="text" ng-model="data.defaultUrl" ab-validate="{required:false,maxlength:150}" />
+					<input class="form-control input-width-80" type="text" ng-model="data.url" ab-validate="{required:false,maxlength:120}" />
+					<span class="fa fa-question-circle btn text-danger ng-isolate-scope" ab-tip=""  title="按钮、链接需要正确配置请求链接，该链接会用于系统鉴权"></span>
 				</td>
 			</tr>
 			<tr>
-				<th>显示到菜单:</th>
+				<th>类型:</th>
 				<td>
-					<input type="radio" ng-model="data.enableMenu" value="1" />
-					是
-					<input type="radio" ng-model="data.enableMenu" value="0" />
-					否
+					 <select class="form-control" ng-model="data.type" ab-validate="{required:true,maxlength:120}">
+					 	<option value="menu"> 菜单</option>
+					 	<option value="button"> 按钮</option>
+					 	<option value="link"> 链接</option>
+					 </select>
 				</td>
 			</tr>
 			<tr>
-				<th>是否有子节点:</th>
+				<th>状态:</th>
 				<td>
-					<input type="radio" ng-model="data.hasChildren" ng-value="1" />
-					是
-					<input type="radio" ng-model="data.hasChildren" ng-value="0" />
-					否
+					<input type="radio" ng-model="data.enable" value="0" /> 禁用
+					<input type="radio" ng-model="data.enable" value="1" /> 启用
 				</td>
 			</tr>
 			<tr>
 				<th>默认展开:</th>
 				<td>
-					<input type="radio" ng-model="data.opened" value="1" />
-					是
-					<input type="radio" ng-model="data.opened" value="0" />
-					否
+					<input type="radio" ng-model="data.opened" value="1" /> 是
+					<input type="radio" ng-model="data.opened" value="0" /> 否
 				</td>
 			</tr>
 			<tr>
-				<th>图标:</th>
+				<th>字体图标:</th>
 				<td>
-					<input class="form-control" type="text" ng-model="data.icon" ab-validate="{required:false,maxlength:150}" />
+					<input class="form-control" type="text" ng-model="data.icon" ab-validate="{required:false,maxlength:60}" />
+					<span class="fa fa-question-circle btn text-info ng-isolate-scope" ab-tip=""  title="字体图标,可以在开发辅助-字体图标中选择合适的图标，按钮、链接目前不支持该配置"></span>
 				</td>
 			</tr>
 			<tr>
-				<th>打开新窗口:</th>
+				<th>排序:{{data.sn}}</th>
 				<td>
-					<input type="radio" ng-model="data.newWindow" value="1" />
-					是
-					<input type="radio" ng-model="data.newWindow" value="0" />
-					否
+					<input class="form-control input-width-5" type="text" ng-model="data.sn" ab-validate="{required:false,number:true,maxlength:10}" />
+					<span class="fa fa-question-circle btn text-info ng-isolate-scope" ab-tip=""  title="默认值1，数字越大同级排序越靠后"></span>
 				</td>
-			</tr>
-			<tr>
-				<th>排序:</th>
-				<td>
-					<input class="form-control input-width-5" type="text" ng-model="data.sn" ab-validate="{required:false,number:true}" />
-				</td>
-			</tr>
-		</table>
-
-		<div>
-			<a ng-click="add()" class="btn  fa-plus btn-primary">
-				<span>添加</span>
-			</a>
-		</div>
-		<table id="relResourcesTable" class="table table-hover" cellspacing="1">
-			<tr style="font-size: 16">
-				<th width="15%">默认</th>
-				<th width="25%">名称</th>
-				<th width="40%">URL</th>
-				<th width="20%">管理</th>
-			</tr>
-			<tr ng-repeat="relResource in data.relResources">
-				<th width="15%">
-					<input type="radio" name="relUrl" ng-model="relResource.id" ng-value="relResource.id" ng-click="setDefaultUrl(relResource.resUrl)" />
-				</th>
-				<th width="25%">
-					<input class="form-control" type="text" ng-model="relResource.name" ab-validate="{required:true}" />
-				</th>
-				<th width="40%">
-					<input class="form-control" type="text" ng-model="relResource.resUrl" ab-validate="{required:true}" />
-				</th>
-				<th width="20%">
-					<a ng-click="data.relResources.remove(relResource)" class="fa fa-trash btn btn-danger">
-					</a>
-				</th>
 			</tr>
 		</table>
 	</form>
-
-
-
 </body>
 </html>

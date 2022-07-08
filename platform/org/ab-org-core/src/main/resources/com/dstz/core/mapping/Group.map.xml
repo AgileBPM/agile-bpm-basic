@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dstz.org.core.dao.GroupDao">
+	<resultMap id="Group" type="com.dstz.org.core.model.Group">
+		<id property="id" column="id_" jdbcType="VARCHAR"/>
+		<result property="name" column="name_" jdbcType="VARCHAR"/>
+		<result property="parentId" column="parent_id_" jdbcType="VARCHAR"/>
+		<result property="code" column="code_" jdbcType="VARCHAR"/>
+		<result property="type" column="type_" jdbcType="NUMERIC"/>
+		<result property="desc" column="desc_" jdbcType="VARCHAR"/>
+		<result property="path" column="path_" jdbcType="VARCHAR"/>
+		<result property="sn" column="sn_" jdbcType="NUMERIC"/>
+		<result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
+		<result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
+		<result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
+		<result property="updateBy" column="update_by_" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="create" parameterType="com.dstz.org.core.model.Group">
+		INSERT INTO org_group
+		(id_,name_,parent_id_,code_,type_,desc_,path_,sn_,create_time_,create_by_,update_time_,update_by_)
+		VALUES 
+		(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{type,jdbcType=NUMERIC}, #{desc,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, #{sn,jdbcType=NUMERIC}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="get"   parameterType="java.lang.String" resultMap="Group">
+		SELECT * FROM org_group 
+		WHERE 
+		id_=#{id}
+	</select>
+	
+	<select id="getByUserId" parameterType="java.lang.String" resultMap="Group">
+		SELECT g.* FROM org_group g
+		left join org_relation rel on group_id_ = g.id_
+		WHERE  user_id_ = #{userId}
+		and rel.type_ in ('groupUser','groupUserRole') and rel.status_ = 1
+		order by rel.is_master_ desc, g.create_time_ desc
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultMap="Group">
+		SELECT * FROM org_group
+		<where>
+			<if test="whereSql!=null">
+				${whereSql}
+			</if>
+		</where>
+		<if test="orderBySql!=null">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="orderBySql==null">
+			ORDER BY sn_ DESC
+		</if>
+	</select>
+	
+	<update id="update" parameterType="com.dstz.org.core.model.Group">
+		UPDATE org_group SET
+		name_=#{name,jdbcType=VARCHAR},
+		parent_id_=#{parentId,jdbcType=VARCHAR},
+		code_=#{code,jdbcType=VARCHAR},
+		type_=#{type,jdbcType=NUMERIC},
+		desc_=#{desc,jdbcType=VARCHAR},
+		path_=#{path,jdbcType=VARCHAR},
+		sn_=#{sn,jdbcType=NUMERIC},
+		create_time_=#{createTime,jdbcType=TIMESTAMP},
+		create_by_=#{createBy,jdbcType=VARCHAR},
+		update_time_=#{updateTime,jdbcType=TIMESTAMP},
+		update_by_=#{updateBy,jdbcType=VARCHAR}
+		WHERE
+		id_=#{id}
+	</update>
+	
+	<delete id="remove" parameterType="java.lang.String">
+		DELETE FROM org_group 
+		WHERE
+		id_=#{id}
+	</delete>
+	
+	<select id="getByCode"   parameterType="java.lang.String" resultMap="Group">
+		SELECT * FROM org_group 
+		WHERE 
+		code_=#{code}
+	</select>
+	
+	<select id="getChildByPath"   parameterType="java.lang.String" resultMap="Group">
+		SELECT * FROM org_group 
+		WHERE 
+		path_ like #{path}
+	</select>
+	
+</mapper>

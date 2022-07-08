@@ -1,3 +1,72 @@
+/** 客户样式调优 star**/
+*{ -webkit-user-select: none; }
+ 
+::-webkit-scrollbar, ::-webkit-scrollbar-track {
+	background-color: #f5f5f5
+}
+
+::-webkit-scrollbar {
+	width: 6px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #999
+}
+
+.editor-toolbar > .btn-group {
+    margin: 5px 15px 0px 0px;
+}
+
+.subheader{
+    min-height: 50px;
+}
+
+.panel-heading{
+    padding:8px 12px;
+}
+
+.panel-body{
+    font-size:90%!important;
+}
+
+.toolbar-head .glyphicon{
+  top:-5px;
+}
+
+.panel-heading .glyphicon{
+  top:-5px;
+}
+
+th,td{ vertical-align:middle!important; }
+
+.form-control {
+     height: 26px;
+    /* padding: 6px 12px; */
+     font-size: 10px;
+}
+
+.btn-xs {
+    padding: 2px 2px; 
+    margin-left:3px;
+}
+
+.control-label{
+    font-size:12px!important;
+}
+
+.radio-inline,.checkbox-inline{
+    font-size:10px!important;
+    line-height:20px;
+}
+
+.btn{
+    margin-bottom:1px!important;
+}
+/** 客户样式调优 end**/
+
+
+
 /**
  Colors:
  

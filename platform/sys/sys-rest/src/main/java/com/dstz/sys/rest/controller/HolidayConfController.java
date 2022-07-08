@@ -3,6 +3,8 @@ package com.dstz.sys.rest.controller;
 
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dstz.base.api.aop.annotion.CatchErr;
+import com.dstz.base.api.constant.BaseStatusCode;
 import com.dstz.base.api.exception.BusinessException;
 import com.dstz.base.api.exception.BusinessMessage;
 import com.dstz.base.api.response.impl.ResultMsg;
@@ -20,6 +23,7 @@ import com.dstz.base.core.id.IdUtil;
 import com.dstz.base.core.util.StringUtil;
 import com.dstz.base.rest.BaseController;
 import com.dstz.base.rest.util.RequestUtil;
+import com.dstz.sys.api.model.calendar.WorkCalenDar;
 import com.dstz.sys.core.manager.HolidayConfManager;
 import com.dstz.sys.core.manager.WorkCalenDarManager;
 import com.dstz.sys.core.model.HolidayConf;
@@ -90,6 +94,36 @@ public class HolidayConfController extends BaseController<HolidayConf>{
 	}
 	
 
-
-
+	@RequestMapping("test")
+	@CatchErr("计算失败")
+	public ResultMsg<Date> tset(@RequestBody HolidayConf holidayConf) throws Exception{
+		Date startDay = holidayConf.getStartDay();
+		Date endDay = holidayConf.getEndDay();
+		Integer day = holidayConf.getYear();
+		
+		/*TODO if(endDay == null && day == null) {
+			throw new BusinessMessage("结束日期与天数必须输入其中的一个");
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		
+		if(day == null) {
+			if(startDay.after(endDay)){
+				throw new BusinessMessage("开始日期不应该晚于结束日期", BaseStatusCode.PARAM_ILLEGAL);
+			}
+			List<WorkCalenDar> workCalenDars = workCalenDarManager.getByTime(startDay, endDay);
+			sb.append("期间共[").append(workCalenDars.size()).append("]天：");
+			
+			workCalenDars.forEach(c ->{
+				sb.append(c.getDay());
+			});
+		}*/
+		Date d = workCalenDarManager.getWorkDayByDays(startDay,day);
+		
+		return getSuccessResult(d, "获取成功");
+	}
+	
+	
+	
+	
 }

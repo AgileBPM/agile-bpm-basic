@@ -620,6 +620,36 @@ String.prototype.isPicture = function(){
     }        
     return false;            
 }
+
+/**
+ * 字符串根据某个格式转化成日期
+ * yyyy-MM-dd HH:mm:ss
+ */
+String.prototype.toDate = function(format) {
+	if(!format){
+		format = "yyyy-MM-dd";
+	}
+	var year = String_toDate(this,format,"yyyy")
+	var month = String_toDate(this,format,"MM");
+	var day = String_toDate(this,format,"dd");
+	var hour = String_toDate(this,format,"HH");
+	var minth = String_toDate(this,format,"mm");
+	var second = String_toDate(this,format,"ss");
+	var date = new Date(0);
+	date.setFullYear(year||1);
+	date.setMonth(parseInt(month||1)-1);
+	date.setDate(day||1);
+	date.setHours(hour||0);
+	date.setMinutes(minth||0);
+	date.setSeconds(second||0);
+	return date;
+};
+function String_toDate(str,format,a){
+	if(format.indexOf(a)==-1){
+		return null;
+	}
+	return str.substr(format.indexOf(a),a.length);
+}
 /**
  * 去除数组中的重复项
  * @function [method] 判断对象是否相同的方法(可选参数，默认实现是深度匹配两个对象是否相同)，示例：function(x,y){if(x.id===y.id)return true;}
@@ -780,8 +810,12 @@ window._stringRender = function(template, scopeData) {
 	    if (slash1 || slash2) { 
 	      return word.replace('\\', '');
 	    }
-	 
+	    
 	    var variables = token.replace(/\s/g, '').split('.');
+	    
+	    if(word.startWith("{url.")){
+	    	return $.getParam(variables[1]);
+	    }
 	    var currentObject = scopeData;
 	    var i, length, variable;
 	    
@@ -836,95 +870,28 @@ Date.prototype.format = function(format){
 
 
 /**
- * 求两个时间的天数差 日期格式为 yyyy-MM-dd 或 YYYY-MM-dd HH:mm:ss
+ * 求当前时间到指定时间的差（当前时间是起点）
+ * type:date 天数;month:月数;year:年数;hour：小时
  */
-function daysBetween(DateOne, DateTwo) {
-	var dayOne = '';
-	var dayTwo = '';
-	var timeOne = '';
-	var timeTwo = '';
-
-	if (DateOne != null && DateOne != '') {
-		var arrOne = DateOne.split(' ');
-		dayOne = arrOne[0];
-		if (arrOne.length > 1) {
-			timeOne = arrOne[1];
-		}
+Date.prototype.between = function(date,type) {
+	if(!type){
+		type = "date";
 	}
-
-	if (DateTwo != null && DateTwo != '') {
-		var arrTwo = DateTwo.split(' ');
-		dayTwo = arrTwo[0];
-		if (arrTwo.length > 1) {
-			timeTwo = arrTwo[1];
-		}
+	if(type=="hour"){
+		var dateSpan = date.getTime() - this.getTime();
+		return Math.floor(dateSpan / (3600 * 1000));
 	}
-
-	var OneMonth = 0;
-	var OneDay = 0;
-	var OneYear = 0;
-	if (dayOne != null && dayOne != '') {
-		var arrDate = dayOne.split('-');
-		OneYear = parseInt(arrDate[0], 10);
-		OneMonth = parseInt(arrDate[1], 10);
-		OneDay = parseInt(arrDate[2], 10);
+	if(type=="date"){
+		var dateSpan = date.getTime() - this.getTime();
+		return Math.floor(dateSpan / (24 * 3600 * 1000));
 	}
-
-	var TwoMonth = 0;
-	var TwoDay = 0;
-	var TwoYear = 0;
-	if (dayTwo != null && dayTwo != '') {
-		var arrDate = dayTwo.split('-');
-		TwoYear = parseInt(arrDate[0], 10);
-		TwoMonth = parseInt(arrDate[1], 10);
-		TwoDay = parseInt(arrDate[2], 10);
+	if(type=="month"){
+		return (date.getFullYear()-this.getFullYear()) * 12 + (date.getMonth()-this.getMonth());
 	}
-
-	var OneHour = 0;
-	var OneMin = 0;
-	var OneSec = 0;
-	if (timeOne != null && timeOne != '') {
-		var arrTiem = timeOne.split(':');
-		OneHour = parseInt(arrTiem[0]);
-		OneMin = parseInt(arrTiem[1]);
-		OneSec = parseInt(arrTiem[2]);
+	if(type=="year"){
+		return date.getFullYear()-this.getFullYear();
 	}
-
-	var TwoHour = 0;
-	var TwoMin = 0;
-	var TwoSec = 0;
-	if (timeTwo != null && timeTwo != '') {
-		var arrTiem = timeTwo.split(':');
-		TwoHour = parseInt(arrTiem[0]);
-		TwoMin = parseInt(arrTiem[1]);
-		TwoSec = parseInt(arrTiem[2]);
-	}
-
-	var vflag = TwoYear > OneYear ? true : false;
-	if (!vflag) {
-		vflag = TwoMonth > OneMonth ? true : false;
-		if (!vflag) {
-			vflag = TwoDay > OneDay ? true : false;
-
-			if (!vflag) {
-				if (OneDay == TwoDay) {
-					vflag = TwoHour > OneHour ? true : false;
-					if (!vflag) {
-						vflag = TwoMin > OneMin ? true : false;
-						if (!vflag) {
-							vflag = TwoSec >= OneSec ? true : false;
-						}
-					}
-				} else {
-					return false;
-				}
-			} else {
-				return true;
-			}
-		}
-	}
-
-	return vflag;
+	
 };
 
 // 禁用刷新。通过传入浏览器类型 来指定禁用某个浏览器的刷新

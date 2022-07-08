@@ -1,77 +1,76 @@
 package com.dstz.base.db.model.query;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dstz.base.api.query.FieldLogic;
 import com.dstz.base.api.query.FieldRelation;
 import com.dstz.base.api.query.WhereClause;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author csx
  */
 public class DefaultFieldLogic implements FieldLogic {
 
-    /**
-     * 查询字段组合列表
-     */
-    private List<WhereClause> whereClauses = new ArrayList<WhereClause>();
-    /**
-     * 字段关系
-     */
-    private FieldRelation fieldRelation = FieldRelation.AND;
+	/**
+	 * 查询字段组合列表
+	 */
+	private List<WhereClause> whereClauses = new ArrayList<>();
+	/**
+	 * 字段关系
+	 */
+	private FieldRelation fieldRelation = FieldRelation.AND;
 
-    public DefaultFieldLogic() {
-    }
+	public DefaultFieldLogic() {
+	}
 
-    public DefaultFieldLogic(FieldRelation fieldRelation) {
-        this.fieldRelation = fieldRelation;
-    }
+	public DefaultFieldLogic(FieldRelation fieldRelation) {
+		this.fieldRelation = fieldRelation;
+	}
 
-    public List<WhereClause> getWhereClauses() {
-        return whereClauses;
-    }
+	public List<WhereClause> getWhereClauses() {
+		return whereClauses;
+	}
 
-    public void setWhereClauses(List<WhereClause> whereClauses) {
-        this.whereClauses = whereClauses;
-    }
+	public void setWhereClauses(List<WhereClause> whereClauses) {
+		this.whereClauses = whereClauses;
+	}
 
-    public FieldRelation getFieldRelation() {
-        return fieldRelation;
-    }
+	public FieldRelation getFieldRelation() {
+		return fieldRelation;
+	}
 
-    public void setFieldRelation(FieldRelation fieldRelation) {
-        this.fieldRelation = fieldRelation;
-    }
+	public void setFieldRelation(FieldRelation fieldRelation) {
+		this.fieldRelation = fieldRelation;
+	}
 
-    public String getSql() {
-        if (whereClauses.size() == 0) return "";
-        if (whereClauses.size() == 1 && !FieldRelation.NOT.equals(fieldRelation)) return whereClauses.get(0).getSql();
+	public String getSql() {
+		if (whereClauses.isEmpty()) {
+			return "";
+		}
 
-        StringBuilder sqlBuf = new StringBuilder("(");
-        int i = 0;
-        if (whereClauses.size() > 0 && FieldRelation.NOT.equals(fieldRelation)) {
-            sqlBuf.append(" NOT (");
-            for (WhereClause clause : whereClauses) {
-                if (i++ > 0) {
-                    sqlBuf.append(" ").append(FieldRelation.AND).append(" ");
-                }
-                sqlBuf.append(clause.getSql());
-            }
-            sqlBuf.append(")");
+		StringBuilder sb = new StringBuilder("(");
+		if (!whereClauses.isEmpty() && FieldRelation.NOT == fieldRelation) {
+			sb.append(" NOT (");
+			for (WhereClause wc : whereClauses) {
+				if (!sb.toString().endsWith("NOT (")) {
+					sb.append(" " + FieldRelation.AND.value() + " ");
+				}
+				sb.append(wc.getSql());
+			}
+			sb.append(")");
+			return sb.toString();
+		}
 
-            return sqlBuf.toString();
-        }
+		for (WhereClause wc : whereClauses) {
+			if (!sb.toString().endsWith("(")) {
+				sb.append(" " + fieldRelation.value() + " ");
+			}
+			sb.append(wc.getSql());
+		}
+		sb.append(")");
 
-        for (WhereClause clause : whereClauses) {
-            if (i++ > 0) {
-                sqlBuf.append(" ").append(fieldRelation).append(" ");
-            }
-            sqlBuf.append(clause.getSql());
-        }
-        sqlBuf.append(")");
-
-        return sqlBuf.toString();
-    }
+		return sb.toString();
+	}
 
 }

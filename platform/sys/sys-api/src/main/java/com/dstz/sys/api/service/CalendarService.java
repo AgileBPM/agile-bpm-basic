@@ -40,5 +40,13 @@ public interface CalendarService{
 	
 	public ResultMsg<Date> getEndWorkDay(Date startDay,int days, String system);
 	
+	/**
+	 * 获取多少分钟后的天数
+	 * @param startDay
+	 * @param minute
+	 * @return
+	 */
+	public ResultMsg<Date> getEndWorkDayByMinute(Date startDay,int minute);
+	
 	
 }

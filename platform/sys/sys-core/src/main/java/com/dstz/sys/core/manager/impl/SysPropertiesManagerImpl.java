@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.dstz.base.core.cache.ICache;
 import com.dstz.base.core.util.AppUtil;
-import com.dstz.base.core.util.BeanUtils;
 import com.dstz.base.core.util.StringUtil;
 import com.dstz.base.manager.impl.BaseManager;
 import com.dstz.sys.api.constant.EnvironmentConstant;
@@ -20,6 +19,8 @@ import com.dstz.sys.api.service.PropertyService;
 import com.dstz.sys.core.dao.SysPropertiesDao;
 import com.dstz.sys.core.manager.SysPropertiesManager;
 import com.dstz.sys.core.model.SysProperties;
+
+import cn.hutool.core.map.MapUtil;
 
 /**
  * <pre>
@@ -77,7 +78,7 @@ public class SysPropertiesManagerImpl extends BaseManager<String, SysProperties>
     public String getByAlias(String alias) {
         alias = alias.toLowerCase();
         Map<String, Map<String, String>> enviromentProps = (Map<String, Map<String, String>>) cache.getByKey(PROPERTIES_CACHE_KEY);
-        if (BeanUtils.isEmpty(enviromentProps)) {
+        if (MapUtil.isEmpty(enviromentProps)) {
             enviromentProps = reloadProperty();
         }
 

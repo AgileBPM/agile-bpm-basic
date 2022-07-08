@@ -1,11 +1,12 @@
 package com.dstz.sys.util;
 
-import com.dstz.base.core.util.BeanUtils;
+import java.util.Locale;
+
 import com.dstz.org.api.context.ICurrentContext;
 import com.dstz.org.api.model.IGroup;
 import com.dstz.org.api.model.IUser;
 
-import java.util.Locale;
+import cn.hutool.core.util.StrUtil;
 
 
 /**
@@ -52,7 +53,7 @@ public class ContextUtil {
      */
     public static String getCurrentGroupId() {
         IGroup iGroup = getCurrentGroup();
-        if (BeanUtils.isNotEmpty(iGroup)) {
+        if (iGroup != null) {
             return iGroup.getGroupId();
         } else {
             return "";
@@ -107,7 +108,7 @@ public class ContextUtil {
      * @since 1.0.0
      */
     public static void setCurrentOrg(IGroup group) {
-        contextUtil.currentContext.setCurrentGroup(group);
+        contextUtil.currentContext.cacheCurrentGroup(group);
     }
 
     /**
@@ -139,13 +140,13 @@ public class ContextUtil {
     
     public static boolean isAdmin(IUser user) {
     	  String tmp = SysPropertyUtil.getByAlias("admin.account", "admin");
-          return tmp.equals(user.getAccount());
+          return StrUtil.equals(tmp, user.getAccount());
     }
     
     public static boolean currentUserIsAdmin() {
     	IUser user = getCurrentUser();
     	
   	  	String tmp = SysPropertyUtil.getByAlias("admin.account", "admin");
-        return tmp.equals(user.getAccount());
+        return StrUtil.equals(tmp,user.getAccount());
   }
 }

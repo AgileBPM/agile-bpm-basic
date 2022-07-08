@@ -4,21 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import com.alibaba.fastjson.JSONObject;
 import com.dstz.base.core.model.BaseModel;
 import com.dstz.base.core.util.JsonUtil;
 import com.dstz.base.core.util.StringUtil;
-import com.dstz.bus.api.constant.RightsType;
 import com.dstz.bus.api.model.IBusinessPermission;
-import com.dstz.bus.api.model.permission.IBusColumnPermission;
 import com.dstz.bus.api.model.permission.IBusObjPermission;
-import com.dstz.bus.api.model.permission.IBusTablePermission;
 import com.dstz.bus.model.permission.BusObjPermission;
 
 /**
@@ -115,12 +106,12 @@ public class BusinessPermission extends BaseModel implements IBusinessPermission
 	}
 	
 	public JSONObject getTablePermission(boolean isReadonly) {
-		handlerPermission(isReadonly);
+		handlePermission(isReadonly);
 		return tablePermission;
 	}
 	
 	public JSONObject getPermission(boolean isReadonly) {
-		handlerPermission(isReadonly);
+		handlePermission(isReadonly);
 		return permission;
 	}
 	
@@ -129,7 +120,7 @@ public class BusinessPermission extends BaseModel implements IBusinessPermission
 	 */
 	private JSONObject tablePermission;
 	private JSONObject permission = null;
-	private synchronized void handlerPermission(Boolean isReadonly) {
+	private synchronized void handlePermission(Boolean isReadonly) {
 		if(permission != null) return;
 		
 		tablePermission = new JSONObject();
@@ -137,31 +128,7 @@ public class BusinessPermission extends BaseModel implements IBusinessPermission
 		
 		for (Entry<String, ? extends IBusObjPermission> entry : this.getBusObjMap().entrySet()) {
 			IBusObjPermission busObjPermission = entry.getValue();
-			permission.put(busObjPermission.getKey(), new JSONObject());
-			tablePermission.put(busObjPermission.getKey(), new JSONObject());
-			for (Entry<String, ? extends IBusTablePermission> etry : busObjPermission.getTableMap().entrySet()) {
-				IBusTablePermission busTablePermission = etry.getValue();
-				permission.getJSONObject(busObjPermission.getKey()).put(busTablePermission.getKey(), new JSONObject());
-				tablePermission.getJSONObject(busObjPermission.getKey()).put(busTablePermission.getKey(), handelReadonlyResult(busTablePermission.getResult(),isReadonly));
-
-				for (Entry<String, ? extends IBusColumnPermission> ery : busTablePermission.getColumnMap().entrySet()) {
-					IBusColumnPermission busColumnPermission = ery.getValue();
-					permission.getJSONObject(busObjPermission.getKey()).getJSONObject(busTablePermission.getKey()).put(busColumnPermission.getKey(), handelReadonlyResult(busColumnPermission.getResult(),isReadonly));
-				}
-			}
+			busObjPermission.handlePermission(tablePermission, permission, isReadonly);
 		}
 	}
-	
-	private String handelReadonlyResult(String result,Boolean isReadonly){
-		if(!isReadonly) return result;
-		
-		if(RightsType.REQUIRED.getKey().equals(result) || RightsType.WRITE.getKey().equals(result)) {
-			return RightsType.READ.getKey();
-		}
-		
-		return result;
-	}
-
-
-
 }

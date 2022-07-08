@@ -1,5 +1,10 @@
 package com.dstz.form.manager;
 
+import java.util.List;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSONArray;
+import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.manager.Manager;
 import com.dstz.form.model.FormDef;
 
@@ -41,5 +46,16 @@ public interface FormDefManager extends Manager<String, FormDef> {
      * @return
      */
     String getBackupHtml(FormDef formDef);
+
+	String generateFormHtml(String boKey, JSONArray templateConfig, String formType);
+	
+	/**
+	 * <pre>
+	 * 获取表单列表包含bo的内容
+	 * </pre>	
+	 * @param queryFilter
+	 * @return
+	 */
+	List<Map> queryWithBo(QueryFilter queryFilter);
 
 }

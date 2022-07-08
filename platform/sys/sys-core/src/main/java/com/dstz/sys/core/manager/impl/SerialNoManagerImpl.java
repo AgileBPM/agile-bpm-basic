@@ -64,95 +64,29 @@ public class SerialNoManagerImpl extends BaseManager<String, SerialNo> implement
      * @return
      */
     private String getByRule(String rule, int length, int curValue) {
-        Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH) + 1;
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        String yearStr = "" + year;
-        String shortMonth = "" + month;
-        String longMonth = (month < 10) ? "0" + month : "" + month;
+        Calendar now = Calendar.getInstance();
+        int month = now.get(Calendar.MONTH) + 1;
+        int day = now .get(Calendar.DAY_OF_MONTH);
+        
+        StringBuilder serialNo = new StringBuilder();
+        int fillLength = length - String.valueOf(curValue).length();
+        for (int i = 0; i < fillLength; i++) {
+        	serialNo.append("0");
+		}
+        serialNo.append(curValue);
 
-        String seqNo = getSeqNo(rule, curValue, length);
-
-        String shortDay = "" + day;
-        String longDay = (day < 10) ? "0" + day : "" + day;
-
-        String rtn = rule.replace("{yyyy}", yearStr)
-                .replace("{MM}", longMonth)
-                .replace("{mm}", shortMonth)
-                .replace("{DD}", longDay)
-                .replace("{dd}", shortDay)
-                .replace("{NO}", seqNo)
-                .replace("{no}", seqNo);
+        String rtn = rule.replace("{yyyy}",String.valueOf(now.get(Calendar.YEAR)))
+                .replace("{MM}", String.valueOf((month < 10) ? "0" + month : "" + month))
+                .replace("{mm}", String.valueOf(month))
+                .replace("{DD}", String.valueOf((day < 10) ? "0" + day : "" + day))
+                .replace("{dd}", String.valueOf(day))
+                .replace("{NO}", serialNo.toString())
+                .replace("{no}", String.valueOf(curValue));
 
 
         return rtn;
     }
 
-    /**
-     * 根据当前流水号的值和流水号显示的长度。
-     * <pre>
-     * 比如：当前流水号为55 ，显示长度为5那么这个方法返回：00055。
-     * </pre>
-     *
-     * @param curValue 当前流水号的值。
-     * @param length   显示的长度。
-     * @return
-     */
-    private static String getSeqNo(String rule, int curValue, int length) {
-        String tmp = curValue + "";
-        int len = 0;
-        if (rule.indexOf("no") > -1) {
-            len = length;
-        } else {
-            len = length - tmp.length();
-        }
-        String rtn = "";
-        switch (len) {
-            case 1:
-                rtn = "0";
-                break;
-            case 2:
-                rtn = "00";
-                break;
-            case 3:
-                rtn = "000";
-                break;
-            case 4:
-                rtn = "0000";
-                break;
-            case 5:
-                rtn = "00000";
-                break;
-            case 6:
-                rtn = "000000";
-                break;
-            case 7:
-                rtn = "0000000";
-                break;
-            case 8:
-                rtn = "00000000";
-                break;
-            case 9:
-                rtn = "000000000";
-                break;
-            case 10:
-                rtn = "0000000000";
-                break;
-            case 11:
-                rtn = "00000000000";
-                break;
-            case 12:
-                rtn = "000000000000";
-                break;
-        }
-        if (rule.indexOf("no") > -1) {
-            return tmp + rtn;
-        } else {
-            return rtn + tmp;
-        }
-
-    }
 
     /**
      * 根据流程规则别名获取得下一个流水号。
@@ -181,6 +115,8 @@ public class SerialNoManagerImpl extends BaseManager<String, SerialNo> implement
         }
         return result.getIdNo();
     }
+    
+    
 
     public Result genResult(SerialNo SerialNo) {
         String rule = SerialNo.getRegulation();

@@ -34,7 +34,7 @@ public class FormTemplate implements Serializable {
     private String type;
     
     /**
-     * formType 表单的分类  pc、mobile、vuepc 等不同的表单分类  默认 pc
+     * FormType 表单的分类  pc、mobile、vuepc 等不同的表单分类  默认 pc
      */
     private String formType;
     /**

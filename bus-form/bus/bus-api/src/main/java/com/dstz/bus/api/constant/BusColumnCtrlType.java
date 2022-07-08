@@ -26,7 +26,7 @@ public enum BusColumnCtrlType {
 	/**
 	 * "multiselect", "下拉框多选", new String[] { "varchar"}
 	 */
-	MULTISELECT("multiselect", "下拉框多选", new String[] { "varchar" }),
+//	MULTISELECT("multiselect", "下拉框多选", new String[] { "varchar" }), 先屏蔽
 	/**
 	 * "checkbox", "复选框", new String[] { "varchar" }
 	 */

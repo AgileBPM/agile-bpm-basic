@@ -18,16 +18,66 @@ input.form-control,select.form-control{
 	max-width: 360px;	
 	display: inline;
 }
-input.ng-valid, textarea.ng-valid, select.ng-valid, .edui-editor.ng-valid, div.ng-valid .ht-input {
-    border-color: #5eb95e !;
+
+input.ng-valid, textarea.ng-valid, select.ng-valid, div.ng-valid {
+    border-color: #5eb95e;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
-input.ng-invalid, textarea.ng-invalid, select.ng-invalid, .edui-editor.ng-invalid, span.ng-invalid input, div.ng-invalid .ht-input {
+
+input.ng-invalid, textarea.ng-invalid, select.ng-invalid, span.ng-invalid input, div.ng-invalid {
     border-color: #dd514c !important;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
+
+input.ab-invalid, textarea.ab-invalid, select.ab-invalid, span.ab-invalid input, div.ab-invalid {
+    border-color: #dd514c !important;
+}
+div.ab-invalid input[type='checkbox']{
+	color:#dd514c !important;
+}
+div.ab-invalid input[type='radio']{
+	color:#dd514c !important;
+}
+
+/* 布局表单 */
+.form-item{
+	margin-bottom: 24px;
+    vertical-align: top;
+    zoom: 1;
+}
+
+.form-item-label{
+	text-align: right;
+    vertical-align: middle;
+    float: left;
+    font-size: 12px;
+    color: #515a6e;
+    line-height: 1;
+    padding: 10px 12px 10px 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100px;
+}
+
+.form-item-content{
+	position: relative;
+    line-height: 32px;
+    font-size: 12px;
+    margin-left: 100px;
+}
+
+.form-item-content input.form-control, .form-item-content select.form-control{
+	max-width: 500px !important;
+	display: inline;
+}
+
+ 
+.form-item-content textarea{
+	max-width: 800px !important;
+}
+
 
 /* table-form css*/
 .form-table .red{
@@ -381,6 +431,10 @@ body.body-small .navbar-top-links li:last-child {
 
 .nav-second-level li:last-child {
     margin-bottom: 10px;
+}
+
+.nav-four-level li a {
+    padding-left: 72px;
 }
 
 body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .nav li:hover > .nav-second-level,

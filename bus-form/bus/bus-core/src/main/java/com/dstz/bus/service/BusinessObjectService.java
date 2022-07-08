@@ -40,4 +40,9 @@ public class BusinessObjectService implements IBusinessObjectService {
 		return businessObjectManager.boTreeData(key);
 	}
 
+	@Override
+	public String getBoOverallArrangement(String key) {
+		return businessObjectManager.getOverallArrangementByCode(key);
+	}
+
 }

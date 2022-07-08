@@ -1,7 +1,5 @@
 package com.dstz.base.api.request;
 
-import com.dstz.base.api.exception.BusinessException;
-
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -9,6 +7,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.dstz.base.api.exception.BusinessException;
+import com.dstz.base.api.exception.BusinessMessage;
 
 /**
  * @param params 用于请求参数的存放
@@ -63,7 +64,7 @@ public class RequestParam {
      */
     public String getRQString(String key, String errorMsg) {
         if (this.isParamEmpty(key)) {
-            throw new BusinessException(errorMsg + "[" + key + "]");
+            throw new BusinessMessage(errorMsg + "[" + key + "]");
         }
         return (String) params.get(key);
     }
@@ -73,7 +74,7 @@ public class RequestParam {
      */
     public Object getRQObject(String key, String errorMsg) {
         if (this.isParamEmpty(key)) {
-            throw new BusinessException(errorMsg + "[" + key + "]");
+            throw new BusinessMessage(errorMsg + "[" + key + "]");
         }
 
         return params.get(key);
@@ -91,7 +92,7 @@ public class RequestParam {
 
     public Date getRQDate(String key, String errorMsg) {
         if (isParamEmpty(key)) {
-            throw new BusinessException(errorMsg + "[" + key + "]");
+            throw new BusinessMessage(errorMsg + "[" + key + "]");
         }
 
         return getDate(key);

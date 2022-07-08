@@ -2,6 +2,7 @@ var app = angular.module("app", [ 'base', 'baseDirective' ]);
 app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter', function($scope, baseService, ArrayToolService, $filter) {
 	$scope.ArrayTool = ArrayToolService;
 	var filter = $filter('filter');
+	$scope.collapse = {};
 
 	$scope.init = function() {
 		ToolsController.getEnum("com.dstz.bus.api.constant.BusinessPermissionObjType").then(function(data) {
@@ -194,14 +195,36 @@ app.controller('ctrl', [ '$scope', 'baseService', 'ArrayToolService', '$filter',
 				table.rights = tableTemp.rights;
 
 				// 合并bo中的表的字段
+				var hasConfiged = false;
 				angular.forEach(table.columnMap, function(column, columnName) {
 					var columnTemp = dataTemp.busObjMap[boKey].tableMap[tableKey].columnMap[columnName];
 					if (!columnTemp) {
 						return;
 					}
 					column.rights = columnTemp.rights;
+					
+					//默认展示配置过字段的
+					if(!jQuery.isEmptyObject(column.rights)){
+						hasConfiged = true;
+					}
 				});
+				//默认展示配置过字段的
+				if(hasConfiged){
+					$scope.collapse[tableKey] = 'in';
+				}
 			});
 		});
+	}
+	
+	$scope.isDisable = function(rights,type){
+		if(type =='b') return false;
+		
+		if(type =='w'){
+			return rights.b && rights.b[0] && rights.b[0].type==='everyone';
+		}
+		
+		return (rights.b && rights.b[0] && rights.b[0].type==='everyone')
+					|| (rights.w && rights.w[0] && rights.w[0].type==='everyone');
+		
 	}
 } ]);

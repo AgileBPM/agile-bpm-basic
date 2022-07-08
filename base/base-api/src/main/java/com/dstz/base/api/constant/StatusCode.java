@@ -14,6 +14,17 @@ public class StatusCode implements IStatusCode {
 
     public StatusCode() {
     }
+    
+    public StatusCode(String code,String desc) {
+    	this.code = code;
+    	this.desc = desc;
+    }
+    
+    public StatusCode(String code,String desc,String system) {
+    	this.code = code;
+    	this.desc = desc;
+    	this.system = system;
+    }
 
     public String getCode() {
         return code;

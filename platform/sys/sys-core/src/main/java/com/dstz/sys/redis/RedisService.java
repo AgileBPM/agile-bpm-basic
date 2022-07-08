@@ -13,7 +13,8 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
-@Service
+@Deprecated
+//@Service
 public class RedisService implements IRedisService {
 
     private static String redisCode = "utf-8";

@@ -3,8 +3,6 @@ package com.dstz.base.api.query;
 
 /**
  * 排序
- *
- * @author csx
  */
 public interface FieldSort {
 

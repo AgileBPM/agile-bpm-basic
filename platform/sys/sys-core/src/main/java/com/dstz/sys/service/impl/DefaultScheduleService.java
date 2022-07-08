@@ -1,20 +1,8 @@
 package com.dstz.sys.service.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.dstz.base.api.aop.annotion.CatchErr;
 import com.dstz.base.api.aop.annotion.ParamValidate;
 import com.dstz.base.api.constant.BaseStatusCode;
-import com.dstz.base.api.exception.BusinessException;
 import com.dstz.base.api.exception.BusinessMessage;
 import com.dstz.base.api.response.impl.ResultMsg;
 import com.dstz.base.core.id.IdUtil;
@@ -28,6 +16,15 @@ import com.dstz.sys.core.dao.ScheduleBizDao;
 import com.dstz.sys.core.dao.ScheduleParticipantDao;
 import com.dstz.sys.core.manager.ScheduleManager;
 import com.dstz.sys.core.model.ScheduleBiz;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Transactional
 @Service
@@ -119,7 +116,7 @@ public class DefaultScheduleService implements ScheduleService {
 		scheduleManager.create(schedule);
 		scheduleBizDao.create(scheduleBiz);
 		 
-		resultMsg.setIsOk(true);
+		resultMsg.setOk(true);
 		resultMsg.setMsg("创建成功");
 		return resultMsg;
 	}
@@ -217,10 +214,10 @@ public class DefaultScheduleService implements ScheduleService {
 			}
 			scheduleManager.updateOnlySchedule(schedule);
 		} catch (Exception e) {
-			resultMsg.setIsOk(false);
+			resultMsg.setOk(false);
 			resultMsg.setMsg("完成日程失败：" + e.getMessage());
 		}
-		resultMsg.setIsOk(true);
+		resultMsg.setOk(true);
 		resultMsg.setMsg("完成日程成功");
 		return resultMsg;
 	}
@@ -241,7 +238,7 @@ public class DefaultScheduleService implements ScheduleService {
 	public ResultMsg updateSchedule(String biz_id, Date start, Date end, String ownerAccount) {
 		List<Schedule> list = scheduleManager.getByBizId(biz_id);
 		if(list == null) {
-			throw new BusinessException("未找到相关日程");
+			throw new BusinessMessage("未找到相关日程");
 		}
 		//一个biz_id是对应1个日程把
 		Schedule schedule = list.get(0);

@@ -2,7 +2,8 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>流程任务</title>
-	<link href="../../build/common/gridList.css" rel="stylesheet">
+	<link href="../../build/common/base.css" rel="stylesheet">
+	<script type="text/javascript" src="../../build/common/base.js"></script>
 	<script type="text/javascript" src="../../build/common/gridList.js"></script>
 </head>
 <body>
@@ -12,13 +13,13 @@
          <div class="panel-body">
              <form id="searchForm" class="form-horizontal">
                  <div class="form-group">
-                     <label class="control-label col-sm-1" for="name_^VLK">名字</label>
-                     <div class="col-sm-3">
-                         <input type="text" class="form-control" id="name_^VLK">
-                     </div>
-                     <label class="control-label col-sm-1" for="subject_^VLK">标题</label>
+                     <label class="control-label col-sm-1" for="subject_^VLK">流程标题</label>
                      <div class="col-sm-3">
                          <input type="text" class="form-control" id="subject_^VLK">
+                     </div>
+                     <label class="control-label col-sm-1" for="name_^VLK">任务名字</label>
+                     <div class="col-sm-3">
+                         <input type="text" class="form-control" id="name_^VLK">
                      </div>
                      <div class="col-sm-4" style="text-align:left;">
                      		<button type="button" style="margin-left: 50px" class="btn btn-primary fa-search">查询</button>
@@ -35,19 +36,19 @@
           <thead>
           <tr>
               <th data-checkbox="true"></th>
-              <th data-field="subject">任务标题</th>
+              <th data-field="subject">流程标题</th>
               <th data-field="name">任务名称</th>
               <th data-field="assigneeNames">候选人</th>
               <th data-field="taskType" data-formatter="labelFormatter" 
-              			data-value-style="NORMAL-普通-primary,SIGN-会签-info,SIGN_SOURCE-会签_父-info,TRANSFORMING-事项-warning,">类型</th>
+              			data-value-style="NORMAL-普通-primary,SIGN-会签-info,SIGN_SOURCE-会签_父-info,ADD_SIGN-加签-info,TRANSFORMING-事项-warning,">类型</th>
               <th data-field="status" data-formatter="labelFormatter" 
-              			data-value-style="NORMAL-普通-primary,SUSPEND-挂起-info,LOCK-锁定-warning,BACK-驳回-warning,DESIGNATE-指派-info,TURN-转办-info,">状态</th>
+              			data-value-style="NORMAL-普通-primary,SUSPEND-挂起-info,LOCK-锁定-warning,BACK-驳回-warning,DESIGNATE-指派-info,TURN-转办-info,AGENCY-代理-info,">状态</th>
               <th data-field="createTime" data-formatter=dateTimeFormatter data-sort-name="create_time_" data-sortable="true">任务创建时间</th>
               <th data-formatter="innerHtmlFormatter" data-title="管理">
 					<!-- <a class="fa-detail btn btn-outline btn-primary btn-sm" openDialog="明细"   url="taskGet?id={taskId}" qtip="明细"></a> -->
-					<span class="fa-check-circle btn btn-outline btn-primary btn-sm" openDialog="处理"  top="true" qtip="新窗口处理" url="bpm/task/taskComplete.html?taskId={id}"></span>
 					<span class="fa-user btn btn-outline btn-primary btn-sm" top="true" qtip="指派候选人" onclick="assignUser('{id}')"></span>
 					<span if="'{status}'==='DESIGNATE'" class="fa-refresh btn btn-outline btn-primary btn-sm" top="true" qtip="取消指派" sendAction="取消指派" url="/bpm/task/unLock?taskId={id}"></span>
+					<span  class="fa-check-circle btn btn-outline btn-primary btn-sm" openDialog="处理任务【{subject}】-【{name}】"  top="true" qtip="处理" url="bpm/task/taskComplete.html?taskId={id}"></span>
 					
 			  </th>
           </tr>
@@ -56,6 +57,14 @@
     </div>
 </body>
 <script type="text/javascript">
+$(function(){
+	window.setTimeout(function(){
+		if($.getParam("type")==='iview'){
+			$("[opendialog]").attr("qtip","处理任务请移步只门户平台 （切换子系统）");
+		}
+	},1000);
+})
+
 	function assignUser (taskId){
 		CustUtil.openCustDialog("userSelector",function(arrData,innerWindow){
 		    var param = {userId:arrData[0].id,userName:arrData[0].name,taskId:taskId};

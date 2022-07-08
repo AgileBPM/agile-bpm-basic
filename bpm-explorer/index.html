@@ -5,7 +5,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=8; IE=9; IE=EDGE;">
 	
-	<link href="./build/home/index.css" rel="stylesheet">
+	<link href="./build/common/base.css" rel="stylesheet">
+		<script type="text/javascript" src="./build/common/base.js"></script>
+	<script type="text/javascript" src="./build/common/ngEdit.js"></script>
 	<script type="text/javascript" src="./build/home/index.js"></script>
 	<script type="text/javascript" src="./assets/js/plugins/pace/pace.min.js"></script>
 </head>
@@ -22,24 +24,32 @@
                      <div class="dropdown profile-element">
                          <span><img alt="image"   src="./assets/img/logo/4.png" style="width: 166px; height: 57px;"/></span>
                      </div>
-                     <div class="logo-element">ANGILE-BPM
+                     <div class="logo-element">AGILE-BPM
                      </div>
                  </li>
          	<!--菜单 -->
-                  <li ng-repeat="item in memus" class="{{item.opened==1?'active':''}}" ng-if="item.enableMenu">
+                  <li ng-repeat="item in memus" class="{{item.opened==1?'active':''}}" ng-if="item.enable">
                       <a href="javascript:void(0);" ng-click="menuClick(item)">
                           <i class="fa {{item.icon}}"></i>
                           <span class="nav-label">{{item.name}}</span>
                           <span class="fa arrow" ng-if="item.children.length"></span>
                       </a>
                       <ul class="nav nav-second-level" ng-if="item.children.length">
-                          <li ng-repeat="second in item.children" ng-if="second.enableMenu">
+                          <li ng-repeat="second in item.children" ng-if="second.enable">
                               <a class="J_menuItem" ng-click="menuClick(second)">
                               		{{second.name}}<span ng-if="second.children" class="fa arrow"></span>
                               </a>
                               <ul class="nav nav-third-level" ng-if="second.children.length">
-		                          <li ng-repeat="third in second.children" ng-if="third.enableMenu">
-		                              <a class="J_menuItem" ng-click="menuClick(third)" >{{third.name}}</a>
+		                          <li ng-repeat="third in second.children" ng-if="third.enable">
+		                              <a class="J_menuItem" ng-click="menuClick(third)" >
+		                              	{{third.name}}
+		                              	<span class="fa arrow" ng-if="third.children.length"></span>
+		                              </a>
+		                              <ul class="nav nav-four-level" ng-if="third.children.length">
+				                          <li ng-repeat="four in third.children" ng-if="third.enable">
+				                              <a class="J_menuItem" ng-click="menuClick(four)" >{{four.name}}</a>
+				                          </li>
+				                      </ul>
 		                          </li>
 		                      </ul>
                           </li>
@@ -54,8 +64,7 @@
             <div class="row border-bottom">
                 <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                     <div class="navbar-header" style="width:80%">
-                    	<a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="javascript:void(0);"><i class="fa fa-bars"></i> </a>
-                   		<a ng-repeat="topMenu in userRes" ng-click="topClick(topMenu)" ab-tip title="{{topMenu.name}}"  ng-if="topMenu.enableMenu"
+                   		<a ng-repeat="topMenu in userRes" ng-click="topClick(topMenu)" ab-tip title="{{topMenu.name}}"  ng-if="topMenu.enable"
                    		 	class="navbar-minimalize minimalize-styl-2 btn btn-primary {{topMenu.active}}" href="javascript:void(0);">
                    		  	<i class="fa fa-{{topMenu.icon ||'server'}} fa-2x" style="display: block;" ></i> {{topMenu.name}}
                    		</a>
@@ -67,11 +76,39 @@
                              <span class="text-muted text-xs block ">{{userMsg.user.fullname}}<b class="caret"></b></span>
                              </span>
                          </a>
-                         <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                             <li><a class="J_menuItem" href="javascript:void(0)">{{userMsg.currentOrg.name}}</a></li>
-                             <li><a class="J_menuItem" onclick="userInfo()" href="javascript:void(0)">个人资料</a></li>
+                         <ul class="dropdown-menu dropdown-alerts" style="width: 220">
+                             <li>
+                             	 <a href="#">
+                                       <div>
+                                           <i class="fa  fa-user">{{userMsg.currentOrg.groupName}}</i> 
+                                           <span class="pull-right btn btn-xs btn-primary">当前组织</span>
+                                       </div>
+                                   </a>
+                             </li>
+                              <li class="divider"></li>
+                             <li ng-repeat="org in userMsg.orgList" ng-show="org.groupId != userMsg.currentOrg.groupId">
+                             		<a href="#">
+                                      <div>
+                                          <i class="fa fa-users"></i> {{org.groupName}}
+                                          <span class="pull-right btn btn-xs btn-success fa fa-exchange" ng-click="changeCurrentOrg(org.groupId)">切换组织</span>
+                                      </div>
+                                   </a>
+                             </li>
+                             <li ng-repeat="system in userMsg.subsystemList" ng-show="system.id != userMsg.currentSystem.id">
+                             		<a href="#">
+                                          <i class="fa fa-align-justify"></i> {{system.name}}
+                                          <span class="pull-right btn btn-xs btn-danger fa fa-exchange" ng-click="changeCurrentSystem(system)">切换系统</span>
+                                   </a>
+                             </li>
+                              <li class="divider"></li>
+                             <li>
+                             	<a class="btn btn-sm fa fa-smile-o" ng-click="userInfo()" href="javascript:void(0)">个人资料</a>
+                             	<a class="btn btn-sm fa fa-key" ng-click="editPassworld()" href="javascript:void(0)">修改密码</a>
+                             	<a class="btn btn-sm fa fa-edit" ng-click="editUserInfo()" href="javascript:void(0)">修改资料</a>
+                             	</li>
                              <li class="divider"></li>
-                             <li><a href="#" ng-click="logout()">安全退出</a></li>
+                             <li><a href="#" class="fa fa-arrow-circle-right" ng-click="logout()">安全退出</a></li>
+                            
                          </ul>
                          </li>
                     </ul>
@@ -84,7 +121,7 @@
                                 <li>
                                     <a href="#">
                                         <div>
-                                            <i class="fa fa-envelope fa-fw"></i> 您有**条未读消息
+                                            <i class="fa fa-envelope fa-fw"></i>系统目前支持第三方消息 
                                             <span class="pull-right text-muted small">4分钟前</span>
                                         </div>
                                     </a>
@@ -93,8 +130,8 @@
                                 <li>
                                     <a href="#">
                                         <div>
-                                            <i class="fa fa-qq fa-fw"></i> *条新回复
-                                            <span class="pull-right text-muted small">12分钟钱</span>
+                                            <i class="fa fa-qq fa-fw"></i> 如 邮件、短信、钉钉等
+                                            <span class="pull-right text-muted small">12分钟前</span>
                                         </div>
                                     </a>
                                 </li>
@@ -102,7 +139,7 @@
                                 <li>
                                     <div class="text-center link-block">
                                         <a class="J_menuItem" href="#">
-                                            <strong>查看所有    (消息模块 TODO)</strong>
+                                            <strong>稍后会推出：站内消息、消息平台消息日志</strong>
                                             <i class="fa fa-angle-right"></i>
                                         </a>
                                     </div>
@@ -143,7 +180,7 @@
             <!-- iframe 内容区 -->
             <div class="row J_mainContent" id="content-main">
                 <iframe class="J_iframe {{menu.active=='active'?'iframe-block':'iframe-none'}}" width="100%" height="100%"  frameborder="0"  seamless ng-repeat="menu in openedMenu" 
-                	ng-src="{{menu.url}}" id="{{menu.id}}iframe"></iframe> 
+                	ng-src="{{menu.url | trustedAsResourceUrl}}" id="{{menu.id}}iframe"></iframe> 
             </div>
             
             <div class="footer">
@@ -157,4 +194,45 @@
 <style>
 .iframe-block{ display:block }
 .iframe-none{ display:none; }
+
+*{ -webkit-user-select: none; }
+
+::-webkit-scrollbar-thumb {
+  background-color:#f5f5f5;
+}
+
+.nav-header{
+  height: 63px;
+  padding: 2px 12px;
+  border-bottom:1px solid #333;
+}
+
+.navbar-static-side{
+  opacity:0.85;
+}
+
+.nav-item{
+  display: inline;line-height: 40px;font-size: 18px;
+}
+
+.btn-primary {
+    margin:10px 0 10px 10px;
+    0background-color: #609e94;
+    border-color: transparent;
+    0color: #fff;
+    background-color: transparent;
+    color: #609e94;
+}
+
+.btn-primary.menuActive{
+	background-color: #18a689;
+    border-color: #18a689;
+    color: #fff;
+}
+
+
+.nav>li.active {
+    border-left: 4px solid #F0F0F0;
+    background: transparent;
+}
 </style>

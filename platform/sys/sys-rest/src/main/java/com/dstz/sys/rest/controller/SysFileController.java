@@ -1,6 +1,9 @@
 package com.dstz.sys.rest.controller;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dstz.base.api.aop.annotion.CatchErr;
 import com.dstz.base.api.query.QueryFilter;
 import com.dstz.base.api.response.impl.ResultMsg;
-import com.dstz.base.core.util.FileUtil;
 import com.dstz.base.core.util.ZipUtil;
 import com.dstz.base.db.model.page.PageResult;
-import com.dstz.base.rest.GenericController;
+import com.dstz.base.rest.ControllerTools;
 import com.dstz.sys.core.manager.SysFileManager;
 import com.dstz.sys.core.model.SysFile;
 import com.github.pagehelper.Page;
@@ -45,7 +47,7 @@ import net.lingala.zip4j.core.ZipFile;
  */
 @RestController
 @RequestMapping("/sys/sysFile/")
-public class SysFileController extends GenericController {
+public class SysFileController extends ControllerTools {
 	@Autowired
 	SysFileManager sysFileManager;
 
@@ -91,7 +93,7 @@ public class SysFileController extends GenericController {
 		ArrayList<File> sourceFileList = new ArrayList<>();
 		for (String id : fileIds.split(",")) {
 			SysFile sysFile = sysFileManager.get(id);
-			sourceFileList.add(FileUtil.inputstream2file(sysFileManager.download(id),new File(sysFile.getName())));
+			sourceFileList.add(inputstream2file(sysFileManager.download(id),new File(sysFile.getName())));
 		}
 
 		String zipName = DateUtil.format(new DateTime(),"yyyyMMddHHmmss")  + ".zip";
@@ -103,6 +105,23 @@ public class SysFileController extends GenericController {
 		byte[] bs = FileUtils.readFileToByteArray(file);
 		file.delete();// 删除临时zip文件
 		return new ResponseEntity<>(bs, headers, HttpStatus.CREATED);
+	}
+	
+	private static File inputstream2file(InputStream ins,File file) {
+		try {
+			OutputStream os = new FileOutputStream(file);
+			int bytesRead = 0;
+			byte[] buffer = new byte[8192];
+			while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+				os.write(buffer, 0, bytesRead);
+			}
+			os.close();
+			ins.close();
+			return file;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@RequestMapping(value = "del")

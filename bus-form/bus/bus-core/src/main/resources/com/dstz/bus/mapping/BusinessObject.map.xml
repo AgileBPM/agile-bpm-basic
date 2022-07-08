@@ -10,6 +10,7 @@
         <result property="groupId" column="group_id_" jdbcType="VARCHAR"/>
         <result property="groupName" column="group_name_" jdbcType="VARCHAR"/>
         <result property="persistenceType" column="persistence_type_" jdbcType="VARCHAR"/>
+        <result property="perTypeConfig" column="per_type_config_" jdbcType="VARCHAR"/>
      	<result property="createTime" column="create_time_" jdbcType="TIMESTAMP"/>
         <result property="createBy" column="create_by_" jdbcType="VARCHAR"/>
         <result property="updateTime" column="update_time_" jdbcType="TIMESTAMP"/>
@@ -18,9 +19,9 @@
 
     <insert id="create" parameterType="com.dstz.bus.model.BusinessObject">
 		INSERT INTO bus_object
-		(id_,key_,name_,desc_,relation_json_,group_id_,group_name_,persistence_type_,create_time_,create_by_,update_time_,update_by_)
+		(id_,key_,name_,desc_,relation_json_,group_id_,group_name_,persistence_type_,per_type_config_,create_time_,create_by_,update_time_,update_by_)
 		VALUES 
-		(#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{relationJson,jdbcType=CLOB}, #{groupId,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR}, #{persistenceType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+		(#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{relationJson,jdbcType=CLOB}, #{groupId,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR}, #{persistenceType,jdbcType=VARCHAR}, #{perTypeConfig,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
 	</insert>
 
     <select id="get" parameterType="java.lang.String" resultMap="BusinessObject">
@@ -53,6 +54,7 @@
 		group_id_=#{groupId,jdbcType=VARCHAR},
 		group_name_=#{groupName,jdbcType=VARCHAR},
 		persistence_type_=#{persistenceType,jdbcType=VARCHAR},
+		per_type_config_=#{perTypeConfig,jdbcType=VARCHAR},
 		update_time_=#{updateTime,jdbcType=TIMESTAMP},
 		update_by_=#{updateBy,jdbcType=VARCHAR}
 		WHERE
@@ -64,6 +66,17 @@
 		WHERE
 		id_=#{id}
 	</delete>
+	
+	 <update id="updateOverallArrangementByCode" parameterType="java.util.Map">
+		UPDATE bus_object SET
+		overall_arrangement_ = #{overallArrangement,jdbcType=VARCHAR}
+		WHERE
+		key_=#{boCode}
+	</update>
+	
+	 <select id="getOverallArrangementByCode" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT overall_arrangement_ FROM bus_object  WHERE key_=#{boCode}
+	</select>
 
 
 </mapper>

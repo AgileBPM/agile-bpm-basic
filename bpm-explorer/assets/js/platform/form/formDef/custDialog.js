@@ -7,7 +7,8 @@ UE.registerUI('custDialog', function(editor, uiName) {
 		name : uiName + uiName,
 		title : '自定义对话框',
 		// 需要添加的额外样式，指定icon图标，这里默认使用一个重复的icon，每个图标偏移量为-20px
-		cssRules : 'background-position: -340px -40px;',
+	//	cssRules : 'background-position: -340px -40px;',
+		cssRules :'background: url("./alert.png") !important',
 		onclick : function() {
 			var conf = {
 				height : 600,

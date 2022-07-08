@@ -9,12 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.dstz.base.core.util.BeanUtils;
 import com.dstz.org.api.model.IUser;
 import com.dstz.org.api.service.GroupService;
 import com.dstz.org.api.service.UserService;
 import com.dstz.sys.api.model.SysIdentity;
 import com.dstz.sys.api.service.SysIdentityConvert;
+
+import cn.hutool.core.collection.CollectionUtil;
 @Component
 public class SysIdentityConvertServiceImpl implements SysIdentityConvert {
     private static final Logger LOGGER = LoggerFactory.getLogger(SysIdentityConvert.class);
@@ -27,9 +28,9 @@ public class SysIdentityConvertServiceImpl implements SysIdentityConvert {
 	
 	@Override
 	public IUser convert2User(SysIdentity identity) {
-		List<IUser> users = convert2Users(identity);
+		List<? extends IUser> users = convert2Users(identity);
 		
-		if(BeanUtils.isNotEmpty(users)) {
+		if(CollectionUtil.isNotEmpty(users)) {
 			return users.get(0);
 		}
 		
@@ -38,7 +39,7 @@ public class SysIdentityConvertServiceImpl implements SysIdentityConvert {
 	}
 
 	@Override
-	public List<IUser> convert2Users(SysIdentity identity) {
+	public List<? extends IUser> convert2Users(SysIdentity identity) {
 		//如果为用户
 		if(SysIdentity.TYPE_USER.equals(identity.getType())) {
 			List<IUser> users = new ArrayList<>();
@@ -52,7 +53,7 @@ public class SysIdentityConvertServiceImpl implements SysIdentityConvert {
 			return users;
 		}
 		//目前其他均为组类型
-		List<IUser> userList = userService.getUserListByGroup(identity.getType(), identity.getId());
+		List<? extends IUser> userList = userService.getUserListByGroup(identity.getType(), identity.getId());
 		
 		return userList;
 	}
